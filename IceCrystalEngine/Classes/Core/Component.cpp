@@ -1,11 +1,15 @@
 #include <Ice/Core/Component.h>
 
-Component::Component(Actor* owner)
+Component::Component()
 {
-	actor = owner;
+	owner = nullptr;
 }
 
 Component::~Component()
 {
-	delete actor;
+	delete owner;
+}
+
+void Component::Update()
+{
 }

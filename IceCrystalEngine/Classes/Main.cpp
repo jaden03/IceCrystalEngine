@@ -40,20 +40,15 @@ int main()
         return -1;
     }
 
+    glEnable(GL_DEPTH_TEST);
+	
 	// Initialize FileUtils
     FileUtil::InitializeStaticMembers();
 
     Actor* amogusActor = new Actor();
 	Material* material = new Material(FileUtil::AssetDir + "Materials/amogus.mat");
-	Renderer* renderer = new Renderer(amogusActor, FileUtil::AssetDir + "Models/amogus.obj", material);
-	
-	
-    unsigned int VBO, UVBO, EBO;
-    glGenBuffers(1, &VBO);
-	glGenBuffers(1, &UVBO);
-	glGenBuffers(1, &EBO);
-    glEnable(GL_DEPTH_TEST);
-
+	Renderer* renderer = new Renderer(FileUtil::AssetDir + "Models/amogus.obj", material);
+	amogusActor->AddComponent(renderer);
 	
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -65,35 +60,12 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-        // Create transformations
-        glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-        glm::mat4 view = glm::mat4(1.0f);
-        glm::mat4 projection = glm::mat4(1.0f);
-		
-        float time = glfwGetTime() * 25;
-		float rotationalTime = std::fmod(time, 360);
-
-        model = glm::rotate(model, glm::radians(15.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(rotationalTime), glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::translate(model, glm::vec3(0.0f, -0.5f, 0.0f));
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -1.5f));
-        projection = glm::perspective(glm::radians(90.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-
-		renderer->Render(view, projection, model, VBO, UVBO, EBO);
+		renderer->Update();
 
         // call evnets and swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-	
- 
-    glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &UVBO);
-	
-	
-    //shader->Dispose();
-    //glDeleteProgram(shaderProgram);
 
     glfwTerminate();
     return 0;

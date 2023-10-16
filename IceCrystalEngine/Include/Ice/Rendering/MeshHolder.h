@@ -11,6 +11,13 @@ class MeshHolder
 {
 	
 public:
+	
+	unsigned int vertexArrayObject;
+
+	unsigned int vertexBufferObject;
+	unsigned int uvBufferObject;
+	unsigned int elementBufferObject;
+
 	std::vector<GLfloat> vertices;
 	std::vector<GLfloat> uvs;
 	std::vector<unsigned int> indices;

@@ -8,19 +8,25 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <Ice/Rendering/MeshHolder.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 std::string ModelPath;
-unsigned int VertexArrayObject;
 
-Renderer::Renderer(Actor* owner, std::string modelPath) : Component(owner)
+Renderer::Renderer()
 {
-	std::cout << FileUtil::AssetDir;
+	material = new Material();
+	ModelPath = FileUtil::AssetDir + "Models/triangulatedCube.obj";
+	InitializeRenderer();
+}
 
+Renderer::Renderer(std::string modelPath) : Component()
+{
 	material = new Material();
 	ModelPath = modelPath;
 	InitializeRenderer();
 }
 
-Renderer::Renderer(Actor* owner, std::string modelPath, Material* material) : Component(owner)
+Renderer::Renderer(std::string modelPath, Material* material) : Component()
 {
 	ModelPath = modelPath;
 	this->material = material;
@@ -35,8 +41,6 @@ Renderer::~Renderer()
 
 void Renderer::InitializeRenderer()
 {
-	glGenVertexArrays(1, &VertexArrayObject);
-
 	objl::Loader loader;
 	
 	bool loadout = loader.LoadFile(ModelPath);
@@ -78,16 +82,55 @@ void Renderer::InitializeRenderer()
 			// add the mesh holder to the vector
 			meshHolders.push_back(meshHolder);
 		}
+
+		
+		for (int i = 0; i < meshHolders.size(); i++)
+		{
+			glGenVertexArrays(1, &meshHolders[i].vertexArrayObject);
+
+			// bind the vertex array object
+			glBindVertexArray(meshHolders[i].vertexArrayObject);
+
+			// create the vertex buffer object and copy the vertices into it
+			glGenBuffers(1, &meshHolders[i].vertexBufferObject);
+			glBindBuffer(GL_ARRAY_BUFFER, meshHolders[i].vertexBufferObject);
+			glBufferData(GL_ARRAY_BUFFER, meshHolders[i].vertices.size() * sizeof(float), &meshHolders[i].vertices[0], GL_STATIC_DRAW);
+
+			// set our vertex attributes pointers
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(0);
+
+
+			// create the uv buffer object and copy the uvs into it
+			glGenBuffers(1, &meshHolders[i].uvBufferObject);
+			glBindBuffer(GL_ARRAY_BUFFER, meshHolders[i].uvBufferObject);
+			glBufferData(GL_ARRAY_BUFFER, meshHolders[i].uvs.size() * sizeof(float), &meshHolders[i].uvs[0], GL_STATIC_DRAW);
+
+			// set our vertex attributes pointers
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(1);
+
+
+			// create the element buffer object and copy the indices into it
+			glGenBuffers(1, &meshHolders[i].elementBufferObject);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshHolders[i].elementBufferObject);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshHolders[i].indices.size() * sizeof(unsigned int), &meshHolders[i].indices[0], GL_STATIC_DRAW);
+
+			// unbind the vertex array object to prevent accidental change
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
+		}
 	}
 	else
 	{
 		std::cout << "Failed to load model: " << ModelPath << std::endl;
 	}
 
+
 }
 
 
-void Renderer::Render(glm::mat4 view, glm::mat4 projection, glm::mat4 model, int vertexBufferObject, int uvBufferObject, int elementBufferObject)
+void Renderer::Update()
 {
 	if (material == nullptr)
 	{
@@ -98,36 +141,28 @@ void Renderer::Render(glm::mat4 view, glm::mat4 projection, glm::mat4 model, int
 	// loop through meshHolders
 	for (int i = 0; i < meshHolders.size(); i++)
 	{
-
 		// bind the vertex array object
-		glBindVertexArray(VertexArrayObject);
-
-		// copy vertices array into a buffer for OpenGL to use
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-		glBufferData(GL_ARRAY_BUFFER, meshHolders[i].vertices.size() * sizeof(float), &meshHolders[i].vertices[0], GL_STATIC_DRAW);
-
-		// set our vertex attributes pointers
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
-		
-
-		// copy uvs array into a buffer for OpenGL to use
-		glBindBuffer(GL_ARRAY_BUFFER, uvBufferObject);
-		glBufferData(GL_ARRAY_BUFFER, meshHolders[i].uvs.size() * sizeof(float), &meshHolders[i].uvs[0], GL_STATIC_DRAW);
-
-		// set our vertex attributes pointers
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(1);
+		glBindVertexArray(meshHolders[i].vertexArrayObject);
 
 		
-		// copy indices array into a buffer for OpenGL to use
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshHolders[i].indices.size() * sizeof(unsigned int), &meshHolders[i].indices[0], GL_STATIC_DRAW);
 
-		// unbind the vertex array object to prevent accidental change
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
 
+		// temporary
+		// Create transformations
+		glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+		glm::mat4 view = glm::mat4(1.0f);
+		glm::mat4 projection = glm::mat4(1.0f);
+
+		float time = glfwGetTime() * 25;
+		float rotationalTime = std::fmod(time, 360);
+
+		model = glm::rotate(model, glm::radians(15.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(rotationalTime), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.0f, -0.5f, 0.0f));
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -1.5f));
+		projection = glm::perspective(glm::radians(90.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
+
+		
 
 		// bind the texture
 		material->texture->Bind();
@@ -137,9 +172,6 @@ void Renderer::Render(glm::mat4 view, glm::mat4 projection, glm::mat4 model, int
 		material->shader->setMat4("view", view);
 		material->shader->setMat4("projection", projection);
 		material->shader->setMat4("model", model);
-
-		// bind the vertex array object
-		glBindVertexArray(VertexArrayObject);
 
 		// draw the elements
 		glDrawElements(GL_TRIANGLES, meshHolders[i].indices.size() * sizeof(unsigned int), GL_UNSIGNED_INT, 0);

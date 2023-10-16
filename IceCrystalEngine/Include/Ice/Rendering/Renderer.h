@@ -23,12 +23,13 @@ public:
 
 	std::vector<MeshHolder> meshHolders;
 
-	Renderer(Actor* owner, std::string modelPath);
-	Renderer(Actor* owner, std::string modelPath, Material* material);
+	Renderer();
+	Renderer(std::string modelPath);
+	Renderer(std::string modelPath, Material* material);
 
 	~Renderer();
-
-	void Render(glm::mat4 view, glm::mat4 projection, glm::mat4 model, int vertexBufferObject, int uvBufferObject, int elementBufferObject);
+	
+	void Update() override;
 };
 
 #endif

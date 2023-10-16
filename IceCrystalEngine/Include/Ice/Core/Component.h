@@ -11,10 +11,12 @@ class Component
 
 public:
 
-	Actor* actor;
+	Actor* owner;
 
-	Component(Actor* owner);
+	Component();
 	~Component();
+
+	virtual void Update(); // this needs to be virtual to allow it to be overridden by derived classes
 
 };
 
