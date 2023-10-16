@@ -20,6 +20,16 @@ public:
 
 	Transform(Actor* owner);
 
+	// Helper Functions
+	void Translate(glm::vec3 translation);
+	void Translate(float x, float y, float z);
+	
+	void Rotate(glm::vec3 rotation);
+	void Rotate(float x, float y, float z);
+
+	void Scale(glm::vec3 scale);
+	void Scale(float x, float y, float z);
+
 };
 
 

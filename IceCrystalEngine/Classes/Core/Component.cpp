@@ -3,6 +3,7 @@
 Component::Component()
 {
 	owner = nullptr;
+	transform = nullptr;
 }
 
 void Component::Update()

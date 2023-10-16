@@ -9,6 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <Ice/Core/SceneManager.h>
+#include <Ice/Core/Transform.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -49,25 +50,37 @@ int main()
 	// Get a reference to the SceneManager
 	SceneManager &sceneManager = SceneManager::GetInstance();
 
-    Actor* amogusActor = new Actor();
-	Material* material = new Material(FileUtil::AssetDir + "Materials/amogus.mat");
-	Renderer* renderer = new Renderer(FileUtil::AssetDir + "Models/amogus.obj", material);
-	amogusActor->AddComponent(renderer);
+    Actor* testActor = new Actor();
+	Material* material = new Material(FileUtil::AssetDir + "Materials/object.mat");
+	Renderer* renderer = new Renderer(FileUtil::AssetDir + "Models/finch.obj", material);
+    testActor->AddComponent(renderer);
+
+    testActor->transform->Translate(0, -2, 0);
 	
-    // render loop
+    // program loop
+    float lastFrameTime = 0.0f;
     while (!glfwWindowShouldClose(window))
     {
+        // calculate delta time
+		float currentFrameTime = glfwGetTime();
+		sceneManager.deltaTime = currentFrameTime - lastFrameTime;
+		lastFrameTime = currentFrameTime;
+		
         // input
         processInput(window);
 
-        // render
+		// clear the screen
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Update the scene
+		// update the scene (this will update all components)
         sceneManager.Update();
 
-        // call evnets and swap buffers
+
+        testActor->transform->Translate(glm::vec3(0, 0, -5) * sceneManager.deltaTime);
+		
+
+        // call events and swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

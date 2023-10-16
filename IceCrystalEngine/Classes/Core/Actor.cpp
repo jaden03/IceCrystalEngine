@@ -29,6 +29,7 @@ T* Actor::AddComponent()
 {
 	T* newComponent = new T;
 	newComponent->owner = this;
+	newComponent->transform = transform;
 	components->push_back(newComponent);
 	return newComponent;
 }
@@ -85,5 +86,6 @@ void Actor::AddComponent(Component* component)
 		component->owner->RemoveComponent(component);
 	}
 	component->owner = this;
+	component->transform = transform;
 	components->push_back(component);
 }
