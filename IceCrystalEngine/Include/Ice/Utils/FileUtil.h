@@ -5,6 +5,7 @@
 #include <filesystem>
 
 class FileUtil {
+	
 public:
     static std::string ProjectRoot;
     static std::string AssetDir;
@@ -14,6 +15,7 @@ public:
     static std::string ReadFile(const std::string& filename);
 	
 	static std::string SubstituteVariables(const std::string& str);
+	
 };
 
 
