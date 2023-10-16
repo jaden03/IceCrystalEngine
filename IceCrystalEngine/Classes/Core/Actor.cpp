@@ -4,6 +4,11 @@
 #include <Ice/Core/SceneManager.h>
 
 // Constructor
+Actor::Actor()
+{
+	components = new std::vector<Component*>();
+	transform = new Transform(this);
+}
 Actor::Actor(std::string name)
 {
 	this->name = name;
@@ -36,31 +41,6 @@ Actor::~Actor()
 		delete component;
 	}
 	delete components;
-}
-
-// Add Component by Type
-template <typename T>
-T* Actor::AddComponent()
-{
-	T* newComponent = new T;
-	newComponent->owner = this;
-	newComponent->transform = transform;
-	components->push_back(newComponent);
-	return newComponent;
-}
-
-// Get Component by Type
-template <typename T>
-T* Actor::GetComponent()
-{
-	for (Component* component : *components)
-	{
-		if (dynamic_cast<T*>(component) != nullptr)
-		{
-			return dynamic_cast<T*>(component);
-		}
-	}
-	return nullptr;
 }
 
 

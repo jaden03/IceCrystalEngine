@@ -15,23 +15,43 @@ class Actor
 
 public:
 	
-	std::string name;
-	std::string tag;
+	std::string name = "Actor";
+	std::string tag = "Untagged";
 
 	Transform* transform;
 	std::vector<Component*>* components;
 
+	Actor();
 	Actor(std::string name);
 	Actor(std::string name, std::string tag);
 	~Actor();
 
+	// You have to do template stuff in the header file or else it wont compile
+
 	// Add Component by Type
 	template <typename T>
-	T* AddComponent();
+	T* AddComponent()
+	{
+		T* newComponent = new T;
+		newComponent->owner = this;
+		newComponent->transform = transform;
+		components->push_back(newComponent);
+		return newComponent;
+	}
 	
 	// Get Component by Type
 	template <typename T>
-	T* GetComponent();
+	T* GetComponent()
+	{
+		for (Component* component : *components)
+		{
+			if (dynamic_cast<T*>(component) != nullptr)
+			{
+				return dynamic_cast<T*>(component);
+			}
+		}
+		return nullptr;
+	}
 
 	
 	// Remove Component by Pointer
