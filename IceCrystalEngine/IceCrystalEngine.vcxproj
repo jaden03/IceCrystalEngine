@@ -428,7 +428,7 @@
     <Library Include="Libraries\GLFW\glfw3.lib" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Materials\amogus.mat" />
+    <None Include="Assets\Materials\object.mat" />
     <None Include="Assets\Materials\cubeTest.mat" />
     <None Include="Assets\Materials\default.mat" />
     <None Include="Assets\Shaders\default.frag" />
@@ -567,15 +567,17 @@
     <None Include="Include\glm\gtx\wrap.inl" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Assets\Textures\amogus.png" />
     <Image Include="Assets\Textures\Blank.png" />
     <Image Include="Assets\Textures\cubeTest.png" />
+    <Image Include="Assets\Textures\ObjectGrid.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Models\amogus.obj" />
     <None Include="Assets\Models\cube.obj" />
-    <None Include="Assets\Models\test.obj" />
-    <None Include="Assets\Models\triangulatedCube.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Models\finch.obj">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

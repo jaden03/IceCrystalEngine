@@ -7,8 +7,8 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <Ice/Rendering/MeshHolder.h>
-
 #include <glm/gtc/matrix_transform.hpp>
+#include <Ice/Core/Transform.h>
 
 std::string ModelPath;
 
@@ -154,15 +154,21 @@ void Renderer::Update()
 		glm::mat4 projection = glm::mat4(1.0f);
 
 		float time = glfwGetTime() * 25;
-		float rotationalTime = std::fmod(time, 360);
 
-		model = glm::rotate(model, glm::radians(15.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(rotationalTime), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::translate(model, glm::vec3(0.0f, -0.5f, 0.0f));
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -1.5f));
-		projection = glm::perspective(glm::radians(90.0f), 1920.0f / 1080.0f, 0.1f, 100.0f);
-
+		// translation
+		model = glm::translate(model, transform->position);
 		
+		// rotation
+		model = glm::rotate(model, transform->rotation.x, glm::vec3(1, 0, 0));
+		model = glm::rotate(model, transform->rotation.y, glm::vec3(0, 1, 0));
+		model = glm::rotate(model, transform->rotation.z, glm::vec3(0, 0, 1));
+
+		// scale
+		model = glm::scale(model, transform->scale);
+		
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
+		projection = glm::perspective(glm::radians(90.0f), 1920.0f / 1080.0f, 0.1f, 10000.0f);
+
 
 		// bind the texture
 		material->texture->Bind();
@@ -172,6 +178,7 @@ void Renderer::Update()
 		material->shader->setMat4("view", view);
 		material->shader->setMat4("projection", projection);
 		material->shader->setMat4("model", model);
+		material->shader->setFloat("time", time);
 
 		// draw the elements
 		glDrawElements(GL_TRIANGLES, meshHolders[i].indices.size() * sizeof(unsigned int), GL_UNSIGNED_INT, 0);

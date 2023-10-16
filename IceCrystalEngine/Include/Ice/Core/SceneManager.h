@@ -19,6 +19,8 @@ public:
 		return instance;
 	}
 	
+	float deltaTime;
+	
 	void Update();
 	void AddActor(Actor* actor);
 	

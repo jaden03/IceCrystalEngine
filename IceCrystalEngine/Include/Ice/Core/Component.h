@@ -4,7 +4,8 @@
 
 #define COMPONENT_H
 
-#include <Ice\Core\Actor.h>
+#include <Ice/Core/Actor.h>
+#include <Ice/Core/Component.h>
 
 class Component
 {
@@ -12,6 +13,7 @@ class Component
 public:
 
 	Actor* owner;
+	Transform* transform;
 
 	Component();
 	// as in my architecture, components are "owned" by an actor they are deleted when the owner is deleted
