@@ -4,13 +4,28 @@
 #include <Ice/Core/SceneManager.h>
 
 // Constructor
-Actor::Actor()
+Actor::Actor(std::string name)
 {
+	this->name = name;
+
 	transform = new Transform(this);
 	components = new std::vector<Component*>;
 
 	SceneManager::GetInstance().AddActor(this);
 }
+Actor::Actor(std::string name, std::string tag)
+{
+	this->name = name;
+	this->tag = tag;
+
+	transform = new Transform(this);
+	components = new std::vector<Component*>;
+
+	SceneManager::GetInstance().AddActor(this);
+}
+
+
+
 
 // Deconstructor
 Actor::~Actor()

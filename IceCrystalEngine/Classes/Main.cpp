@@ -50,13 +50,13 @@ int main()
 	// Get a reference to the SceneManager
 	SceneManager &sceneManager = SceneManager::GetInstance();
 
-    Actor* testActor = new Actor();
+    Actor* testActor = new Actor("Test Actor", "Test");
 	Material* material = new Material(FileUtil::AssetDir + "Materials/object.mat");
 	Renderer* renderer = new Renderer(FileUtil::AssetDir + "Models/finch.obj", material);
     testActor->AddComponent(renderer);
 
     testActor->transform->Translate(0, -2, 0);
-	
+
     // program loop
     float lastFrameTime = 0.0f;
     while (!glfwWindowShouldClose(window))

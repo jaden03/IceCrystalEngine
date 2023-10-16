@@ -5,6 +5,7 @@
 #define SCENE_MANAGER_H
 
 #include <vector>
+#include <string>
 #include <Ice/Core/Actor.h>
 
 // This is how to make a singleton class
@@ -23,6 +24,12 @@ public:
 	
 	void Update();
 	void AddActor(Actor* actor);
+
+	// Returns the first actor with the given tag
+	Actor* GetActorByTag(std::string tag);
+		
+	// Returns all actors with the given tag
+	std::vector<Actor*> GetActorsByTag(std::string tag);
 	
 
 private:
