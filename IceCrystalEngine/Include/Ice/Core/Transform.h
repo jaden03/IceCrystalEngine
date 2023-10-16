@@ -20,7 +20,9 @@ public:
 
 	Transform(Actor* owner);
 
+	
 	// Helper Functions
+	
 	void Translate(glm::vec3 translation);
 	void Translate(float x, float y, float z);
 	

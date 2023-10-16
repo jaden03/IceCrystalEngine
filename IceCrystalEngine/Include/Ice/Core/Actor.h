@@ -5,6 +5,7 @@
 #define ACTOR_H
 
 #include <vector>
+#include <string>
 
 class Transform; // forward declaration because actor and transform depend on eachother
 class Component;
@@ -14,10 +15,14 @@ class Actor
 
 public:
 	
+	std::string name;
+	std::string tag;
+
 	Transform* transform;
 	std::vector<Component*>* components;
 
-	Actor();
+	Actor(std::string name);
+	Actor(std::string name, std::string tag);
 	~Actor();
 
 	// Add Component by Type
