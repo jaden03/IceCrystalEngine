@@ -564,6 +564,17 @@
     <None Include="Include\glm\gtx\vector_query.inl" />
     <None Include="Include\glm\gtx\wrap.inl" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Textures\amogus.png" />
+    <Image Include="Assets\Textures\Blank.png" />
+    <Image Include="Assets\Textures\cubeTest.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Models\amogus.obj" />
+    <None Include="Assets\Models\cube.obj" />
+    <None Include="Assets\Models\test.obj" />
+    <None Include="Assets\Models\triangulatedCube.obj" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

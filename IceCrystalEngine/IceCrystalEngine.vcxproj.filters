@@ -1228,4 +1228,21 @@
     <None Include="Assets\Materials\amogus.mat" />
     <None Include="Assets\Materials\cubeTest.mat" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Textures\cubeTest.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Blank.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Textures\amogus.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Assets\Models\test.obj" />
+    <Object Include="Assets\Models\cube.obj" />
+    <Object Include="Assets\Models\amogus.obj" />
+    <Object Include="Assets\Models\triangulatedCube.obj" />
+  </ItemGroup>
 </Project>
