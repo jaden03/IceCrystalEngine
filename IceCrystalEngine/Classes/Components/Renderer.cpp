@@ -1,18 +1,26 @@
-#include <Ice/Utils/OBJLoader.h>
-#include <Ice/Rendering/Material.h>
-#include <Ice/Rendering/Renderer.h>
-#include <Ice/Utils/FileUtil.h>
 #include <iostream>
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
 #include <glm/gtc/type_ptr.hpp>
-#include <Ice/Rendering/MeshHolder.h>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <Ice/Core/WindowManager.h>
+#include <Ice/Core/SceneManager.h>
+#include <Ice/Utils/OBJLoader.h>
+#include <Ice/Utils/FileUtil.h>
 #include <Ice/Core/Transform.h>
 
+#include <Ice/Components/Renderer.h>
+#include <Ice/Rendering/MeshHolder.h>
+#include <Ice/Rendering/Material.h>
+
+WindowManager& windowManager = WindowManager::GetInstance();
+SceneManager& sceneManager = SceneManager::GetInstance();
 std::string ModelPath;
 
-Renderer::Renderer()
+Renderer::Renderer() : Component()
 {
 	material = new Material();
 	ModelPath = FileUtil::AssetDir + "Models/triangulatedCube.obj";
@@ -153,7 +161,7 @@ void Renderer::Update()
 		glm::mat4 view = glm::mat4(1.0f);
 		glm::mat4 projection = glm::mat4(1.0f);
 
-		float time = glfwGetTime() * 25;
+		float time = glfwGetTime();
 
 		// translation
 		model = glm::translate(model, transform->position);
@@ -166,8 +174,18 @@ void Renderer::Update()
 		// scale
 		model = glm::scale(model, transform->scale);
 		
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
-		projection = glm::perspective(glm::radians(90.0f), 1920.0f / 1080.0f, 0.1f, 10000.0f);
+
+		// camera stuff
+		if (sceneManager.mainCamera != nullptr)
+		{
+			Transform* camTransform = sceneManager.mainCamera->owner->transform;
+			view = glm::lookAt(camTransform->position, camTransform->position + camTransform->forward, camTransform->up);
+			projection = glm::perspective(glm::radians(sceneManager.mainCamera->fieldOfView), (float)windowManager.windowWidth / (float)windowManager.windowHeight, sceneManager.mainCamera->nearClippingPlane, sceneManager.mainCamera->farClippingPlane);
+		}
+		else
+		{
+			projection = glm::perspective(glm::radians(90.0f), (float)windowManager.windowWidth / (float)windowManager.windowHeight, 0.1f, 10000.0f);
+		}
 
 
 		// bind the texture

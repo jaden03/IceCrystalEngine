@@ -7,11 +7,13 @@
 #include <vector>
 #include <string>
 #include <Ice/Core/Actor.h>
+#include <Ice/Components/Camera.h>
 
 // This is how to make a singleton class
+
 class SceneManager
 {
-
+	
 public:
 	
 	static SceneManager& GetInstance()
@@ -20,6 +22,7 @@ public:
 		return instance;
 	}
 	
+	Camera* mainCamera;
 	float deltaTime;
 	
 	void Update();
@@ -30,6 +33,12 @@ public:
 		
 	// Returns all actors with the given tag
 	std::vector<Actor*> GetActorsByTag(std::string tag);
+
+	
+
+	// Returns the first component of the given type
+	template <typename T>
+	T* GetComponentOfType();
 	
 
 private:

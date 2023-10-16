@@ -1,47 +1,30 @@
 #include <iostream>
+#include <filesystem>
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <filesystem>
-#include <Ice/Rendering/Material.h>
-#include <Ice/Rendering/Shader.h>
-#include <Ice/Rendering/Renderer.h>
-#include <Ice/Utils/FileUtil.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <Ice/Core/WindowManager.h>
 #include <Ice/Core/SceneManager.h>
+#include <Ice/Utils/FileUtil.h>
+
 #include <Ice/Core/Transform.h>
+#include <Ice/Components/Renderer.h>
+#include <Ice/Rendering/Material.h>
+#include <Ice/Rendering/Shader.h>
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
-
-// settings
-unsigned int SCR_WIDTH = 1920;
-unsigned int SCR_HEIGHT = 1080;
 
 int main()
 {
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // Get a reference to the WindowManager (this will initialize the window)
+	WindowManager& windowManager = WindowManager::GetInstance();
+    GLFWwindow* window = windowManager.window;
 
-
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "IceCrystal Engine", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
-
+    // Enable the depth test
     glEnable(GL_DEPTH_TEST);
 	
 	// Initialize FileUtils
@@ -50,12 +33,16 @@ int main()
 	// Get a reference to the SceneManager
 	SceneManager &sceneManager = SceneManager::GetInstance();
 
+
+    Actor* cameraActor = new Actor("Main Camera");
+    cameraActor->AddComponent<Camera>();
+
     Actor* testActor = new Actor("Test Actor", "Test");
 	Material* material = new Material(FileUtil::AssetDir + "Materials/object.mat");
 	Renderer* renderer = new Renderer(FileUtil::AssetDir + "Models/finch.obj", material);
     testActor->AddComponent(renderer);
 
-    testActor->transform->Translate(0, -2, 0);
+    testActor->transform->Translate(0, -4, -5);
 
     // program loop
     float lastFrameTime = 0.0f;
@@ -76,9 +63,8 @@ int main()
 		// update the scene (this will update all components)
         sceneManager.Update();
 
+        testActor->transform->TranslateDelta(0, 0, 1);
 
-        testActor->transform->Translate(glm::vec3(0, 0, -5) * sceneManager.deltaTime);
-		
 
         // call events and swap buffers
         glfwSwapBuffers(window);
@@ -94,12 +80,4 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-}
-
-// glfw: whenever the window size changed
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    SCR_WIDTH = width;
-	SCR_HEIGHT = height;
-    glViewport(0, 0, width, height);
 }

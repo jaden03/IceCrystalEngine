@@ -151,13 +151,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Classes\Components\Camera.cpp" />
     <ClCompile Include="Classes\Core\Actor.cpp" />
     <ClCompile Include="Classes\Core\Component.cpp" />
     <ClCompile Include="Classes\Core\SceneManager.cpp" />
     <ClCompile Include="Classes\Core\Transform.cpp" />
+    <ClCompile Include="Classes\Core\WindowManager.cpp" />
     <ClCompile Include="Classes\glad.c" />
     <ClCompile Include="Classes\Rendering\Material.cpp" />
-    <ClCompile Include="Classes\Rendering\Renderer.cpp" />
+    <ClCompile Include="Classes\Components\Renderer.cpp" />
     <ClCompile Include="Classes\Rendering\Shader.cpp" />
     <ClCompile Include="Classes\Rendering\Texture.cpp" />
     <ClCompile Include="Classes\Utils\FileUtil.cpp" />
@@ -406,13 +408,15 @@
     <ClInclude Include="Include\glm\vec3.hpp" />
     <ClInclude Include="Include\glm\vec4.hpp" />
     <ClInclude Include="Include\glm\vector_relational.hpp" />
+    <ClInclude Include="Include\Ice\Components\Camera.h" />
     <ClInclude Include="Include\Ice\Core\Actor.h" />
     <ClInclude Include="Include\Ice\Core\Component.h" />
     <ClInclude Include="Include\Ice\Core\SceneManager.h" />
     <ClInclude Include="Include\Ice\Core\Transform.h" />
+    <ClInclude Include="Include\Ice\Core\WindowManager.h" />
     <ClInclude Include="Include\Ice\Rendering\Material.h" />
     <ClInclude Include="Include\Ice\Rendering\MeshHolder.h" />
-    <ClInclude Include="Include\Ice\Rendering\Renderer.h" />
+    <ClInclude Include="Include\Ice\Components\Renderer.h" />
     <ClInclude Include="Include\Ice\Rendering\Shader.h" />
     <ClInclude Include="Include\Ice\Rendering\Texture.h" />
     <ClInclude Include="Include\Ice\Utils\FileUtil.h" />
