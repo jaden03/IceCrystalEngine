@@ -19,7 +19,6 @@ public:
 	glm::vec3 scale;
 
 	Transform(Actor* owner);
-	~Transform();
 
 };
 

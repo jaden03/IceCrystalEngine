@@ -8,6 +8,7 @@
 #include <Ice/Utils/FileUtil.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <Ice/Core/SceneManager.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -45,6 +46,9 @@ int main()
 	// Initialize FileUtils
     FileUtil::InitializeStaticMembers();
 
+	// Get a reference to the SceneManager
+	SceneManager &sceneManager = SceneManager::GetInstance();
+
     Actor* amogusActor = new Actor();
 	Material* material = new Material(FileUtil::AssetDir + "Materials/amogus.mat");
 	Renderer* renderer = new Renderer(FileUtil::AssetDir + "Models/amogus.obj", material);
@@ -60,7 +64,8 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		renderer->Update();
+		// Update the scene
+        sceneManager.Update();
 
         // call evnets and swap buffers
         glfwSwapBuffers(window);
