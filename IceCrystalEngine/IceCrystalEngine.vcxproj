@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Classes\Components\Camera.cpp" />
+    <ClCompile Include="Classes\Components\Freecam.cpp" />
     <ClCompile Include="Classes\Core\Actor.cpp" />
     <ClCompile Include="Classes\Core\Component.cpp" />
     <ClCompile Include="Classes\Core\Input.cpp" />
@@ -410,6 +411,7 @@
     <ClInclude Include="Include\glm\vec4.hpp" />
     <ClInclude Include="Include\glm\vector_relational.hpp" />
     <ClInclude Include="Include\Ice\Components\Camera.h" />
+    <ClInclude Include="Include\Ice\Components\Freecam.h" />
     <ClInclude Include="Include\Ice\Core\Actor.h" />
     <ClInclude Include="Include\Ice\Core\Component.h" />
     <ClInclude Include="Include\Ice\Core\Input.h" />

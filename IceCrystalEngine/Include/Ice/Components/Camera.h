@@ -5,6 +5,7 @@
 #define CAMERA_H
 
 #include <Ice/Core/Component.h>
+#include <glm/glm.hpp>
 
 class Camera : public Component
 {

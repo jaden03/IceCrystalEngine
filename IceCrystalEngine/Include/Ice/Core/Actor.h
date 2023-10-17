@@ -28,6 +28,21 @@ public:
 
 	// You have to do template stuff in the header file or else it wont compile
 
+	// Has Component
+	template <typename T>
+	bool HasComponent()
+	{
+		for (int i = 0; i < components->size(); i++)
+		{
+			if (dynamic_cast<T*>(components->at(i)) != nullptr)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+
 	// Add Component by Type
 	template <typename T>
 	T* AddComponent()
@@ -35,6 +50,7 @@ public:
 		T* newComponent = new T;
 		newComponent->owner = this;
 		newComponent->transform = transform;
+		newComponent->Ready();
 		components->push_back(newComponent);
 		return newComponent;
 	}

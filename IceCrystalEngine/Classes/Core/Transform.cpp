@@ -21,8 +21,6 @@ void Transform::Update()
 	forward = Forward();
 	right = Right();
 	up = Up();
-
-	rotation = glm::quat(glm::vec3(eulerAngles.x, eulerAngles.y, eulerAngles.z));
 }
 
 
@@ -46,52 +44,93 @@ void Transform::TranslateDelta(float x, float y, float z)
 	position += glm::vec3(x, y, z) * sceneManager.deltaTime;
 }
 
-void Transform::Rotate(glm::vec3 rotation)
+void Transform::Rotate(glm::vec3 rot)
 {
-	this->eulerAngles += rotation;
+	eulerAngles += rot;
+	rotation = glm::quat(eulerAngles);
 }
 void Transform::Rotate(float x, float y, float z)
 {
-	this->eulerAngles += glm::vec3(x, y, z);
+	eulerAngles += glm::vec3(x, y, z);
+	rotation = glm::quat(eulerAngles);
 }
-void Transform::RotateDelta(glm::vec3 rotation)
+void Transform::RotateDelta(glm::vec3 rot)
 {
-	this->eulerAngles += rotation * sceneManager.deltaTime;
+	eulerAngles += rot * sceneManager.deltaTime;
+	rotation = glm::quat(eulerAngles);
 }
 void Transform::RotateDelta(float x, float y, float z)
 {
-	this->eulerAngles += glm::vec3(x, y, z) * sceneManager.deltaTime;
+	eulerAngles += glm::vec3(x, y, z) * sceneManager.deltaTime;
+	rotation = glm::quat(eulerAngles);
 }
 
 void Transform::Scale(glm::vec3 scale)
 {
-	this->scale += scale;
+	scale += scale;
 }
 void Transform::Scale(float x, float y, float z)
 {
-	this->scale += glm::vec3(x, y, z);
+	scale += glm::vec3(x, y, z);
 }
 void Transform::ScaleDelta(glm::vec3 scale)
 {
-	this->scale += scale * sceneManager.deltaTime;
+	scale += scale * sceneManager.deltaTime;
 }
 void Transform::ScaleDelta(float x, float y, float z)
 {
-	this->scale += glm::vec3(x, y, z) * sceneManager.deltaTime;
+	scale += glm::vec3(x, y, z) * sceneManager.deltaTime;
 }
+
+void Transform::LookAt(float x, float y, float z)
+{
+	glm::vec3 target = glm::vec3(x, y, z);
+	glm::vec3 direction = glm::normalize(target - position);
+
+	rotation = glm::quatLookAt(direction, glm::vec3(0.0f, 1.0f, 0.0f));
+	eulerAngles = glm::eulerAngles(rotation);
+}
+
+void Transform::LookAt(glm::vec3 target)
+{
+	glm::vec3 direction = glm::normalize(target - position);
+
+	rotation = glm::quatLookAt(direction, glm::vec3(0.0f, 1.0f, 0.0f));
+	eulerAngles = glm::eulerAngles(rotation);
+}
+
+
+
+
+void Transform::SetRotation(glm::vec3 rot)
+{
+	eulerAngles = rot;
+	rotation = glm::quat(eulerAngles);
+}
+void Transform::SetRotation(float x, float y, float z)
+{
+	eulerAngles = glm::vec3(x, y, z);
+	rotation = glm::quat(eulerAngles);
+}
+void Transform::SetRotation(glm::quat rot)
+{
+	eulerAngles = glm::eulerAngles(rot);
+	rotation = rot;
+}
+
 
 
 glm::vec3 Transform::Forward()
 {
-	return glm::vec3(0.0f, 0.0f, 1.0f) * rotation;
+	return glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f) * rotation);
 }
 
 glm::vec3 Transform::Right()
 {
-	return glm::vec3(1.0f, 0.0f, 0.0f) * rotation;
+	return glm::normalize(glm::vec3(-1.0f, 0.0f, 0.0f) * rotation);
 }
 
 glm::vec3 Transform::Up()
 {
-	return glm::vec3(0.0f, 1.0f, 0.0f) * rotation;
+	return glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f) * rotation);
 }

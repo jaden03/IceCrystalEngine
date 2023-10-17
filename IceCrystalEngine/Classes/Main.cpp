@@ -16,6 +16,7 @@
 #include <Ice/Components/Renderer.h>
 #include <Ice/Rendering/Material.h>
 #include <Ice/Rendering/Shader.h>
+#include <Ice/Components/Freecam.h>
 
 int main()
 {
@@ -37,14 +38,15 @@ int main()
 
 
     Actor* cameraActor = new Actor("Main Camera");
-    cameraActor->AddComponent<Camera>();
+    Camera* cameraComponent = cameraActor->AddComponent<Camera>();
+    cameraActor->AddComponent<Freecam>();
 
     Actor* testActor = new Actor("Test Actor", "Test");
 	Material* material = new Material(FileUtil::AssetDir + "Materials/object.mat");
 	Renderer* renderer = new Renderer(FileUtil::AssetDir + "Models/finch.obj", material);
     testActor->AddComponent(renderer);
 
-    testActor->transform->Translate(0, -4, -5);
+    testActor->transform->Translate(0, -4, 5);
 
     // program loop
     float lastFrameTime = 0.0f;
@@ -62,31 +64,6 @@ int main()
 		// update the scene (this will update all components)
         sceneManager.Update();
 		
-        if (input.GetKeyDown(GLFW_KEY_W))
-        {
-			std::cout << "W key pressed" << std::endl;
-        }
-
-        if (input.GetMouseButtonDown(0))
-        {
-			std::cout << "Left mouse button pressed" << std::endl;
-
-			// Get the mouse position
-			double xpos, ypos;
-			input.GetMousePosition(&xpos, &ypos);
-
-			std::cout << "Mouse position: " << xpos << ", " << ypos << std::endl;
-
-            glm::vec2 mousePos = input.GetMousePosition();
-
-			std::cout << "Mouse position: " << mousePos.x << ", " << mousePos.y << std::endl;
-        }
-
-        if (input.scrolledUp)
-        {
-			std::cout << "Scrolled up" << std::endl;
-        }
-
 
         testActor->transform->TranslateDelta(0, 0, 1);
 

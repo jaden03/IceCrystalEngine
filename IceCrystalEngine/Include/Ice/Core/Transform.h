@@ -47,6 +47,14 @@ public:
 	void Scale(float x, float y, float z);
 	void ScaleDelta(glm::vec3 scale);
 	void ScaleDelta(float x, float y, float z);
+	// --------------------------------------------- \\
+
+	void LookAt(float x, float y, float z);
+	void LookAt(glm::vec3 target);
+
+	void SetRotation(glm::vec3 rotation);
+	void SetRotation(float x, float y, float z);
+	void SetRotation(glm::quat rotation);
 
 private:
 

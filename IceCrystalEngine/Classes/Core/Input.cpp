@@ -2,7 +2,8 @@
 
 #include <Ice/Core/Input.h>
 
-GLFWwindow* Input::window = WindowManager::GetInstance().window;
+WindowManager& Input::windowManager = WindowManager::GetInstance();
+GLFWwindow* Input::window = windowManager.window;
 
 std::vector<int> Input::keysPressed;
 std::vector<int> Input::keysJustPressed;
@@ -12,8 +13,13 @@ std::vector<int> Input::mouseButtonsPressed;
 std::vector<int> Input::mouseButtonsJustPressed;
 std::vector<int> Input::mouseButtonsJustReleased;
 
+std::vector<InputAxis> Input::inputAxes;
+
 bool Input::scrolledUp = false;
 bool Input::scrolledDown = false;
+
+bool Input::lockCursor = false;
+bool Input::hideCursor = false;
 
 Input::Input()
 {
@@ -26,6 +32,18 @@ Input::Input()
 // Clear Input (called in the main loop)
 void Input::ClearInput()
 {
+	if (lockCursor)
+	{
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+	else
+	{
+		if (hideCursor)
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		else
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+
 	keysJustPressed.clear();
 	keysJustReleased.clear();
 	mouseButtonsJustPressed.clear();
@@ -159,25 +177,6 @@ bool Input::GetMouseButton(int button)
 }
 
 
-// Mouse Position
-void Input::GetMousePosition(double* xPos, double* yPos)
-{
-	double xpos, ypos;
-	glfwGetCursorPos(window, &xpos, &ypos);
-
-	*xPos = xpos; // this is basically "out" from C#
-	*yPos = ypos;
-}
-
-glm::vec2 Input::GetMousePosition()
-{
-	double xpos, ypos;
-	glfwGetCursorPos(window, &xpos, &ypos);
-
-	return glm::vec2(xpos, ypos);
-}
-
-
 // Callback for scrollwheel
 
 void Input::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -186,4 +185,59 @@ void Input::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 		scrolledDown = true;
 	else if (yoffset == 1)
 		scrolledUp = true;
+}
+
+
+
+// Input Axes
+
+InputAxis::InputAxis(std::string name, int positiveKey, int negativeKey)
+{
+	this->name = name;
+	this->positiveKey = positiveKey;
+	this->negativeKey = negativeKey;
+}
+
+
+void Input::CreateAxis(std::string name, int positiveKey, int negativeKey)
+{
+	InputAxis axis = InputAxis(name, positiveKey, negativeKey);
+	inputAxes.push_back(axis);
+}
+
+int Input::GetAxis(std::string name)
+{
+	for (int i = 0; i < inputAxes.size(); i++)
+	{
+		if (inputAxes[i].name == name)
+		{
+			int value = 0;
+
+			if (GetKey(inputAxes[i].positiveKey))
+				value += 1;
+			if (GetKey(inputAxes[i].negativeKey))
+				value -= 1;
+
+			return value;
+		}
+	}
+
+	return 0;
+}
+
+
+
+void Input::GetMousePosition(double* x, double* y)
+{
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+	*x = xpos;
+	*y = ypos;
+}
+
+glm::vec2 Input::GetMousePosition()
+{
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+	return glm::vec2(xpos, ypos);
 }
