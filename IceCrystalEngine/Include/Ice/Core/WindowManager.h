@@ -26,7 +26,6 @@ public:
 private:
 
 	WindowManager(); // Private constructor to ensure a single instance
-	~WindowManager();
 
 	WindowManager(WindowManager const&) = delete; // Delete copy constructor
 	// this prevents the copy constructor "SceneManager copy(original);" from working

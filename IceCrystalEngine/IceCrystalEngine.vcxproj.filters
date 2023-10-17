@@ -33,9 +33,6 @@
     <ClCompile Include="Include\glm\detail\glm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\Rendering\Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Classes\Rendering\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -46,6 +43,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Classes\Core\Component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Components\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Core\SceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Core\WindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Components\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Core\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -800,9 +812,6 @@
     <ClInclude Include="Include\Ice\Utils\OBJLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Ice\Rendering\Renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Ice\Rendering\MeshHolder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -819,6 +828,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\Ice\Core\Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Ice\Components\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Ice\Core\SceneManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Ice\Core\WindowManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Ice\Components\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Ice\Core\Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1225,8 +1249,10 @@
     <None Include="Include\glm\gtx\wrap.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Assets\Materials\amogus.mat" />
     <None Include="Assets\Materials\cubeTest.mat" />
+    <None Include="Assets\Materials\object.mat" />
+    <None Include="Assets\Models\cube.obj" />
+    <None Include="Assets\Models\finch.obj" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Textures\cubeTest.png">
@@ -1235,14 +1261,8 @@
     <Image Include="Assets\Textures\Blank.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Assets\Textures\amogus.png">
+    <Image Include="Assets\Textures\ObjectGrid.png">
       <Filter>Resource Files</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="Assets\Models\test.obj" />
-    <Object Include="Assets\Models\cube.obj" />
-    <Object Include="Assets\Models\amogus.obj" />
-    <Object Include="Assets\Models\triangulatedCube.obj" />
   </ItemGroup>
 </Project>

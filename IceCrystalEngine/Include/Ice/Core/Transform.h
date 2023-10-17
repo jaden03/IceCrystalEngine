@@ -15,7 +15,6 @@ class Transform
 public:
 
 	Actor* actor;
-	SceneManager& sceneManager = SceneManager::GetInstance();
 
 	glm::vec3 position;
 	glm::quat rotation;
@@ -50,6 +49,8 @@ public:
 	void ScaleDelta(float x, float y, float z);
 
 private:
+
+	SceneManager& sceneManager = SceneManager::GetInstance();
 
 	glm::vec3 Forward();
 	glm::vec3 Right();
