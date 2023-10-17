@@ -76,6 +76,10 @@ int main()
 			input.GetMousePosition(&xpos, &ypos);
 
 			std::cout << "Mouse position: " << xpos << ", " << ypos << std::endl;
+
+            glm::vec2 mousePos = input.GetMousePosition();
+
+			std::cout << "Mouse position: " << mousePos.x << ", " << mousePos.y << std::endl;
         }
 
         if (input.scrolledUp)

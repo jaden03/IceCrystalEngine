@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 #include <Ice/Core/WindowManager.h>
 
@@ -36,6 +37,7 @@ public:
 
 	// Moust Position
 	static void GetMousePosition(double* xPos, double* yPos);
+	static glm::vec2 GetMousePosition();
 
 	
 	// Scroll Input

@@ -169,6 +169,14 @@ void Input::GetMousePosition(double* xPos, double* yPos)
 	*yPos = ypos;
 }
 
+glm::vec2 Input::GetMousePosition()
+{
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+
+	return glm::vec2(xpos, ypos);
+}
+
 
 // Callback for scrollwheel
 
