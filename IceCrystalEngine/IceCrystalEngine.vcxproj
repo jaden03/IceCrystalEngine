@@ -154,6 +154,7 @@
     <ClCompile Include="Classes\Components\Camera.cpp" />
     <ClCompile Include="Classes\Core\Actor.cpp" />
     <ClCompile Include="Classes\Core\Component.cpp" />
+    <ClCompile Include="Classes\Core\Input.cpp" />
     <ClCompile Include="Classes\Core\SceneManager.cpp" />
     <ClCompile Include="Classes\Core\Transform.cpp" />
     <ClCompile Include="Classes\Core\WindowManager.cpp" />
@@ -411,6 +412,7 @@
     <ClInclude Include="Include\Ice\Components\Camera.h" />
     <ClInclude Include="Include\Ice\Core\Actor.h" />
     <ClInclude Include="Include\Ice\Core\Component.h" />
+    <ClInclude Include="Include\Ice\Core\Input.h" />
     <ClInclude Include="Include\Ice\Core\SceneManager.h" />
     <ClInclude Include="Include\Ice\Core\Transform.h" />
     <ClInclude Include="Include\Ice\Core\WindowManager.h" />

@@ -9,14 +9,13 @@
 
 #include <Ice/Core/WindowManager.h>
 #include <Ice/Core/SceneManager.h>
+#include <Ice/Core/Input.h>
 #include <Ice/Utils/FileUtil.h>
 
 #include <Ice/Core/Transform.h>
 #include <Ice/Components/Renderer.h>
 #include <Ice/Rendering/Material.h>
 #include <Ice/Rendering/Shader.h>
-
-void processInput(GLFWwindow* window);
 
 int main()
 {
@@ -32,6 +31,9 @@ int main()
 
 	// Get a reference to the SceneManager
 	SceneManager &sceneManager = SceneManager::GetInstance();
+
+    // Get a reference to Input
+	Input& input = Input::GetInstance();
 
 
     Actor* cameraActor = new Actor("Main Camera");
@@ -53,31 +55,28 @@ int main()
 		sceneManager.deltaTime = currentFrameTime - lastFrameTime;
 		lastFrameTime = currentFrameTime;
 		
-        // input
-        processInput(window);
-
 		// clear the screen
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// update the scene (this will update all components)
         sceneManager.Update();
+		
+        if (input.GetKeyDown(GLFW_KEY_W))
+        {
+			std::cout << "W key pressed" << std::endl;
+        }
+
 
         testActor->transform->TranslateDelta(0, 0, 1);
 
 
-        // call events and swap buffers
+		// swap buffers, clear the input, poll events
         glfwSwapBuffers(window);
+        input.ClearInput();
         glfwPollEvents();
     }
 
     glfwTerminate();
     return 0;
-}
-
-// process all input
-void processInput(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
 }

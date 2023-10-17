@@ -12,13 +12,6 @@ WindowManager::WindowManager()
     InitializeWindow();
 }
 
-WindowManager::~WindowManager()
-{
-    // Get a reference to the WindowManager
-    // Setup the framebufferSizeCallback
-    //glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-}
-
 
 void WindowManager::InitializeWindow()
 {
