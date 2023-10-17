@@ -45,6 +45,14 @@ Renderer::Renderer(std::string modelPath, Material* material) : Component()
 Renderer::~Renderer()
 {
 	delete material;
+
+	for (MeshHolder meshHolder : meshHolders)
+	{
+		glDeleteVertexArrays(1, &meshHolder.vertexArrayObject);
+		glDeleteBuffers(1, &meshHolder.vertexBufferObject);
+		glDeleteBuffers(1, &meshHolder.uvBufferObject);
+		glDeleteBuffers(1, &meshHolder.elementBufferObject);
+	}
 }
 
 

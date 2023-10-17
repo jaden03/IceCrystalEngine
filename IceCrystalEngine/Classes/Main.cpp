@@ -9,6 +9,7 @@
 
 #include <Ice/Core/WindowManager.h>
 #include <Ice/Core/SceneManager.h>
+#include <Ice/Core/SceneInitializer.h>
 #include <Ice/Core/Input.h>
 #include <Ice/Utils/FileUtil.h>
 
@@ -26,6 +27,7 @@ int main()
 
     // Enable the depth test
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
 	
 	// Initialize FileUtils
     FileUtil::InitializeStaticMembers();
@@ -33,20 +35,11 @@ int main()
 	// Get a reference to the SceneManager
 	SceneManager &sceneManager = SceneManager::GetInstance();
 
+	// Get a reference to the SceneInitializer (this will initialize the scene)
+	SceneInitializer& sceneInitializer = SceneInitializer::GetInstance();
+
     // Get a reference to Input
 	Input& input = Input::GetInstance();
-
-
-    Actor* cameraActor = new Actor("Main Camera");
-    Camera* cameraComponent = cameraActor->AddComponent<Camera>();
-    cameraActor->AddComponent<Freecam>();
-
-    Actor* testActor = new Actor("Test Actor", "Test");
-	Material* material = new Material(FileUtil::AssetDir + "Materials/object.mat");
-	Renderer* renderer = new Renderer(FileUtil::AssetDir + "Models/finch.obj", material);
-    testActor->AddComponent(renderer);
-
-    testActor->transform->Translate(0, -4, 5);
 
     // program loop
     float lastFrameTime = 0.0f;
@@ -64,10 +57,6 @@ int main()
 		// update the scene (this will update all components)
         sceneManager.Update();
 		
-
-        testActor->transform->TranslateDelta(0, 0, 1);
-
-
 		// swap buffers, clear the input, poll events
         glfwSwapBuffers(window);
         input.ClearInput();

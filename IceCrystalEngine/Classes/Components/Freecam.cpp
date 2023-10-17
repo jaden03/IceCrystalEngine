@@ -34,8 +34,18 @@ void Freecam::Update()
 
 	// Move the camera
 	glm::vec3 movement = (vertical * transform->forward) + (horizontal * transform->right);
+
+	// Up and down
+	if (input.GetKey(GLFW_KEY_SPACE))
+		movement += glm::vec3(0, 1, 0);
+	if (input.GetKey(GLFW_KEY_LEFT_CONTROL))
+		movement -= glm::vec3(0, 1, 0);
+
+	float currentSpeed = input.GetKey(GLFW_KEY_LEFT_SHIFT) ? speed * 1.5f : speed;
+
 	if (glm::length(movement) != 0.0f)
-		movement = glm::normalize(movement) * speed;
+		movement = glm::normalize(movement) * currentSpeed;
+	
 	transform->TranslateDelta(movement);
 
 	// Rotate the camera
