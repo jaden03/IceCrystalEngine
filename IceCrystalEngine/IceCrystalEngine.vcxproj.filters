@@ -63,6 +63,9 @@
     <ClCompile Include="Classes\Components\Freecam.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\Core\SceneInitializer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\glad\glad.h">
@@ -849,6 +852,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\Ice\Components\Freecam.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Ice\Core\SceneInitializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
