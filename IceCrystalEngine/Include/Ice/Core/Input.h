@@ -29,6 +29,18 @@ public:
 	
 	// Mouse Input
 	
+	static bool GetMouseButtonDown(int button);
+	static bool GetMouseButtonUp(int button);
+	static bool GetMouseButton(int button);
+
+
+	// Moust Position
+	static void GetMousePosition(double* xPos, double* yPos);
+
+	
+	// Scroll Input
+	static bool scrolledUp;
+	static bool scrolledDown;
 
 
 	// Clear Input
@@ -37,8 +49,7 @@ public:
 
 private:
 
-	GLFWwindow* window;
-	WindowManager& windowManager = WindowManager::GetInstance();
+	static GLFWwindow* window;
 
 	
 	// Storing keys
@@ -47,11 +58,19 @@ private:
 	static std::vector<int> keysJustPressed;
 	static std::vector<int> keysJustReleased;
 
+	static std::vector<int> mouseButtonsPressed;
+	static std::vector<int> mouseButtonsJustPressed;
+	static std::vector<int> mouseButtonsJustReleased;
+
 
 	// Callback for keyboard input
-	
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	
+	// Callback for mouse input
+	static void mouse_callback(GLFWwindow* window, int button, int action, int mods);
+
+	// Callback for scrollwheel
+	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 	
 
 
