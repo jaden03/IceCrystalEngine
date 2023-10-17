@@ -67,6 +67,22 @@ int main()
 			std::cout << "W key pressed" << std::endl;
         }
 
+        if (input.GetMouseButtonDown(0))
+        {
+			std::cout << "Left mouse button pressed" << std::endl;
+
+			// Get the mouse position
+			double xpos, ypos;
+			input.GetMousePosition(&xpos, &ypos);
+
+			std::cout << "Mouse position: " << xpos << ", " << ypos << std::endl;
+        }
+
+        if (input.scrolledUp)
+        {
+			std::cout << "Scrolled up" << std::endl;
+        }
+
 
         testActor->transform->TranslateDelta(0, 0, 1);
 
