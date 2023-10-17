@@ -15,6 +15,7 @@
 #include <Ice/Components/Renderer.h>
 #include <Ice/Rendering/MeshHolder.h>
 #include <Ice/Rendering/Material.h>
+#include <Ice/Components/Camera.h>
 
 WindowManager& windowManager = WindowManager::GetInstance();
 SceneManager& sceneManager = SceneManager::GetInstance();
@@ -178,8 +179,9 @@ void Renderer::Update()
 		// camera stuff
 		if (sceneManager.mainCamera != nullptr)
 		{
-			Transform* camTransform = sceneManager.mainCamera->owner->transform;
-			view = glm::lookAt(camTransform->position, camTransform->position + camTransform->forward, camTransform->up);
+			Camera* mainCamera = sceneManager.mainCamera;
+			view = glm::lookAt(mainCamera->transform->position, mainCamera->transform->position + mainCamera->transform->forward, mainCamera->transform->up);
+			
 			projection = glm::perspective(glm::radians(sceneManager.mainCamera->fieldOfView), (float)windowManager.windowWidth / (float)windowManager.windowHeight, sceneManager.mainCamera->nearClippingPlane, sceneManager.mainCamera->farClippingPlane);
 		}
 		else

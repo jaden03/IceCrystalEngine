@@ -10,6 +10,20 @@
 
 #include <Ice/Core/WindowManager.h>
 
+
+class InputAxis
+{
+public:
+
+	std::string name;
+	int positiveKey;
+	int negativeKey;
+
+	InputAxis(std::string name, int positiveKey, int negativeKey);
+
+};
+
+
 class Input
 {
 
@@ -35,14 +49,25 @@ public:
 	static bool GetMouseButton(int button);
 
 
-	// Moust Position
-	static void GetMousePosition(double* xPos, double* yPos);
+	// Mouse Position
+	static void GetMousePosition(double* mouseX, double* mouseY);
 	static glm::vec2 GetMousePosition();
-
 	
 	// Scroll Input
 	static bool scrolledUp;
 	static bool scrolledDown;
+
+
+	// Input Axes
+	
+	static void CreateAxis(std::string name, int positiveKey, int negativeKey);
+	static int GetAxis(std::string axisName);
+
+
+	// Cursor
+
+	static bool lockCursor;
+	static bool hideCursor;
 
 
 	// Clear Input
@@ -51,8 +76,9 @@ public:
 
 private:
 
-	static GLFWwindow* window;
 
+	static WindowManager& windowManager;;
+	static GLFWwindow* window;
 	
 	// Storing keys
 	
@@ -64,6 +90,7 @@ private:
 	static std::vector<int> mouseButtonsJustPressed;
 	static std::vector<int> mouseButtonsJustReleased;
 
+	static std::vector<InputAxis> inputAxes;
 
 	// Callback for keyboard input
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -74,8 +101,6 @@ private:
 	// Callback for scrollwheel
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 	
-
-
 
 	Input(); // Private constructor to ensure a single instance
 

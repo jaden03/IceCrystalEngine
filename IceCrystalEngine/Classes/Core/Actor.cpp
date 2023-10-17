@@ -82,5 +82,6 @@ void Actor::AddComponent(Component* component)
 	}
 	component->owner = this;
 	component->transform = transform;
+	component->Ready();
 	components->push_back(component);
 }

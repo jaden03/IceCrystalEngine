@@ -5,7 +5,6 @@
 #define COMPONENT_H
 
 #include <Ice/Core/Actor.h>
-#include <Ice/Core/Component.h>
 
 class Component
 {
@@ -19,6 +18,10 @@ public:
 	// as in my architecture, components are "owned" by an actor they are deleted when the owner is deleted
 	// therefore there is no need to have a deconstructor that deletes the owner, because the owner is already deleted
 
+	// Called when the component is added to an actor (reparenting counts)
+	virtual void Ready();
+	
+	// Called every frame (only fires when "attached" to an actor)
 	virtual void Update(); // this needs to be virtual to allow it to be overridden by derived classes
 
 };
