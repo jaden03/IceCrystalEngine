@@ -2,53 +2,29 @@
 
 #include <Ice/Core/LightingManager.h>
 
-LightingManager& lightingManager = LightingManager::GetInstance();
-
-DirectionalLight::DirectionalLight() : Component() {}
+DirectionalLight::DirectionalLight() : Component() 
+{
+	LightingManager::GetInstance().AddDirectionalLight(this);
+}
 
 DirectionalLight::DirectionalLight(glm::vec3 color, float strength) : Component()
 {
 	this->color = color;
 	this->strength = strength;
 
-	lightingManager.AddDirectionalLight(this);
+	LightingManager::GetInstance().AddDirectionalLight(this);
 }
 
 DirectionalLight::~DirectionalLight()
 {
-	lightingManager.RemoveDirectionalLight(this);
+	LightingManager::GetInstance().RemoveDirectionalLight(this);
 }
 
-glm::mat3 DirectionalLight::GetLightData()
+
+PointLight::PointLight() : Component() 
 {
-	//[dx] [dy] [dx]
-	//[r] [g] [b]
-	//[strength] [] []
-
-	glm::mat3 dataMatrix;
-	
-	// Direction
-	dataMatrix[0].x = transform->forward.x;
-	dataMatrix[0].y = transform->forward.y;
-	dataMatrix[0].z = transform->forward.z;
-
-	// Color
-	dataMatrix[1].x = color.x;
-	dataMatrix[1].y = color.y;
-	dataMatrix[1].z = color.z;
-
-	// Strength
-	dataMatrix[2].x = strength;
-
-	return dataMatrix;
+	LightingManager::GetInstance().AddPointLight(this);
 }
-
-
-
-
-
-
-PointLight::PointLight() : Component() {}
 
 PointLight::PointLight(glm::vec3 color, float strength, float radius) : Component()
 {
@@ -56,35 +32,10 @@ PointLight::PointLight(glm::vec3 color, float strength, float radius) : Componen
 	this->strength = strength;
 	this->radius = radius;
 
-	lightingManager.AddPointLight(this);
+	LightingManager::GetInstance().AddPointLight(this);
 }
 
 PointLight::~PointLight()
 {
-	lightingManager.RemovePointLight(this);
-}
-
-glm::mat3 PointLight::GetLightData()
-{
-	//[x] [y] [x]
-	//[r] [g] [b]
-	//[strength] [radius] []
-
-	glm::mat3 dataMatrix;
-
-	// Direction
-	dataMatrix[0].x = transform->position.x;
-	dataMatrix[0].y = transform->position.y;
-	dataMatrix[0].z = transform->position.z;
-
-	// Color
-	dataMatrix[1].x = color.x;
-	dataMatrix[1].y = color.y;
-	dataMatrix[1].z = color.z;
-
-	// Strength + Radius
-	dataMatrix[2].x = strength;
-	dataMatrix[2].y = radius;
-
-	return dataMatrix;
+	LightingManager::GetInstance().RemovePointLight(this);
 }

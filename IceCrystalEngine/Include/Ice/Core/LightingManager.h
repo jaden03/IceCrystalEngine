@@ -6,6 +6,7 @@
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <vector>
 
 class DirectionalLight;
 class PointLight;
@@ -27,9 +28,14 @@ public:
 	int maxDirectionalLights = 5;
 	int maxPointLights = 128;
 
-	void InitializeLighting();
+	std::vector<DirectionalLight*> directionalLights = std::vector<DirectionalLight*>();
+	std::vector<PointLight*> pointLights = std::vector<PointLight*>();
 
-	void UpdateLights();
+	glm::mat3* directionalLightData;
+	glm::mat3* pointLightData;
+
+
+	void InitializeLighting();
 
 	void AddDirectionalLight(DirectionalLight* light);
 	void AddPointLight(PointLight* light);
@@ -39,12 +45,8 @@ public:
 
 private:
 
-	unsigned int directionalLightSSBO;
-	unsigned int pointLightSSBO;
-	
-
 	LightingManager(); // Private constructor to ensure a single instance
-	//~SceneInitializer();
+	~LightingManager();
 
 	LightingManager(LightingManager const&) = delete; // Delete copy constructor
 	// this prevents the copy constructor "SceneManager copy(original);" from working

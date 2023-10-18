@@ -5,6 +5,7 @@
 #include <Ice/Utils/FileUtil.h>
 
 #include <Ice/Components/Camera.h>
+#include <Ice/Components/Light.h>
 
 
 std::string ModelPath;
@@ -64,6 +65,7 @@ void Renderer::InitializeRenderer()
 			// get the vertices and uvs
 			std::vector<GLfloat> vertices = std::vector<GLfloat>();
 			std::vector<GLfloat> uvs = std::vector<GLfloat>();
+			std::vector<GLfloat> normals = std::vector<GLfloat>();
 			for (int j = 0; j < mesh.Vertices.size(); j++)
 			{
 				vertices.push_back(mesh.Vertices[j].Position.X);
@@ -72,6 +74,10 @@ void Renderer::InitializeRenderer()
 
 				uvs.push_back(mesh.Vertices[j].TextureCoordinate.X);
 				uvs.push_back(mesh.Vertices[j].TextureCoordinate.Y);
+
+				normals.push_back(mesh.Vertices[j].Normal.X);
+				normals.push_back(mesh.Vertices[j].Normal.Y);
+				normals.push_back(mesh.Vertices[j].Normal.Z);
 			}
 
 			// get the indices
@@ -82,7 +88,7 @@ void Renderer::InitializeRenderer()
 			}
 
 			// create a new mesh holder
-			MeshHolder meshHolder = MeshHolder(vertices, uvs, indices);
+			MeshHolder meshHolder = MeshHolder(vertices, uvs, normals, indices);
 
 			// add the mesh holder to the vector
 			meshHolders.push_back(meshHolder);
@@ -114,6 +120,16 @@ void Renderer::InitializeRenderer()
 			// set our vertex attributes pointers
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 			glEnableVertexAttribArray(1);
+
+
+			// create the normal buffer object and copy the normals into it
+			glGenBuffers(1, &meshHolders[i].normalBufferObject);
+			glBindBuffer(GL_ARRAY_BUFFER, meshHolders[i].normalBufferObject);
+			glBufferData(GL_ARRAY_BUFFER, meshHolders[i].normals.size() * sizeof(float), &meshHolders[i].normals[0], GL_STATIC_DRAW);
+
+			// set our vertex attributes pointers
+			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(2);
 
 
 			// create the element buffer object and copy the indices into it
@@ -197,11 +213,43 @@ void Renderer::Update()
 		
 			// material stuff
 		material->shader->setVec3("fragColor", material->color);
+		
+		if (sceneManager.mainCamera != nullptr)
+			material->shader->setVec3("viewPos", sceneManager.mainCamera->transform->position);
 
 			// lighting stuff
 		material->shader->setFloat("ambientLightStrength", lightingManager.ambientLightingStrength);
 		material->shader->setVec3("ambientLightColor", lightingManager.ambientLightingColor);
 		
+		material->shader->setInt("directionalLightCount", lightingManager.directionalLights.size());
+		material->shader->setInt("pointLightCount", lightingManager.pointLights.size());
+
+		int numberOfDirectionalLights = lightingManager.directionalLights.size();
+		int maxDirectionalLights = lightingManager.maxDirectionalLights;
+		if (numberOfDirectionalLights > maxDirectionalLights)
+			numberOfDirectionalLights = maxDirectionalLights;
+
+		for (int i = 0; i < numberOfDirectionalLights; i++)
+		{
+			material->shader->setVec3("directionalLights[" + std::to_string(i) + "].direction", lightingManager.directionalLights[i]->transform->forward);
+			material->shader->setVec3("directionalLights[" + std::to_string(i) + "].color", lightingManager.directionalLights[i]->color);
+			material->shader->setFloat("directionalLights[" + std::to_string(i) + "].strength", lightingManager.directionalLights[i]->strength);
+		}
+
+		int numberOfPointLights = lightingManager.pointLights.size();
+		int maxPointLights = lightingManager.maxPointLights;
+		if (numberOfPointLights > maxPointLights)
+			numberOfPointLights = maxPointLights;
+
+		for (int i = 0; i < numberOfPointLights; i++)
+		{
+			material->shader->setVec3("pointLights[" + std::to_string(i) + "].position", lightingManager.pointLights[i]->transform->position);
+			material->shader->setVec3("pointLights[" + std::to_string(i) + "].color", lightingManager.pointLights[i]->color);
+			material->shader->setFloat("pointLights[" + std::to_string(i) + "].strength", lightingManager.pointLights[i]->strength);
+			material->shader->setFloat("pointLights[" + std::to_string(i) + "].radius", lightingManager.pointLights[i]->radius);
+		}
+		
+
 			// extra stuff
 		material->shader->setFloat("time", time);
 

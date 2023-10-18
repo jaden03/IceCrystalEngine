@@ -9,13 +9,11 @@
 
 class DirectionalLight : public Component
 {
-	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
-	float strength = 1;
-
 public:
 
-	glm::mat3 GetLightData();
-
+	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
+	float strength = 1;
+	
 	DirectionalLight();
 	DirectionalLight(glm::vec3 color, float strength);
 
@@ -26,13 +24,12 @@ public:
 
 class PointLight : public Component
 {
-	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
-	float strength = 1; 
-	float radius = 5;
 
 public:
 
-	glm::mat3 GetLightData();
+	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
+	float strength = 1;
+	float radius = 5;
 
 	PointLight();
 	PointLight(glm::vec3 color, float strength, float radius);
