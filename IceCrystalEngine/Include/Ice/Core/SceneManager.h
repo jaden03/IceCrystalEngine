@@ -8,6 +8,7 @@
 #include <string>
 #include <Ice/Core/Actor.h>
 #include <Ice/Components/Camera.h>
+#include <Ice/Core/LightingManager.h>
 
 // This is how to make a singleton class
 
@@ -24,6 +25,7 @@ public:
 	
 	Camera* mainCamera;
 	float deltaTime;
+
 	
 	void Update();
 	void AddActor(Actor* actor);
@@ -42,6 +44,8 @@ public:
 	
 
 private:
+
+	LightingManager& lightingManager = LightingManager::GetInstance();
 
 	std::vector<Actor*>* actors;
 	

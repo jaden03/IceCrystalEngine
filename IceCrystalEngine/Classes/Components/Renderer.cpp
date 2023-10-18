@@ -1,24 +1,17 @@
 #include <iostream>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <Ice/Core/WindowManager.h>
 #include <Ice/Core/SceneManager.h>
-#include <Ice/Utils/OBJLoader.h>
 #include <Ice/Utils/FileUtil.h>
-#include <Ice/Core/Transform.h>
 
 #include <Ice/Components/Renderer.h>
-#include <Ice/Rendering/MeshHolder.h>
-#include <Ice/Rendering/Material.h>
-#include <Ice/Components/Camera.h>
 
 WindowManager& windowManager = WindowManager::GetInstance();
 SceneManager& sceneManager = SceneManager::GetInstance();
+LightingManager& lightingManager = LightingManager::GetInstance();
 std::string ModelPath;
 
 Renderer::Renderer() : Component()
@@ -197,13 +190,27 @@ void Renderer::Update()
 
 		// bind the texture
 		material->texture->Bind();
+		
+		
 		// use the shader and set the attributes
 		material->shader->Use();
-		material->shader->setVec3("fragColor", material->color);
+
+			// position stuff
 		material->shader->setMat4("view", view);
 		material->shader->setMat4("projection", projection);
 		material->shader->setMat4("model", model);
+		
+			// material stuff
+		material->shader->setVec3("fragColor", material->color);
+
+			// lighting stuff
+		material->shader->setFloat("ambientLightStrength", lightingManager.ambientLightingStrength);
+		material->shader->setVec3("ambientLightColor", lightingManager.ambientLightingColor);
+		
+			// extra stuff
 		material->shader->setFloat("time", time);
+
+		
 
 		// draw the elements
 		glDrawElements(GL_TRIANGLES, meshHolders[i].indices.size() * sizeof(unsigned int), GL_UNSIGNED_INT, 0);

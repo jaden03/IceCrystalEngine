@@ -28,11 +28,11 @@ int main()
 	// Initialize FileUtils
     FileUtil::InitializeStaticMembers();
 
-	// Get a reference to the SceneManager
+	// Get a reference to the SceneManager (this has to happen before the scene is initialized)
 	SceneManager &sceneManager = SceneManager::GetInstance();
 
-	// Get a reference to the SceneInitializer (this will initialize the scene)
-	SceneInitializer& sceneInitializer = SceneInitializer::GetInstance();
+    // Get a reference to the SceneInitializer (this will initialize the scene)
+    SceneInitializer& sceneInitializer = SceneInitializer::GetInstance();
 
     // Get a reference to Input
 	Input& input = Input::GetInstance();

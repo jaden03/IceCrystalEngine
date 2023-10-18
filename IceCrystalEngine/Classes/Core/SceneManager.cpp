@@ -41,6 +41,9 @@ void SceneManager::Update()
 		}
 	}
 
+	// update lights
+	lightingManager.UpdateLights();
+
 	// loop through actors
 	for (int i = 0; i < actors->size(); i++)
 	{
