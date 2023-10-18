@@ -5,11 +5,9 @@
 
 #include <Ice/Utils/OBJLoader.h>
 #include <Ice/Rendering/Material.h>
-#include <glm/gtc/type_ptr.hpp>
-#include <glad/glad.h>
 #include <Ice/Rendering/MeshHolder.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <Ice/Core/Component.h>
-#include <Ice/Core/Actor.h>
 
 class Renderer : public Component
 {

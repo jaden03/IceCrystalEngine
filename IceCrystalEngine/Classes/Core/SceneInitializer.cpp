@@ -7,6 +7,8 @@
 #include <Ice/Components/Renderer.h>
 #include <Ice/Components/Freecam.h>
 
+#include <iostream>
+
 SceneInitializer::SceneInitializer()
 {
 	InitializeScene();
@@ -27,8 +29,11 @@ void SceneInitializer::InitializeScene()
     testActor->transform->Translate(0, -4, 5);
 
 
-	Actor* testActor2 = new Actor("Test Actor 2", "Test");
+    // This takes a few seconds to load because spock49.obj is not an optimized model at all
+	/*Actor* testActor2 = new Actor("Test Actor 2", "Test");
 	Material* material2 = new Material(FileUtil::AssetDir + "Materials/spock.mat");
 	Renderer* renderer2 = new Renderer(FileUtil::AssetDir + "Models/spock49.obj", material2);
-	testActor2->AddComponent(renderer2);
+	testActor2->AddComponent(renderer2);*/
+
+	
 }

@@ -66,6 +66,12 @@
     <ClCompile Include="Classes\Core\SceneInitializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\Core\LightingManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Components\Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\glad\glad.h">
@@ -857,6 +863,12 @@
     <ClInclude Include="Include\Ice\Core\SceneInitializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Ice\Core\LightingManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Ice\Components\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Libraries\GLFW\glfw3.lib" />
@@ -1276,6 +1288,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Assets\Textures\ObjectGrid.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Spock49.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

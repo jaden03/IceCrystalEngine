@@ -15,9 +15,9 @@ public:
 		return instance;
 	}
 
-	void InitializeScene();
-
 private:
+
+	void InitializeScene();
 
 	SceneInitializer(); // Private constructor to ensure a single instance
 	//~SceneInitializer();

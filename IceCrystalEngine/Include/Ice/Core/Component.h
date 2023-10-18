@@ -4,7 +4,7 @@
 
 #define COMPONENT_H
 
-#include <Ice/Core/Actor.h>
+#include <Ice/Core/Transform.h>
 
 class Component
 {
