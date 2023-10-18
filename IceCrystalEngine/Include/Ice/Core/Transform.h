@@ -7,7 +7,6 @@
 #include <Ice/Core/Actor.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include <Ice/Core/SceneManager.h>
 
 class Transform
 {
@@ -57,8 +56,6 @@ public:
 	void SetRotation(glm::quat rotation);
 
 private:
-
-	SceneManager& sceneManager = SceneManager::GetInstance();
 
 	glm::vec3 Forward();
 	glm::vec3 Right();

@@ -1,5 +1,7 @@
 #include <Ice/Core/Transform.h>
 
+SceneManager& sceneManager = SceneManager::GetInstance();
+
 Transform::Transform(Actor* owner)
 {
 	actor = owner;

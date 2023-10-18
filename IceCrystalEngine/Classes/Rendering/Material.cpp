@@ -1,8 +1,8 @@
 #include <Ice/Rendering/Material.h>
+
+#include <iostream>
 #include <JSON/json.h>
 #include <Ice/Utils/FileUtil.h>
-#include <iostream>
-#include <Ice/Rendering/Texture.h>
 
 using json = nlohmann::json;
 

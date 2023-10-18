@@ -3,18 +3,24 @@
 
 #define RENDERER_H
 
-#include <Ice/Utils/OBJLoader.h>
 #include <Ice/Rendering/Material.h>
-#include <glm/gtc/type_ptr.hpp>
-#include <glad/glad.h>
 #include <Ice/Rendering/MeshHolder.h>
+#include <Ice/Utils/OBJLoader.h>
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <Ice/Core/Component.h>
-#include <Ice/Core/Actor.h>
 
 class Renderer : public Component
 {
 
 	void InitializeRenderer();
+
+	WindowManager& windowManager = WindowManager::GetInstance();
+	SceneManager& sceneManager = SceneManager::GetInstance();
+	LightingManager& lightingManager = LightingManager::GetInstance();
 
 public:
 	

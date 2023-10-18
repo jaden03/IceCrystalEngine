@@ -3,6 +3,8 @@
 
 #define SHADER_H // definition
 
+#include <string>
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 
 class Shader {

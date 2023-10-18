@@ -1,7 +1,7 @@
 #include <Ice/Core/Actor.h>
+
 #include <Ice/Core/Transform.h> // include transform here for the full definition
 #include <Ice/Core/Component.h>
-#include <Ice/Core/SceneManager.h>
 
 // Constructor
 Actor::Actor()

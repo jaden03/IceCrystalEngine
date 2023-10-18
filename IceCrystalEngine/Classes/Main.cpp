@@ -10,6 +10,7 @@
 #include <Ice/Core/WindowManager.h>
 #include <Ice/Core/SceneManager.h>
 #include <Ice/Core/SceneInitializer.h>
+#include <Ice/Core/LightingManager.h>
 #include <Ice/Core/Input.h>
 #include <Ice/Utils/FileUtil.h>
 
@@ -28,15 +29,24 @@ int main()
 	// Initialize FileUtils
     FileUtil::InitializeStaticMembers();
 
-	// Get a reference to the SceneManager
+	// Get a reference to the SceneManager (this has to happen before the scene is initialized)
 	SceneManager &sceneManager = SceneManager::GetInstance();
 
-	// Get a reference to the SceneInitializer (this will initialize the scene)
-	SceneInitializer& sceneInitializer = SceneInitializer::GetInstance();
+    // Get a reference to the LightingManager
+    LightingManager& lightingManager = LightingManager::GetInstance();
+    lightingManager.InitializeLighting();
 
+    // Get a reference to the SceneInitializer (this will initialize the scene)
+    SceneInitializer& sceneInitializer = SceneInitializer::GetInstance();
+	
     // Get a reference to Input
 	Input& input = Input::GetInstance();
 
+
+    Actor* pointLight1 = sceneManager.GetActorByTag("PointLight1");
+    Actor* pointLight2 = sceneManager.GetActorByTag("PointLight2");
+	Actor* pointLight3 = sceneManager.GetActorByTag("PointLight3");
+	
     // program loop
     float lastFrameTime = 0.0f;
     while (!glfwWindowShouldClose(window))
@@ -47,11 +57,30 @@ int main()
 		lastFrameTime = currentFrameTime;
 		
 		// clear the screen
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.2f, 0.5f, 0.9f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// update the scene (this will update all components)
         sceneManager.Update();
+
+
+
+        // rotate the point lights around (0, -4, 5)
+		pointLight1->transform->position.x = 0 + 3 * cos(glfwGetTime());
+		pointLight1->transform->position.y = -4 + 3 * sin(glfwGetTime());
+		pointLight1->transform->position.z = 5 + 3 * sin(glfwGetTime());
+		
+		pointLight2->transform->position.x = 0 + 3 * cos(glfwGetTime() +  2);
+		pointLight2->transform->position.y = -4 + 3 * sin(glfwGetTime() + 2);
+        pointLight2->transform->position.z = 5 + 3 * sin(glfwGetTime() + 2);
+
+		pointLight3->transform->position.x = 0 + 3 * cos(glfwGetTime() + 4);
+        pointLight3->transform->position.y = -4 + 3 * sin(glfwGetTime() + 4);
+        pointLight3->transform->position.z = 5 + 3 * sin(glfwGetTime() + 4);
+
+
+
+
 		
 		// swap buffers, clear the input, poll events
         glfwSwapBuffers(window);

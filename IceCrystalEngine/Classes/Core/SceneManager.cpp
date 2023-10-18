@@ -1,8 +1,8 @@
+#include <Ice/Core/SceneManager.h>
+
 #include <iostream>
 
-#include <Ice/Core/SceneManager.h>
-#include <Ice/Core/Component.h>
-#include <Ice/Core/Transform.h>
+#include <Ice/Components/Camera.h>
 
 // Constructor
 SceneManager::SceneManager()
