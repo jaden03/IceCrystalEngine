@@ -1,6 +1,6 @@
-#include <iostream>
-
 #include <Ice/Core/Input.h>
+
+#include <iostream>
 
 WindowManager& Input::windowManager = WindowManager::GetInstance();
 GLFWwindow* Input::window = windowManager.window;

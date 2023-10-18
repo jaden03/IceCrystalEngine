@@ -1,8 +1,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <Ice/Rendering/Texture.h>
 #include <Ice/Utils/stb_image.h>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+
 #include <iostream>
 #include <Ice/Utils/FileUtil.h>
 

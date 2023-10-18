@@ -4,6 +4,9 @@
 
 #define SCENE_INITIALIZER_H
 
+#include <Ice/Core/Actor.h>
+#include <Ice/Utils/FileUtil.h>
+
 class SceneInitializer
 {
 
@@ -15,9 +18,9 @@ public:
 		return instance;
 	}
 
-	void InitializeScene();
-
 private:
+
+	void InitializeScene();
 
 	SceneInitializer(); // Private constructor to ensure a single instance
 	//~SceneInitializer();

@@ -1,9 +1,7 @@
+#include <Ice/Core/WindowManager.h>
+
 #include <iostream>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include <Ice/Core/WindowManager.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 

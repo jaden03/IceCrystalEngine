@@ -6,8 +6,11 @@
 
 #include <vector>
 #include <string>
-#include <Ice/Core/Actor.h>
-#include <Ice/Components/Camera.h>
+
+class Actor;
+
+class Camera;
+
 
 // This is how to make a singleton class
 
@@ -24,6 +27,7 @@ public:
 	
 	Camera* mainCamera;
 	float deltaTime;
+
 	
 	void Update();
 	void AddActor(Actor* actor);

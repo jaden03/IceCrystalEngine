@@ -1,9 +1,8 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <Ice/Rendering/Shader.h>
+
+#include <Ice/Utils/FileUtil.h>
 #include <iostream>
 #include <fstream>
-#include <Ice/Rendering/Shader.h>
-#include <Ice/Utils/FileUtil.h>
 
 std::int32_t Handle;
 

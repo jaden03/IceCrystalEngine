@@ -90,7 +90,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -104,7 +104,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -118,7 +118,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>
@@ -136,7 +136,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>
@@ -152,10 +152,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Classes\Components\Camera.cpp" />
+    <ClCompile Include="Classes\Components\Light.cpp" />
     <ClCompile Include="Classes\Components\Freecam.cpp" />
     <ClCompile Include="Classes\Core\Actor.cpp" />
     <ClCompile Include="Classes\Core\Component.cpp" />
     <ClCompile Include="Classes\Core\Input.cpp" />
+    <ClCompile Include="Classes\Core\LightingManager.cpp" />
     <ClCompile Include="Classes\Core\SceneInitializer.cpp" />
     <ClCompile Include="Classes\Core\SceneManager.cpp" />
     <ClCompile Include="Classes\Core\Transform.cpp" />
@@ -412,10 +414,12 @@
     <ClInclude Include="Include\glm\vec4.hpp" />
     <ClInclude Include="Include\glm\vector_relational.hpp" />
     <ClInclude Include="Include\Ice\Components\Camera.h" />
+    <ClInclude Include="Include\Ice\Components\Light.h" />
     <ClInclude Include="Include\Ice\Components\Freecam.h" />
     <ClInclude Include="Include\Ice\Core\Actor.h" />
     <ClInclude Include="Include\Ice\Core\Component.h" />
     <ClInclude Include="Include\Ice\Core\Input.h" />
+    <ClInclude Include="Include\Ice\Core\LightingManager.h" />
     <ClInclude Include="Include\Ice\Core\SceneInitializer.h" />
     <ClInclude Include="Include\Ice\Core\SceneManager.h" />
     <ClInclude Include="Include\Ice\Core\Transform.h" />
@@ -581,6 +585,7 @@
     <Image Include="Assets\Textures\Blank.png" />
     <Image Include="Assets\Textures\cubeTest.png" />
     <Image Include="Assets\Textures\ObjectGrid.png" />
+    <Image Include="Assets\Textures\Spock49.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Models\cube.obj" />
