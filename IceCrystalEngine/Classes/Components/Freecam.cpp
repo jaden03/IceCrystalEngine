@@ -42,6 +42,7 @@ void Freecam::Update()
 		movement -= glm::vec3(0, 1, 0);
 
 	float currentSpeed = input.GetKey(GLFW_KEY_LEFT_SHIFT) ? speed * 1.5f : speed;
+	currentSpeed = input.GetKey(GLFW_KEY_LEFT_ALT) ? speed * 0.2f : currentSpeed;
 
 	if (glm::length(movement) != 0.0f)
 		movement = glm::normalize(movement) * currentSpeed;

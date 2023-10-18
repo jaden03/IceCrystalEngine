@@ -24,10 +24,6 @@ int main()
     // Get a reference to the WindowManager (this will initialize the window)
 	WindowManager& windowManager = WindowManager::GetInstance();
     GLFWwindow* window = windowManager.window;
-
-    // Enable the depth test
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
 	
 	// Initialize FileUtils
     FileUtil::InitializeStaticMembers();

@@ -1265,6 +1265,8 @@
     <None Include="Assets\Materials\object.mat" />
     <None Include="Assets\Models\cube.obj" />
     <None Include="Assets\Models\finch.obj" />
+    <None Include="Assets\Materials\spock.mat" />
+    <None Include="Assets\Models\spock49.obj" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Textures\cubeTest.png">

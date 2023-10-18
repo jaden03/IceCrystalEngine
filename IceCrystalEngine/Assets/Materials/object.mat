@@ -1,5 +1,5 @@
 {
-  "Name": "Amogus Material",
+  "Name": "Object Material",
   "Texture": "{ASSET_DIR}Textures/ObjectGrid.png",
   "Shader": "{ASSET_DIR}Shaders/default",
   "Color": [ 1.0, 1.0, 1.0 ]

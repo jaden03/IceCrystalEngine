@@ -161,9 +161,6 @@ void Renderer::Update()
 		// bind the vertex array object
 		glBindVertexArray(meshHolders[i].vertexArrayObject);
 
-		
-
-
 		// temporary
 		// Create transformations
 		glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
@@ -210,7 +207,6 @@ void Renderer::Update()
 
 		// draw the elements
 		glDrawElements(GL_TRIANGLES, meshHolders[i].indices.size() * sizeof(unsigned int), GL_UNSIGNED_INT, 0);
-		//glDrawArrays(GL_TRIANGLES, 0, meshHolders[i].vertices.size() * sizeof(float));
 
 		glFlush();
 
