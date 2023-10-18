@@ -1,8 +1,8 @@
 #include <Ice/Components/Freecam.h>
+
 #include <iostream>
 
 #include <GLFW/glfw3.h>
-#include <Ice/Utils/FileUtil.h>
 
 Freecam::Freecam() : Component()
 {

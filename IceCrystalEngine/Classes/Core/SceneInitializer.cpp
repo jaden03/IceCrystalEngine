@@ -1,8 +1,5 @@
 #include <Ice/Core/SceneInitializer.h>
 
-#include <Ice/Core/Actor.h>
-#include <Ice/Utils/FileUtil.h>
-
 #include <Ice/Components/Camera.h>
 #include <Ice/Components/Renderer.h>
 #include <Ice/Components/Freecam.h>

@@ -4,6 +4,9 @@
 
 #define SCENE_INITIALIZER_H
 
+#include <Ice/Core/Actor.h>
+#include <Ice/Utils/FileUtil.h>
+
 class SceneInitializer
 {
 
