@@ -17,7 +17,7 @@ public:
 	Camera(float fieldOfView, float nearClippingPlane, float farClippingPlane);
 	
 	float fieldOfView = 90.0f;
-	float nearClippingPlane = 0.1f;
+	float nearClippingPlane = 0.01f;
 	float farClippingPlane = 1000.0f;
 	
 };

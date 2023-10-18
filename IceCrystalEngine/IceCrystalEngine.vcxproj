@@ -441,6 +441,7 @@
     <None Include="Assets\Materials\object.mat" />
     <None Include="Assets\Materials\cubeTest.mat" />
     <None Include="Assets\Materials\default.mat" />
+    <None Include="Assets\Materials\spock.mat" />
     <None Include="Assets\Shaders\default.frag" />
     <None Include="Assets\Shaders\default.vert" />
     <None Include="Include\glm\detail\func_common.inl" />
@@ -586,6 +587,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Models\finch.obj">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Models\spock49.obj">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
