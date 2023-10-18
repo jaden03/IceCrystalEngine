@@ -1,5 +1,4 @@
 #include <Ice/Core/Transform.h>
-#include <Ice/Core/SceneManager.h>
 
 SceneManager& sceneManager = SceneManager::GetInstance();
 

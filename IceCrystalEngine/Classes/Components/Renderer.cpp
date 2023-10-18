@@ -1,17 +1,12 @@
-#include <iostream>
-
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include <Ice/Core/WindowManager.h>
-#include <Ice/Core/SceneManager.h>
-#include <Ice/Utils/FileUtil.h>
-
 #include <Ice/Components/Renderer.h>
 
-WindowManager& windowManager = WindowManager::GetInstance();
-SceneManager& sceneManager = SceneManager::GetInstance();
-LightingManager& lightingManager = LightingManager::GetInstance();
+#include <iostream>
+
+#include <Ice/Utils/FileUtil.h>
+
+#include <Ice/Components/Camera.h>
+
+
 std::string ModelPath;
 
 Renderer::Renderer() : Component()

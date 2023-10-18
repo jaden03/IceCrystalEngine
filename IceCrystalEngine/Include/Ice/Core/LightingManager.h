@@ -39,8 +39,8 @@ public:
 
 private:
 
-	unsigned int DirectionLightSSBO;
-	unsigned int PointLightSSBO;
+	unsigned int directionalLightSSBO;
+	unsigned int pointLightSSBO;
 	
 
 	LightingManager(); // Private constructor to ensure a single instance

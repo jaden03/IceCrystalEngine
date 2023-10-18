@@ -1,4 +1,5 @@
 #include <Ice/Core/LightingManager.h>
+
 #include <Ice/Components/Light.h>
 #include <iostream>
 
@@ -7,24 +8,23 @@ std::vector<PointLight*> pointLights;
 
 LightingManager::LightingManager()
 {
-    InitializeLighting();
 }
 
 
 void LightingManager::InitializeLighting()
 {
 	directionalLights = std::vector<DirectionalLight*>();
-	glGenBuffers(1, &DirectionLightSSBO);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, DirectionLightSSBO);
+	glGenBuffers(1, &directionalLightSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, directionalLightSSBO);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::mat3) * maxDirectionalLights, NULL, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, DirectionLightSSBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, directionalLightSSBO);
 
 
 	pointLights = std::vector<PointLight*>();
-	glGenBuffers(1, &PointLightSSBO);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, PointLightSSBO);
+	glGenBuffers(1, &pointLightSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, pointLightSSBO);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::mat3) * maxPointLights, NULL, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, PointLightSSBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pointLightSSBO);
 }
 
 
@@ -90,7 +90,7 @@ void LightingManager::UpdateLights()
 	{
 		directionalLightData[i] = directionalLights[i]->GetLightData();
 	}
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, DirectionLightSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, directionalLightSSBO);
 	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::mat3) * directionalLights.size(), directionalLightData);
 	delete[] directionalLightData;
 	
@@ -100,7 +100,7 @@ void LightingManager::UpdateLights()
 	{
 		pointLightData[i] = pointLights[i]->GetLightData();
 	}
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, PointLightSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, pointLightSSBO);
 	glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::mat3) * pointLights.size(), pointLightData);
 	delete[] pointLightData;
 }

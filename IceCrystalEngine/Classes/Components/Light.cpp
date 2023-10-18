@@ -1,4 +1,5 @@
 #include <Ice/Components/Light.h>
+
 #include <Ice/Core/LightingManager.h>
 
 LightingManager& lightingManager = LightingManager::GetInstance();

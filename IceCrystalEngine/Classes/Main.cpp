@@ -10,6 +10,7 @@
 #include <Ice/Core/WindowManager.h>
 #include <Ice/Core/SceneManager.h>
 #include <Ice/Core/SceneInitializer.h>
+#include <Ice/Core/LightingManager.h>
 #include <Ice/Core/Input.h>
 #include <Ice/Utils/FileUtil.h>
 
@@ -34,6 +35,10 @@ int main()
     // Get a reference to the SceneInitializer (this will initialize the scene)
     SceneInitializer& sceneInitializer = SceneInitializer::GetInstance();
 
+	// Get a reference to the LightingManager
+	LightingManager& lightingManager = LightingManager::GetInstance();
+    lightingManager.InitializeLighting();
+
     // Get a reference to Input
 	Input& input = Input::GetInstance();
 
@@ -52,6 +57,9 @@ int main()
 
 		// update the scene (this will update all components)
         sceneManager.Update();
+
+		// update the lights
+		lightingManager.UpdateLights();
 		
 		// swap buffers, clear the input, poll events
         glfwSwapBuffers(window);

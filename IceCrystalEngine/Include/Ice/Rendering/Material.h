@@ -7,10 +7,8 @@
 // Definition of the class
 #define MATERIAL_H
 
-#include <string> // this just includes the string library from the standard library
-#include "Shader.h"
-#include "Texture.h"
-#include <glad/glad.h>
+#include <Ice/Rendering/Shader.h>
+#include <Ice/Rendering/Texture.h>
 
 class Material // this is the class definition
 {

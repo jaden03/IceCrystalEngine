@@ -6,9 +6,11 @@
 
 #include <vector>
 #include <string>
-#include <Ice/Core/Actor.h>
-#include <Ice/Components/Camera.h>
-#include <Ice/Core/LightingManager.h>
+
+class Actor;
+
+class Camera;
+
 
 // This is how to make a singleton class
 
@@ -44,8 +46,6 @@ public:
 	
 
 private:
-
-	LightingManager& lightingManager = LightingManager::GetInstance();
 
 	std::vector<Actor*>* actors;
 	

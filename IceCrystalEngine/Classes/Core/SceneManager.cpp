@@ -1,8 +1,8 @@
+#include <Ice/Core/SceneManager.h>
+
 #include <iostream>
 
-#include <Ice/Core/SceneManager.h>
-#include <Ice/Core/Component.h>
-#include <Ice/Core/Transform.h>
+#include <Ice/Components/Camera.h>
 
 // Constructor
 SceneManager::SceneManager()
@@ -40,9 +40,6 @@ void SceneManager::Update()
 			std::cout << "No Camera Component found in Scene, A fallback Actor with a Camera Component has been created. You can access the Actor by the tag \"MainCamera\"." << std::endl;
 		}
 	}
-
-	// update lights
-	lightingManager.UpdateLights();
 
 	// loop through actors
 	for (int i = 0; i < actors->size(); i++)
