@@ -49,22 +49,22 @@ void Transform::TranslateDelta(float x, float y, float z)
 void Transform::Rotate(glm::vec3 rot)
 {
 	eulerAngles += rot;
-	rotation = glm::quat(eulerAngles);
+	rotation = glm::quat(glm::vec3(glm::radians(eulerAngles)));
 }
 void Transform::Rotate(float x, float y, float z)
 {
 	eulerAngles += glm::vec3(x, y, z);
-	rotation = glm::quat(eulerAngles);
+	rotation = glm::quat(glm::vec3(glm::radians(eulerAngles)));
 }
 void Transform::RotateDelta(glm::vec3 rot)
 {
 	eulerAngles += rot * sceneManager.deltaTime;
-	rotation = glm::quat(eulerAngles);
+	rotation = glm::quat(glm::vec3(glm::radians(eulerAngles)));
 }
 void Transform::RotateDelta(float x, float y, float z)
 {
 	eulerAngles += glm::vec3(x, y, z) * sceneManager.deltaTime;
-	rotation = glm::quat(eulerAngles);
+	rotation = glm::quat(glm::vec3(glm::radians(eulerAngles)));
 }
 
 void Transform::Scale(glm::vec3 scale)
@@ -90,7 +90,7 @@ void Transform::LookAt(float x, float y, float z)
 	glm::vec3 direction = glm::normalize(target - position);
 
 	rotation = glm::quatLookAt(direction, glm::vec3(0.0f, 1.0f, 0.0f));
-	eulerAngles = glm::eulerAngles(rotation);
+	eulerAngles = glm::degrees(glm::eulerAngles(rotation));
 }
 
 void Transform::LookAt(glm::vec3 target)
@@ -98,7 +98,7 @@ void Transform::LookAt(glm::vec3 target)
 	glm::vec3 direction = glm::normalize(target - position);
 
 	rotation = glm::quatLookAt(direction, glm::vec3(0.0f, 1.0f, 0.0f));
-	eulerAngles = glm::eulerAngles(rotation);
+	eulerAngles = glm::degrees(glm::eulerAngles(rotation));
 }
 
 
@@ -107,17 +107,17 @@ void Transform::LookAt(glm::vec3 target)
 void Transform::SetRotation(glm::vec3 rot)
 {
 	eulerAngles = rot;
-	rotation = glm::quat(eulerAngles);
+	rotation = glm::quat(glm::vec3(glm::radians(eulerAngles)));
 }
 void Transform::SetRotation(float x, float y, float z)
 {
 	eulerAngles = glm::vec3(x, y, z);
-	rotation = glm::quat(eulerAngles);
+	rotation = glm::quat(glm::vec3(glm::radians(eulerAngles)));
 }
 void Transform::SetRotation(glm::quat rot)
 {
-	eulerAngles = glm::eulerAngles(rot);
 	rotation = rot;
+	eulerAngles = glm::degrees(glm::eulerAngles(rotation));
 }
 
 

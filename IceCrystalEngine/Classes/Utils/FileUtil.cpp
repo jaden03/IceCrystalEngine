@@ -24,6 +24,28 @@ void FileUtil::InitializeStaticMembers() {
 }
 
 
+
+std::string FileUtil::GetProjectRoot()
+{
+    // Get the project root
+    std::string projectRoot = std::filesystem::current_path().string() + "/";
+    // Change the "\\" to "/"
+    for (std::string::iterator it = projectRoot.begin(); it != projectRoot.end(); ++it) {
+        if (*it == '\\') {
+            *it = '/';
+        }
+    }
+    return projectRoot;
+}
+
+std::string FileUtil::GetAssetDir()
+{
+	return GetProjectRoot() + "Assets/";
+}
+
+
+
+
 std::string FileUtil::ReadFile(const std::string& filename) 
 {
 
@@ -65,6 +87,6 @@ std::string FileUtil::SubstituteVariables(const std::string& str)
 		updatedStr.replace(found, 11, AssetDir);
 		found = updatedStr.find("{ASSET_DIR}");
 	}
-	
+
 	return updatedStr;
 }
