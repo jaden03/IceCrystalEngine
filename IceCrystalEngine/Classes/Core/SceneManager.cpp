@@ -2,7 +2,17 @@
 
 #include <iostream>
 
+#include <Ice/Core/LightingManager.h>
+#include <Ice/Core/WindowManager.h>
+
 #include <Ice/Components/Camera.h>
+#include <Ice/Components/Renderer.h>
+#include <Ice/Components/Light.h>
+
+#include <Ice/Rendering/Shader.h>
+
+LightingManager& lightingManager = LightingManager::GetInstance();
+WindowManager& windowManager = WindowManager::GetInstance();
 
 // Constructor
 SceneManager::SceneManager()
@@ -40,6 +50,55 @@ void SceneManager::Update()
 			std::cout << "No Camera Component found in Scene, A fallback Actor with a Camera Component has been created. You can access the Actor by the tag \"MainCamera\"." << std::endl;
 		}
 	}
+
+	
+	// shadows
+	
+	// use the shadow shader
+	lightingManager.shadowShader->Use();
+	// bind to the shadow framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, lightingManager.shadowMapFBO);
+
+	// loop through directional lights
+	for (int i = 0; i < lightingManager.directionalLights.size(); i++)
+	{
+		DirectionalLight* light = lightingManager.directionalLights[i];
+
+		// clear the framebuffer
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, light->depthMap, 0);
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+		
+		// set the light space matrix
+		lightingManager.shadowShader->setMat4("lightSpaceMatrix", light->GetLightSpaceMatrix());
+
+		// set the viewport
+		glViewport(0, 0, light->shadowMapResolution, light->shadowMapResolution);
+
+		// loop through the actors
+		for (int j = 0; j < actors->size(); j++)
+		{
+			Actor* actor = actors->at(j);
+
+			// get the renderer
+			Renderer* renderer = actor->GetComponent<Renderer>();
+
+			if (renderer != nullptr)
+			{
+				// draw the renderer
+				renderer->UpdateShadows();
+			}
+		}
+	}
+
+	// bind to the default framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// reset the viewport
+	glViewport(0, 0, windowManager.windowWidth, windowManager.windowHeight);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.2f, 0.5f, 0.9f, 1.0f);
 
 	// loop through actors
 	for (int i = 0; i < actors->size(); i++)

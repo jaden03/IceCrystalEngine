@@ -9,15 +9,25 @@
 
 class DirectionalLight : public Component
 {
+	void Initialize();
+	
 public:
-
-	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
-	float strength = 1;
 	
 	DirectionalLight();
 	DirectionalLight(glm::vec3 color, float strength);
 
 	~DirectionalLight();
+
+
+	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
+	float strength = 1;
+	
+	int shadowMapResolution = 1024;
+	bool castShadows = true;
+	unsigned int depthMap;
+	
+	
+	glm::mat4 GetLightSpaceMatrix();
 	
 };
 

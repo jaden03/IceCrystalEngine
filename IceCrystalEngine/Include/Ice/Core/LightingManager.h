@@ -8,6 +8,8 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+#include <Ice/Rendering/Shader.h>
+
 class DirectionalLight;
 class PointLight;
 
@@ -31,8 +33,11 @@ public:
 	std::vector<DirectionalLight*> directionalLights = std::vector<DirectionalLight*>();
 	std::vector<PointLight*> pointLights = std::vector<PointLight*>();
 
-	glm::mat3* directionalLightData;
-	glm::mat3* pointLightData;
+	glm::mat3* directionalLightData = nullptr;
+	glm::mat3* pointLightData = nullptr;
+
+	Shader* shadowShader;
+	unsigned int shadowMapFBO = 0;
 
 
 	void InitializeLighting();

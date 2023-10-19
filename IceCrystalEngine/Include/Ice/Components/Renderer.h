@@ -36,6 +36,7 @@ public:
 	~Renderer();
 	
 	void Update() override;
+	void UpdateShadows();
 };
 
 #endif

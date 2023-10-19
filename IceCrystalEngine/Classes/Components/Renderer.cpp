@@ -165,7 +165,7 @@ void Renderer::Update()
 		// bind the vertex array object
 		glBindVertexArray(meshHolders[i].vertexArrayObject);
 
-		// temporary
+		
 		// Create transformations
 		glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
 		glm::mat4 view = glm::mat4(1.0f);
@@ -175,11 +175,13 @@ void Renderer::Update()
 
 		// translation
 		model = glm::translate(model, transform->position);
-		
-		// rotation
-		model = glm::rotate(model, transform->rotation.x, glm::vec3(1, 0, 0));
-		model = glm::rotate(model, transform->rotation.y, glm::vec3(0, 1, 0));
-		model = glm::rotate(model, transform->rotation.z, glm::vec3(0, 0, 1));
+
+		// Rotate around the local right axis (pitch)
+		model = glm::rotate(model, glm::radians(transform->eulerAngles.x), glm::vec3(1, 0, 0));
+		// Rotate around the local up axis (yaw)
+		model = glm::rotate(model, glm::radians(-transform->eulerAngles.y), glm::vec3(0, 1, 0));
+		// Rotate around the local forward axis (roll)
+		model = glm::rotate(model, glm::radians(transform->eulerAngles.z), glm::vec3(0, 0, 1));
 
 		// scale
 		model = glm::scale(model, transform->scale);
@@ -234,6 +236,16 @@ void Renderer::Update()
 			material->shader->setVec3("directionalLights[" + std::to_string(i) + "].direction", lightingManager.directionalLights[i]->transform->forward);
 			material->shader->setVec3("directionalLights[" + std::to_string(i) + "].color", lightingManager.directionalLights[i]->color);
 			material->shader->setFloat("directionalLights[" + std::to_string(i) + "].strength", lightingManager.directionalLights[i]->strength);
+			
+			std::cout << "Forward: " << lightingManager.directionalLights[i]->transform->forward.x << ", " << lightingManager.directionalLights[i]->transform->forward.y << ", " << lightingManager.directionalLights[i]->transform->forward.z << std::endl;
+
+			glm::mat4 lightSpaceMatrix = lightingManager.directionalLights[i]->GetLightSpaceMatrix();
+			lightSpaceMatrix = glm::transpose(lightSpaceMatrix);
+
+			material->shader->setMat4("directionalLights[" + std::to_string(i) + "].lightSpaceMatrix", lightSpaceMatrix);
+
+			GLint shadowMapLocation = glGetUniformLocation(material->shader->Handle, ("directionalShadowMap[" + std::to_string(i) + "]").c_str());
+			glUniform1i(shadowMapLocation, lightingManager.directionalLights[i]->depthMap);
 		}
 
 		int numberOfPointLights = lightingManager.pointLights.size();
@@ -254,6 +266,43 @@ void Renderer::Update()
 		material->shader->setFloat("time", time);
 
 		
+
+		// draw the elements
+		glDrawElements(GL_TRIANGLES, meshHolders[i].indices.size() * sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+
+		glFlush();
+
+	}
+}
+
+
+
+void Renderer::UpdateShadows()
+{
+	// loop through meshHolders
+	for (int i = 0; i < meshHolders.size(); i++)
+	{
+		// bind the vertex array object
+		glBindVertexArray(meshHolders[i].vertexArrayObject);
+
+		// Create transformations
+		glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+
+		// translation
+		model = glm::translate(model, transform->position);
+
+		// Rotate around the local right axis (pitch)
+		model = glm::rotate(model, glm::radians(transform->eulerAngles.x), glm::vec3(1, 0, 0));
+		// Rotate around the local up axis (yaw)
+		model = glm::rotate(model, glm::radians(-transform->eulerAngles.y), glm::vec3(0, 1, 0));
+		// Rotate around the local forward axis (roll)
+		model = glm::rotate(model, glm::radians(transform->eulerAngles.z), glm::vec3(0, 0, 1));
+
+		// scale
+		model = glm::scale(model, transform->scale);
+
+		// position stuff
+		lightingManager.shadowShader->setMat4("model", model);
 
 		// draw the elements
 		glDrawElements(GL_TRIANGLES, meshHolders[i].indices.size() * sizeof(unsigned int), GL_UNSIGNED_INT, 0);
