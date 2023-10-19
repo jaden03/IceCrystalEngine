@@ -17,6 +17,9 @@ LightingManager::~LightingManager()
 
 void LightingManager::InitializeLighting()
 {
+	shadowShader = new Shader("{ASSET_DIR}Shaders/shadows.vert", "{ASSET_DIR}Shaders/shadows.frag");
+	glGenFramebuffers(1, &shadowMapFBO);
+
 	directionalLights = std::vector<DirectionalLight*>();
 	pointLights = std::vector<PointLight*>();
 }

@@ -13,26 +13,26 @@ uniform vec3 viewPos;
 uniform float ambientLightStrength;
 uniform vec3 ambientLightColor;
 
+#define MAX_POINT_LIGHTS 128
+#define MAX_DIRECTIONAL_LIGHTS 5
 
-struct DirectionalLight {
+uniform int directionalLightCount;
+uniform struct DirectionalLight {
     vec3 direction;
 	vec3 color;
 	float strength;
-};
+    mat4 lightSpaceMatrix;
+} directionalLights[MAX_DIRECTIONAL_LIGHTS];
+uniform sampler2D directionalShadowMap[MAX_DIRECTIONAL_LIGHTS];
 
-uniform int directionalLightCount;
-uniform DirectionalLight directionalLights[5];
 
-
-struct PointLight {
+uniform int pointLightCount;
+uniform struct PointLight {
     vec3 position;
 	vec3 color;
 	float strength;
     float radius;
-};
-
-uniform int pointLightCount;
-uniform PointLight pointLights[128];
+} pointLights[MAX_POINT_LIGHTS];;
 
 
 void main()
@@ -44,6 +44,7 @@ void main()
 	vec3 lighting = vec3(0.0);
 
     vec3 normal = normalize(fragNormal);
+
     vec3 viewDir = normalize(viewPos - fragPos);
 
 	 // Directional Lights
@@ -63,7 +64,21 @@ void main()
         vec3 diffuse = diff * color;
         vec3 specular = spec * color;
 
-        lighting += (diffuse + specular) * strength;
+
+        // Shadow
+
+        vec4 fragPosLightSpace = light.lightSpaceMatrix * vec4(fragPos, 1.0);
+        vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+        projCoords.xy = fragPosLightSpace.xy * 0.5 + 0.5;
+        float closestDepth = texture(directionalShadowMap[i], projCoords.xy).r;
+        float currentDepth = projCoords.z;
+        float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+        float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
+        if (projCoords.z > 1.0)
+            shadow = 0.0;
+        
+        lighting += (diffuse + specular) * strength * (1.0 - shadow);
     }
 
     // Point Lights

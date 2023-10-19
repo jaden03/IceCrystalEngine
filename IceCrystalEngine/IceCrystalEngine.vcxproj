@@ -448,6 +448,8 @@
     <None Include="Assets\Materials\spock.mat" />
     <None Include="Assets\Shaders\default.frag" />
     <None Include="Assets\Shaders\default.vert" />
+    <None Include="Assets\Shaders\shadows.frag" />
+    <None Include="Assets\Shaders\shadows.vert" />
     <None Include="Include\glm\detail\func_common.inl" />
     <None Include="Include\glm\detail\func_common_simd.inl" />
     <None Include="Include\glm\detail\func_exponential.inl" />
@@ -599,6 +601,9 @@
     <None Include="Assets\Models\spock49.obj">
       <FileType>Document</FileType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Assets\Models\cone.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

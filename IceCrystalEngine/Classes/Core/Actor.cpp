@@ -8,6 +8,8 @@ Actor::Actor()
 {
 	components = new std::vector<Component*>();
 	transform = new Transform(this);
+
+	SceneManager::GetInstance().AddActor(this);
 }
 Actor::Actor(std::string name)
 {
