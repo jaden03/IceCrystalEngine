@@ -1281,6 +1281,7 @@
     <None Include="Assets\Models\spock49.obj" />
     <None Include="Assets\Shaders\shadows.frag" />
     <None Include="Assets\Shaders\shadows.vert" />
+    <None Include="Assets\Models\cone.obj" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Textures\cubeTest.png">
@@ -1295,8 +1296,5 @@
     <Image Include="Assets\Textures\Spock49.png">
       <Filter>Resource Files</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="Assets\Models\cone.obj" />
   </ItemGroup>
 </Project>

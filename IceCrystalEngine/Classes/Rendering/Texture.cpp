@@ -55,8 +55,3 @@ void Texture::InitializeTexture()
 	// Free the image memory
 	stbi_image_free(data);
 }
-
-void Texture::Bind()
-{
-	glBindTexture(GL_TEXTURE_2D, Handle);
-}

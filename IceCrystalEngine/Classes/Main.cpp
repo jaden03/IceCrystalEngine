@@ -75,6 +75,10 @@ int main()
 		{
 			sun->transform->RotateDelta(90, 0, 0);
 		}
+		if (input.GetKey(GLFW_KEY_9))
+		{
+			sun->transform->TranslateDelta(sun->transform->forward * 5.0f);
+		}
 
         // rotate the point lights around (0, -4, 5)
 		

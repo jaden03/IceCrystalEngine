@@ -603,7 +603,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="Assets\Models\cone.obj" />
+    <None Include="Assets\Models\cone.obj">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

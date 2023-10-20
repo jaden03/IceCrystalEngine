@@ -22,8 +22,11 @@ uniform struct DirectionalLight {
 	vec3 color;
 	float strength;
     mat4 lightSpaceMatrix;
+    bool castShadows;
 } directionalLights[MAX_DIRECTIONAL_LIGHTS];
 uniform sampler2D directionalShadowMap[MAX_DIRECTIONAL_LIGHTS];
+
+uniform sampler2D test;
 
 
 uniform int pointLightCount;
@@ -42,6 +45,7 @@ void main()
 	vec4 objectColor = texture(fragTexture, fragUV);
     
 	vec3 lighting = vec3(0.0);
+    vec4 testLight = vec4(0.0);
 
     vec3 normal = normalize(fragNormal);
 
@@ -66,17 +70,27 @@ void main()
 
 
         // Shadow
+        float shadow = 0.0;
 
-        vec4 fragPosLightSpace = light.lightSpaceMatrix * vec4(fragPos, 1.0);
-        vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-        projCoords.xy = fragPosLightSpace.xy * 0.5 + 0.5;
-        float closestDepth = texture(directionalShadowMap[i], projCoords.xy).r;
-        float currentDepth = projCoords.z;
-        float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
-        float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+        if (light.castShadows)
+        {
+            vec4 fragPosLightSpace = light.lightSpaceMatrix * vec4(fragPos, 1.0);
 
-        if (projCoords.z > 1.0)
-            shadow = 0.0;
+            vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+            projCoords = projCoords * 0.5 + 0.5;
+
+            float closestDepth = texture(test, projCoords.xy).r;
+            float currentDepth = projCoords.z;
+
+            float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+            //shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
+            shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+            if (projCoords.z > 1.0)
+                shadow = 0.0;
+
+            testLight = texture(test, projCoords.xy);
+        }
         
         lighting += (diffuse + specular) * strength * (1.0 - shadow);
     }
@@ -110,4 +124,6 @@ void main()
 
     vec4 result = vec4((ambientLighting + lighting), 1.0) * objectColor * vec4(fragColor, 1.0);
 	FragColor = result;
+
+    //FragColor = testLight;
 }
