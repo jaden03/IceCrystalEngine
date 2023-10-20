@@ -177,11 +177,11 @@ void Renderer::Update()
 		model = glm::translate(model, transform->position);
 
 		// Rotate around the local right axis (pitch)
-		model = glm::rotate(model, glm::radians(transform->eulerAngles.x), glm::vec3(1, 0, 0));
+		model = glm::rotate(model, glm::radians(-transform->eulerAngles.x), glm::vec3(1, 0, 0));
 		// Rotate around the local up axis (yaw)
 		model = glm::rotate(model, glm::radians(-transform->eulerAngles.y), glm::vec3(0, 1, 0));
 		// Rotate around the local forward axis (roll)
-		model = glm::rotate(model, glm::radians(transform->eulerAngles.z), glm::vec3(0, 0, 1));
+		model = glm::rotate(model, glm::radians(-transform->eulerAngles.z), glm::vec3(0, 0, 1));
 
 		// scale
 		model = glm::scale(model, transform->scale);
@@ -192,21 +192,27 @@ void Renderer::Update()
 		{
 			Camera* mainCamera = sceneManager.mainCamera;
 			view = glm::lookAt(mainCamera->transform->position, mainCamera->transform->position + mainCamera->transform->forward, mainCamera->transform->up);
-			
+
 			projection = glm::perspective(glm::radians(sceneManager.mainCamera->fieldOfView), (float)windowManager.windowWidth / (float)windowManager.windowHeight, sceneManager.mainCamera->nearClippingPlane, sceneManager.mainCamera->farClippingPlane);
+			//projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, sceneManager.mainCamera->nearClippingPlane, sceneManager.mainCamera->farClippingPlane);
 		}
 		else
 		{
 			projection = glm::perspective(glm::radians(90.0f), (float)windowManager.windowWidth / (float)windowManager.windowHeight, 0.1f, 10000.0f);
+			//projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.1f, 10000.0f);
 		}
 
 
-		// bind the texture
-		material->texture->Bind();
 		
 		
 		// use the shader and set the attributes
 		material->shader->Use();
+		
+		// bind the texture
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, material->texture->Handle);
+		GLint textureLocation = glGetUniformLocation(material->shader->Handle, "fragTexture");
+		glUniform1i(textureLocation, 0);
 
 			// position stuff
 		material->shader->setMat4("view", view);
@@ -236,16 +242,17 @@ void Renderer::Update()
 			material->shader->setVec3("directionalLights[" + std::to_string(i) + "].direction", lightingManager.directionalLights[i]->transform->forward);
 			material->shader->setVec3("directionalLights[" + std::to_string(i) + "].color", lightingManager.directionalLights[i]->color);
 			material->shader->setFloat("directionalLights[" + std::to_string(i) + "].strength", lightingManager.directionalLights[i]->strength);
+			material->shader->setBool("directionalLights[" + std::to_string(i) + "].castShadows", lightingManager.directionalLights[i]->castShadows);
 			
-			std::cout << "Forward: " << lightingManager.directionalLights[i]->transform->forward.x << ", " << lightingManager.directionalLights[i]->transform->forward.y << ", " << lightingManager.directionalLights[i]->transform->forward.z << std::endl;
-
 			glm::mat4 lightSpaceMatrix = lightingManager.directionalLights[i]->GetLightSpaceMatrix();
 			lightSpaceMatrix = glm::transpose(lightSpaceMatrix);
-
+			
 			material->shader->setMat4("directionalLights[" + std::to_string(i) + "].lightSpaceMatrix", lightSpaceMatrix);
 
-			GLint shadowMapLocation = glGetUniformLocation(material->shader->Handle, ("directionalShadowMap[" + std::to_string(i) + "]").c_str());
-			glUniform1i(shadowMapLocation, lightingManager.directionalLights[i]->depthMap);
+			glActiveTexture(GL_TEXTURE1 + i);
+			glBindTexture(GL_TEXTURE_2D, lightingManager.directionalLights[i]->depthMap);
+			material->shader->setInt("directionalShadowMap[" + std::to_string(i) + "]", 1 + i);
+			material->shader->setInt("test", 1);
 		}
 
 		int numberOfPointLights = lightingManager.pointLights.size();
@@ -292,11 +299,11 @@ void Renderer::UpdateShadows()
 		model = glm::translate(model, transform->position);
 
 		// Rotate around the local right axis (pitch)
-		model = glm::rotate(model, glm::radians(transform->eulerAngles.x), glm::vec3(1, 0, 0));
+		model = glm::rotate(model, glm::radians(-transform->eulerAngles.x), glm::vec3(1, 0, 0));
 		// Rotate around the local up axis (yaw)
 		model = glm::rotate(model, glm::radians(-transform->eulerAngles.y), glm::vec3(0, 1, 0));
 		// Rotate around the local forward axis (roll)
-		model = glm::rotate(model, glm::radians(transform->eulerAngles.z), glm::vec3(0, 0, 1));
+		model = glm::rotate(model, glm::radians(-transform->eulerAngles.z), glm::vec3(0, 0, 1));
 
 		// scale
 		model = glm::scale(model, transform->scale);
