@@ -20,8 +20,6 @@ public:
 	Texture();
 	Texture(std::string texturePath);
 
-	void Bind();
-
 };
 
 

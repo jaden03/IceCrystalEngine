@@ -37,7 +37,7 @@ void DirectionalLight::Initialize()
 
 glm::mat4 DirectionalLight::GetLightSpaceMatrix()
 {
-	float nearPlane = 1.0f, farPlane = 100.0f;
+	float nearPlane = 0.5f, farPlane = 10.0f;
 	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, nearPlane, farPlane);
 
 	glm::mat4 lightView = glm::lookAt(transform->position, transform->position + transform->forward, glm::vec3(0.0f, 1.0f, 0.0f));
