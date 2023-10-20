@@ -54,15 +54,18 @@ void SceneManager::Update()
 	
 	// shadows
 	
-	// use the shadow shader
-	lightingManager.shadowShader->Use();
 	// bind to the shadow framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, lightingManager.shadowMapFBO);
+	// use the shadow shader
+	lightingManager.shadowShader->Use();
 
 	// loop through directional lights
 	for (int i = 0; i < lightingManager.directionalLights.size(); i++)
 	{
 		DirectionalLight* light = lightingManager.directionalLights[i];
+
+		// if the light doesnt cast shadows, move on to the next one
+		if (!light->castShadows) continue;
 
 		// clear the framebuffer
 		glClear(GL_DEPTH_BUFFER_BIT);
