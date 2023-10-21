@@ -22,7 +22,7 @@ public:
 	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 	float strength = 1;
 	
-	int shadowMapResolution = 1024;
+	int shadowMapResolution = 2048;
 	bool castShadows = true;
 	unsigned int depthMap;
 	

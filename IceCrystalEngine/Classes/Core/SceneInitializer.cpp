@@ -19,6 +19,8 @@ void SceneInitializer::InitializeScene()
     Camera* cameraComponent = cameraActor->AddComponent<Camera>();
     cameraActor->AddComponent<Freecam>();
 
+
+	// Airship
     Actor* testActor = new Actor("Test Actor", "Test");
     Material* material = new Material(FileUtil::AssetDir + "Materials/object.mat");
     Renderer* testRenderer = new Renderer(FileUtil::AssetDir + "Models/finch.obj", material);
@@ -27,27 +29,47 @@ void SceneInitializer::InitializeScene()
     testActor->transform->Translate(0, -4, 5);
 
 
+
+	// Floor
+	Actor* floorActor = new Actor("Floor");
+	Renderer* floorRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj");
+	floorActor->AddComponent(floorRenderer);
+	floorActor->transform->scale = glm::vec3(8, 1, 8);
+	floorActor->transform->Translate(0, -5, 0);
+	
+	
+	// Cube
+	Actor* cubeActor = new Actor("Cube");
+	Renderer* cubeRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj");
+	cubeActor->AddComponent(cubeRenderer);
+	cubeActor->transform->scale = glm::vec3(0.5f, 0.5f, 0.5f);
+	cubeActor->transform->Translate(0, -3, 3);
+
+
+
+
 	Actor* sun = new Actor("Sun", "sun");
     Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
 	sun->AddComponent(sunRenderer);
     DirectionalLight* sunLight = sun->AddComponent<DirectionalLight>();
-	sunLight->castShadows = false;
+	//sunLight->castShadows = false;
 
 	// set the rotation quat to be at an angle and angled down
 	//sun->transform->Rotate(230, 0, 0);
-	sun->transform->Translate(0, 0, 0);
+	sun->transform->Translate(0, 5, -12.5f);
+	sun->transform->Rotate(-30, 0, 0);
 	sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
 
 
 	
 	//Actor* sun2 = new Actor("Sun2");
-	//Renderer* sunRenderer2 = new Renderer(FileUtil::AssetDir + "Models/cube.obj");
+	//Renderer* sunRenderer2 = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
 	//sun2->AddComponent(sunRenderer2);
 	//sun2->AddComponent<DirectionalLight>();
 
 	//// set the rotation quat to be at an angle and angled down (different from the first sun)
-	//sun2->transform->Rotate(230, -45, 0);
-	//sun2->transform->Translate(2, 0, 0);
+	//sun2->transform->Rotate(210, 0, 0);
+	//sun2->transform->Translate(0, 5, 20);
 	//sun2->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
 
 
