@@ -16,7 +16,7 @@ class Camera;
 
 class SceneManager
 {
-	
+
 public:
 	
 	static SceneManager& GetInstance()

@@ -11,8 +11,11 @@
 
 #include <Ice/Rendering/Shader.h>
 
+#include <Ice/Core/Skybox.h>
+
 LightingManager& lightingManager = LightingManager::GetInstance();
 WindowManager& windowManager = WindowManager::GetInstance();
+Skybox& skybox = Skybox::GetInstance();
 
 // Constructor
 SceneManager::SceneManager()
@@ -107,6 +110,7 @@ void SceneManager::Update()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.05f, 0.2f, 0.6f, 1.0f);
 
+
 	// backface culling
 	glCullFace(GL_BACK);
 
@@ -121,6 +125,9 @@ void SceneManager::Update()
 			actors->at(i)->components->at(j)->Update();
 		}
 	}
+
+	// render the skybox
+	skybox.Render();
 }
 
 // Add Actor
