@@ -452,10 +452,13 @@
     <None Include="Assets\Materials\cubeTest.mat" />
     <None Include="Assets\Materials\default.mat" />
     <None Include="Assets\Materials\spock.mat" />
+    <None Include="Assets\Materials\unlit.mat" />
     <None Include="Assets\Shaders\default.frag" />
     <None Include="Assets\Shaders\default.vert" />
     <None Include="Assets\Shaders\shadows.frag" />
     <None Include="Assets\Shaders\shadows.vert" />
+    <None Include="Assets\Shaders\unlit.frag" />
+    <None Include="Assets\Shaders\unlit.vert" />
     <None Include="Include\glm\detail\func_common.inl" />
     <None Include="Include\glm\detail\func_common_simd.inl" />
     <None Include="Include\glm\detail\func_exponential.inl" />

@@ -168,11 +168,10 @@ void Renderer::Update()
 		
 		// Create transformations
 		glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+		glm::mat3 normalModel = glm::mat3(1.0f);
 		glm::mat4 view = glm::mat4(1.0f);
 		glm::mat4 projection = glm::mat4(1.0f);
-
-		float time = glfwGetTime();
-
+		
 		// translation
 		model = glm::translate(model, transform->position);
 
@@ -184,7 +183,10 @@ void Renderer::Update()
 		model = glm::rotate(model, glm::radians(-transform->eulerAngles.z), glm::vec3(0, 0, 1));
 
 		// scale
-		model = glm::scale(model, transform->scale);
+		model = glm::scale(model, transform->scale * transform->localScale);
+
+		// calculate the normal model
+		normalModel = glm::transpose(glm::inverse(glm::mat3(model)));
 		
 
 		// camera stuff
@@ -208,16 +210,20 @@ void Renderer::Update()
 		// use the shader and set the attributes
 		material->shader->Use();
 		
+		int usedTextureCount = 0;
+
 		// bind the texture
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, material->texture->Handle);
 		GLint textureLocation = glGetUniformLocation(material->shader->Handle, "fragTexture");
 		glUniform1i(textureLocation, 0);
+		usedTextureCount++;
 
 			// position stuff
 		material->shader->setMat4("view", view);
 		material->shader->setMat4("projection", projection);
 		material->shader->setMat4("model", model);
+		material->shader->setMat3("normalModel", normalModel);
 		
 			// material stuff
 		material->shader->setVec3("fragColor", material->color);
@@ -247,9 +253,10 @@ void Renderer::Update()
 			glm::mat4 lightSpaceMatrix = lightingManager.directionalLights[i]->GetLightSpaceMatrix();
 			material->shader->setMat4("directionalLights[" + std::to_string(i) + "].lightSpaceMatrix", lightSpaceMatrix);
 
-			glActiveTexture(GL_TEXTURE1 + i);
+			glActiveTexture(GL_TEXTURE0 + i + usedTextureCount);
 			glBindTexture(GL_TEXTURE_2D, lightingManager.directionalLights[i]->depthMap);
 			material->shader->setInt("directionalShadowMap[" + std::to_string(i) + "]", 1 + i);
+			usedTextureCount += 1;
 		}
 
 		int numberOfPointLights = lightingManager.pointLights.size();
@@ -267,6 +274,7 @@ void Renderer::Update()
 		
 
 			// extra stuff
+		float time = glfwGetTime();
 		material->shader->setFloat("time", time);
 
 		
