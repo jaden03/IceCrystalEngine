@@ -105,7 +105,7 @@ void SceneManager::Update()
 	// reset the viewport
 	glViewport(0, 0, windowManager.windowWidth, windowManager.windowHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.2f, 0.5f, 0.9f, 1.0f);
+	glClearColor(0.05f, 0.2f, 0.6f, 1.0f);
 
 	// backface culling
 	glCullFace(GL_BACK);

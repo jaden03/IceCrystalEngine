@@ -1,0 +1,6 @@
+{
+  "Name": "Unlit Material",
+  "Texture": "",
+  "Shader": "{ASSET_DIR}Shaders/unlit",
+  "Color": [ 1.0, 1.0, 1.0 ]
+}
