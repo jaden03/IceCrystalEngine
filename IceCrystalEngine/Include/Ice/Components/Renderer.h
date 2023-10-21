@@ -24,6 +24,8 @@ class Renderer : public Component
 
 public:
 	
+	bool castShadows = true;
+
 	std::vector<objl::Mesh> meshes;
 	Material* material;
 

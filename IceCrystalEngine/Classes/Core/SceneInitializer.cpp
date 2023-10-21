@@ -26,7 +26,7 @@ void SceneInitializer::InitializeScene()
     Renderer* testRenderer = new Renderer(FileUtil::AssetDir + "Models/finch.obj", material);
     testActor->AddComponent(testRenderer);
 
-    testActor->transform->Translate(0, -4, 5);
+    testActor->transform->Translate(0, 0, 5);
 
 
 
@@ -52,6 +52,7 @@ void SceneInitializer::InitializeScene()
     Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
 	sun->AddComponent(sunRenderer);
     DirectionalLight* sunLight = sun->AddComponent<DirectionalLight>();
+	sunRenderer->castShadows = false;
 	//sunLight->castShadows = false;
 
 	// set the rotation quat to be at an angle and angled down
@@ -75,12 +76,16 @@ void SceneInitializer::InitializeScene()
 
 
 
-	/*Actor* pointLight = new Actor("Point Light", "PointLight1");
+	Actor* pointLight = new Actor("Point Light", "PointLight1");
 	PointLight* pointLightComponent = pointLight->AddComponent<PointLight>();
-	pointLightComponent->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	//pointLightComponent->color = glm::vec3(1.0f, 0.0f, 0.0f);
 	pointLight->transform->Translate(0, -3, 5);
+	Renderer* pointLightRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj");
+	pointLight->AddComponent(pointLightRenderer);
+	pointLight->transform->scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	pointLightRenderer->castShadows = false;
 
-	Actor* pointLight2 = new Actor("Point Light", "PointLight2");
+	/*Actor* pointLight2 = new Actor("Point Light", "PointLight2");
 	PointLight* pointLightComponent2 = pointLight2->AddComponent<PointLight>();
 	pointLightComponent2->color = glm::vec3(0.0f, 0.0f, 1.0f);
 	pointLight2->transform->Translate(0, -3, 4);*/
