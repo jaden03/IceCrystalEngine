@@ -1,6 +1,7 @@
 #include <Ice/Components/Light.h>
 
 #include <Ice/Core/LightingManager.h>
+#include <Ice/Components/Camera.h>
 
 DirectionalLight::DirectionalLight() : Component() 
 {
@@ -38,9 +39,11 @@ void DirectionalLight::Initialize()
 glm::mat4 DirectionalLight::GetLightSpaceMatrix()
 {
 	float nearPlane = 0.5f, farPlane = 100.0f;
-	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, nearPlane, farPlane);
+	glm::mat4 lightProjection = glm::ortho(-frustumSize, frustumSize, -frustumSize, frustumSize, nearPlane, farPlane);
 
-	glm::mat4 lightView = glm::lookAt(transform->position, transform->position + transform->forward, transform->up);
+	Camera* mainCamera = sceneManager.mainCamera;
+
+	glm::mat4 lightView = glm::lookAt(mainCamera->transform->position - (transform->forward * 10.0f), mainCamera->transform->position - (transform->forward * 9.0f), transform->up);
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 
 	return lightSpaceMatrix;
