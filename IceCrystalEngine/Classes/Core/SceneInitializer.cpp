@@ -15,6 +15,10 @@ SceneInitializer::SceneInitializer()
 
 void SceneInitializer::InitializeScene()
 {
+	Material* unlitMaterial = new Material(FileUtil::AssetDir + "Materials/unlit.mat");
+	//unlitMaterial->color = glm::vec3(1.0f, 1.0f, 1.0f);
+
+
     Actor* cameraActor = new Actor("Main Camera");
     Camera* cameraComponent = cameraActor->AddComponent<Camera>();
     cameraActor->AddComponent<Freecam>();
@@ -49,7 +53,7 @@ void SceneInitializer::InitializeScene()
 
 
 	Actor* sun = new Actor("Sun", "sun");
-    Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
+    Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj", unlitMaterial);
 	sun->AddComponent(sunRenderer);
     DirectionalLight* sunLight = sun->AddComponent<DirectionalLight>();
 	sunRenderer->castShadows = false;
@@ -79,11 +83,12 @@ void SceneInitializer::InitializeScene()
 	Actor* pointLight = new Actor("Point Light", "PointLight1");
 	PointLight* pointLightComponent = pointLight->AddComponent<PointLight>();
 	//pointLightComponent->color = glm::vec3(1.0f, 0.0f, 0.0f);
-	pointLight->transform->Translate(0, -3, 5);
-	Renderer* pointLightRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj");
+	pointLight->transform->Translate(0, -3, 10);
+	Renderer* pointLightRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterial);
 	pointLight->AddComponent(pointLightRenderer);
 	pointLight->transform->scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	pointLightRenderer->castShadows = false;
+	pointLight->transform->SetParent(testActor->transform);
 
 	/*Actor* pointLight2 = new Actor("Point Light", "PointLight2");
 	PointLight* pointLightComponent2 = pointLight2->AddComponent<PointLight>();

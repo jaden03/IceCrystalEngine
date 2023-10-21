@@ -2,5 +2,5 @@
   "Name": "Default Material",
   "Texture": "",
   "Shader": "{ASSET_DIR}Shaders/default",
-	"Color": [ 0.0, 0.5, 1.0 ]
+	"Color": [ 0.5, 0.5, 0.5 ]
 }
