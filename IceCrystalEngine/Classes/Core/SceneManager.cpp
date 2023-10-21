@@ -92,7 +92,7 @@ void SceneManager::Update()
 			// get the renderer
 			Renderer* renderer = actor->GetComponent<Renderer>();
 
-			if (renderer != nullptr)
+			if (renderer != nullptr && renderer->castShadows)
 			{
 				// draw the renderer
 				renderer->UpdateShadows();

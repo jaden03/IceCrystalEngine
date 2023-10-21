@@ -43,7 +43,6 @@ void main()
 	vec4 objectColor = texture(fragTexture, fragUV);
     
 	vec3 lighting = vec3(0.0);
-    vec4 testLight = vec4(0.0);
 
     vec3 normal = normalize(fragNormal);
 
@@ -83,20 +82,21 @@ void main()
             float bias = 0.0001;
            
             vec2 texelSize = 1.0 / textureSize(directionalShadowMap[i], 0);
-            for(int x = -1; x <= 1; ++x)
+            float shadowSum = 0.0;
+
+            for (int x = -2; x <= 2; ++x)
             {
-                for(int y = -1; y <= 1; ++y)
+                for (int y = -2; y <= 2; ++y)
                 {
-                    float pcfDepth = texture(directionalShadowMap[i], projCoords.xy + vec2(x, y) * texelSize).r; 
-                    shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
-                }    
+                    float pcfDepth = texture(directionalShadowMap[i], projCoords.xy + vec2(x, y) * texelSize).r;
+                    shadowSum += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+                }
             }
-            shadow /= 9.0;
+
+            shadow = shadowSum / 25.0;
 
             if (projCoords.z > 1.0)
                 shadow = 0.0;
-
-            testLight = texture(directionalShadowMap[i], projCoords.xy);
         }
         
         lighting += (diffuse + specular) * strength * (1.0 - shadow);
@@ -129,8 +129,21 @@ void main()
         lighting += (diffuse + specular) * strength * attenuation;
     }
 
-    vec4 result = vec4((ambientLighting + lighting), 1.0) * objectColor * vec4(fragColor, 1.0);
-	FragColor = result;
+    // this is a hack to make sure the light will always be visible (even if it should realistically be absorbed by the object)
+    vec3 endColor = fragColor;
+    if (endColor.r == 0.0)
+        endColor.r = 0.1;
+    if (endColor.g == 0.0)
+        endColor.g = 0.1;
+    if (endColor.b == 0.0)
+        endColor.b = 0.1;
+    if (objectColor.r == 0.0)
+        objectColor.r = 0.1;
+    if (objectColor.g == 0.0)
+        objectColor.g = 0.1;
+    if (objectColor.b == 0.0)
+        objectColor.b = 0.1;
 
-    //FragColor = testLight;
+    vec4 result = vec4((ambientLighting + lighting), 1.0) * objectColor * vec4(endColor, 1.0);
+	FragColor = result;
 }
