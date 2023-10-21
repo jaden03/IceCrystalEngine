@@ -9,3 +9,4 @@ Game engine I am writing to learn C++
 - Custom Material file format
 - Lighting
 - Shadows (only directional lights as of right now)
+- Parenting
