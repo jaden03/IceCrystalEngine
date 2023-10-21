@@ -103,7 +103,8 @@ void SceneInitializer::InitializeScene()
 	/*Actor* testActor2 = new Actor("Test Actor 2", "Test");
 	Material* material2 = new Material(FileUtil::AssetDir + "Materials/spock.mat");
 	Renderer* renderer2 = new Renderer(FileUtil::AssetDir + "Models/spock49.obj", material2);
-	testActor2->AddComponent(renderer2);*/
+	testActor2->AddComponent(renderer2);
+	testActor2->transform->Rotate(0, 90, 0);*/
 
 	
 }

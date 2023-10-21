@@ -166,6 +166,7 @@
     <ClCompile Include="Classes\Core\LightingManager.cpp" />
     <ClCompile Include="Classes\Core\SceneInitializer.cpp" />
     <ClCompile Include="Classes\Core\SceneManager.cpp" />
+    <ClCompile Include="Classes\Core\Skybox.cpp" />
     <ClCompile Include="Classes\Core\Transform.cpp" />
     <ClCompile Include="Classes\Core\WindowManager.cpp" />
     <ClCompile Include="Classes\glad.c" />
@@ -428,6 +429,7 @@
     <ClInclude Include="Include\Ice\Core\LightingManager.h" />
     <ClInclude Include="Include\Ice\Core\SceneInitializer.h" />
     <ClInclude Include="Include\Ice\Core\SceneManager.h" />
+    <ClInclude Include="Include\Ice\Core\Skybox.h" />
     <ClInclude Include="Include\Ice\Core\Transform.h" />
     <ClInclude Include="Include\Ice\Core\WindowManager.h" />
     <ClInclude Include="Include\Ice\Rendering\Material.h" />
@@ -457,6 +459,8 @@
     <None Include="Assets\Shaders\default.vert" />
     <None Include="Assets\Shaders\shadows.frag" />
     <None Include="Assets\Shaders\shadows.vert" />
+    <None Include="Assets\Shaders\skybox.frag" />
+    <None Include="Assets\Shaders\skybox.vert" />
     <None Include="Assets\Shaders\unlit.frag" />
     <None Include="Assets\Shaders\unlit.vert" />
     <None Include="Include\glm\detail\func_common.inl" />
@@ -596,6 +600,12 @@
     <Image Include="Assets\Textures\Blank.png" />
     <Image Include="Assets\Textures\cubeTest.png" />
     <Image Include="Assets\Textures\ObjectGrid.png" />
+    <Image Include="Assets\Textures\skybox\back.png" />
+    <Image Include="Assets\Textures\skybox\bottom.png" />
+    <Image Include="Assets\Textures\skybox\front.png" />
+    <Image Include="Assets\Textures\skybox\left.png" />
+    <Image Include="Assets\Textures\skybox\right.png" />
+    <Image Include="Assets\Textures\skybox\top.png" />
     <Image Include="Assets\Textures\Spock49.png" />
   </ItemGroup>
   <ItemGroup>

@@ -70,6 +70,11 @@ std::string FileUtil::ReadFile(const std::string& filename)
 
 std::string FileUtil::SubstituteVariables(const std::string& str)
 {
+	if (ProjectRoot == "")
+	{
+		InitializeStaticMembers();
+	}
+
 	std::string updatedStr = str;
 
 	// PROJECT_ROOT
