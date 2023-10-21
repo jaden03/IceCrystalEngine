@@ -77,7 +77,20 @@ int main()
 		}
 		if (input.GetKey(GLFW_KEY_9))
 		{
+			sun->transform->RotateDelta(-90, 0, 0);
+		}
+		if (input.GetKey(GLFW_KEY_8))
+		{
 			sun->transform->TranslateDelta(sun->transform->forward * 5.0f);
+		}
+		if (input.GetKey(GLFW_KEY_7))
+		{
+			sun->transform->TranslateDelta(sun->transform->forward * -5.0f);
+		}
+		if (input.GetKey(GLFW_KEY_6))
+		{
+			std::cout << "Sun position: " << sun->transform->position.x << ", " << sun->transform->position.y << ", " << sun->transform->position.z << std::endl;
+			std::cout << "Sun rotation: " << sun->transform->eulerAngles.x << ", " << sun->transform->eulerAngles.y << ", " << sun->transform->eulerAngles.z << std::endl;
 		}
 
         // rotate the point lights around (0, -4, 5)
