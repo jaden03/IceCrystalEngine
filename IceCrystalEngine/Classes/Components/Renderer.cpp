@@ -245,14 +245,11 @@ void Renderer::Update()
 			material->shader->setBool("directionalLights[" + std::to_string(i) + "].castShadows", lightingManager.directionalLights[i]->castShadows);
 			
 			glm::mat4 lightSpaceMatrix = lightingManager.directionalLights[i]->GetLightSpaceMatrix();
-			lightSpaceMatrix = glm::transpose(lightSpaceMatrix);
-			
 			material->shader->setMat4("directionalLights[" + std::to_string(i) + "].lightSpaceMatrix", lightSpaceMatrix);
 
 			glActiveTexture(GL_TEXTURE1 + i);
 			glBindTexture(GL_TEXTURE_2D, lightingManager.directionalLights[i]->depthMap);
 			material->shader->setInt("directionalShadowMap[" + std::to_string(i) + "]", 1 + i);
-			material->shader->setInt("test", 1);
 		}
 
 		int numberOfPointLights = lightingManager.pointLights.size();
