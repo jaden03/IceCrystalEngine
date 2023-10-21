@@ -59,6 +59,9 @@ void SceneManager::Update()
 	// use the shadow shader
 	lightingManager.shadowShader->Use();
 
+	// frontface culling
+	glCullFace(GL_FRONT);
+
 	// loop through directional lights
 	for (int i = 0; i < lightingManager.directionalLights.size(); i++)
 	{
@@ -67,18 +70,19 @@ void SceneManager::Update()
 		// if the light doesnt cast shadows, move on to the next one
 		if (!light->castShadows) continue;
 
-		// clear the framebuffer
-		glClear(GL_DEPTH_BUFFER_BIT);
-
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, light->depthMap, 0);
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
+
+		// clear the framebuffer
+		glClear(GL_DEPTH_BUFFER_BIT);
 		
 		// set the light space matrix
 		lightingManager.shadowShader->setMat4("lightSpaceMatrix", light->GetLightSpaceMatrix());
 
 		// set the viewport
 		glViewport(0, 0, light->shadowMapResolution, light->shadowMapResolution);
+		
 
 		// loop through the actors
 		for (int j = 0; j < actors->size(); j++)
@@ -102,6 +106,9 @@ void SceneManager::Update()
 	glViewport(0, 0, windowManager.windowWidth, windowManager.windowHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.2f, 0.5f, 0.9f, 1.0f);
+
+	// backface culling
+	glCullFace(GL_BACK);
 
 	// loop through actors
 	for (int i = 0; i < actors->size(); i++)

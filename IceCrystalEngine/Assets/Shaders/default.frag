@@ -26,8 +26,6 @@ uniform struct DirectionalLight {
 } directionalLights[MAX_DIRECTIONAL_LIGHTS];
 uniform sampler2D directionalShadowMap[MAX_DIRECTIONAL_LIGHTS];
 
-uniform sampler2D test;
-
 
 uniform int pointLightCount;
 uniform struct PointLight {
@@ -79,17 +77,26 @@ void main()
             vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
             projCoords = projCoords * 0.5 + 0.5;
 
-            float closestDepth = texture(test, projCoords.xy).r;
+            float closestDepth = texture(directionalShadowMap[i], projCoords.xy).r;
             float currentDepth = projCoords.z;
 
-            float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
-            //shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+            float bias = 0.0001;
+           
+            vec2 texelSize = 1.0 / textureSize(directionalShadowMap[i], 0);
+            for(int x = -1; x <= 1; ++x)
+            {
+                for(int y = -1; y <= 1; ++y)
+                {
+                    float pcfDepth = texture(directionalShadowMap[i], projCoords.xy + vec2(x, y) * texelSize).r; 
+                    shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+                }    
+            }
+            shadow /= 9.0;
 
-            shadow = currentDepth > closestDepth ? 1.0 : 0.0;
             if (projCoords.z > 1.0)
                 shadow = 0.0;
 
-            testLight = texture(test, projCoords.xy);
+            testLight = texture(directionalShadowMap[i], projCoords.xy);
         }
         
         lighting += (diffuse + specular) * strength * (1.0 - shadow);
