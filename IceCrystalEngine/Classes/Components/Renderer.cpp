@@ -13,7 +13,7 @@ std::string ModelPath;
 Renderer::Renderer() : Component()
 {
 	material = new Material();
-	ModelPath = FileUtil::AssetDir + "Models/triangulatedCube.obj";
+	ModelPath = FileUtil::AssetDir + "Models/cube.obj";
 	InitializeRenderer();
 }
 
@@ -53,7 +53,7 @@ void Renderer::InitializeRenderer()
 
 	if (loadout)
 	{
-		meshes = loader.LoadedMeshes;
+		std::vector<objl::Mesh> meshes = loader.LoadedMeshes;
 		meshHolders = std::vector<MeshHolder>();
 
 		// loop through the meshes

@@ -43,7 +43,7 @@ int main()
 	Input& input = Input::GetInstance();
 
 
- //   Actor* pointLight1 = sceneManager.GetActorByTag("PointLight1");
+    Actor* pointLight1 = sceneManager.GetActorByTag("PointLight1");
  //   Actor* pointLight2 = sceneManager.GetActorByTag("PointLight2");
 	//Actor* pointLight3 = sceneManager.GetActorByTag("PointLight3");
 	
@@ -81,16 +81,15 @@ int main()
 		}
 		if (input.GetKey(GLFW_KEY_8))
 		{
-			sun->transform->TranslateDelta(sun->transform->forward * 5.0f);
+			testActor->transform->RotateDelta(-90, 0, 0);
 		}
 		if (input.GetKey(GLFW_KEY_7))
 		{
-			sun->transform->TranslateDelta(sun->transform->forward * -5.0f);
+			testActor->transform->RotateDelta(90, 0, 0);
 		}
 		if (input.GetKey(GLFW_KEY_6))
 		{
-			std::cout << "Sun position: " << sun->transform->position.x << ", " << sun->transform->position.y << ", " << sun->transform->position.z << std::endl;
-			std::cout << "Sun rotation: " << sun->transform->eulerAngles.x << ", " << sun->transform->eulerAngles.y << ", " << sun->transform->eulerAngles.z << std::endl;
+			pointLight1->transform->RotateLocalDelta(90, 0, 0);
 		}
 
         // rotate the point lights around (0, -4, 5)
