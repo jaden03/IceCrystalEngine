@@ -72,6 +72,12 @@
     <ClCompile Include="Classes\Components\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\Core\Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\Rendering\PostProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\glad\glad.h">
@@ -869,6 +875,12 @@
     <ClInclude Include="Include\Ice\Components\Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Ice\Core\Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Ice\Rendering\PostProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Libraries\GLFW\glfw3.lib" />
@@ -1282,6 +1294,13 @@
     <None Include="Assets\Shaders\shadows.frag" />
     <None Include="Assets\Shaders\shadows.vert" />
     <None Include="Assets\Models\cone.obj" />
+    <None Include="Assets\Materials\unlit.mat" />
+    <None Include="Assets\Shaders\skybox.frag" />
+    <None Include="Assets\Shaders\skybox.vert" />
+    <None Include="Assets\Shaders\unlit.frag" />
+    <None Include="Assets\Shaders\unlit.vert" />
+    <None Include="Assets\Shaders\hdr.frag" />
+    <None Include="Assets\Shaders\hdr.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Textures\cubeTest.png">
@@ -1294,6 +1313,24 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Assets\Textures\Spock49.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Textures\skybox\back.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Textures\skybox\bottom.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Textures\skybox\front.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Textures\skybox\left.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Textures\skybox\right.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Textures\skybox\top.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
