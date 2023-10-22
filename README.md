@@ -11,3 +11,4 @@ Game engine I am writing to learn C++
 - Shadows (only directional lights as of right now)
 - Parenting
 - Skybox
+- HDR
