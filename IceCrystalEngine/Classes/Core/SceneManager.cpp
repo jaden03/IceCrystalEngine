@@ -2,17 +2,18 @@
 
 #include <iostream>
 
+#include <Ice/Rendering/PostProcessor.h>
 #include <Ice/Core/LightingManager.h>
 #include <Ice/Core/WindowManager.h>
+#include <Ice/Utils/FileUtil.h>
 
 #include <Ice/Components/Camera.h>
 #include <Ice/Components/Renderer.h>
 #include <Ice/Components/Light.h>
 
-#include <Ice/Rendering/Shader.h>
-
 #include <Ice/Core/Skybox.h>
 
+PostProcessor& postProcessor = PostProcessor::GetInstance();
 LightingManager& lightingManager = LightingManager::GetInstance();
 WindowManager& windowManager = WindowManager::GetInstance();
 Skybox& skybox = Skybox::GetInstance();
@@ -103,8 +104,8 @@ void SceneManager::Update()
 		}
 	}
 
-	// bind to the default framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// bind to the hdr framebuffer
+	postProcessor.Bind();
 	// reset the viewport
 	glViewport(0, 0, windowManager.windowWidth, windowManager.windowHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -128,6 +129,8 @@ void SceneManager::Update()
 
 	// render the skybox
 	skybox.Render();
+
+	postProcessor.Render();
 }
 
 // Add Actor

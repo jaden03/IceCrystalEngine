@@ -23,7 +23,6 @@ public:
 	int windowWidth = 1920;
 	int windowHeight = 1080;
 
-
 private:
 
 	WindowManager(); // Private constructor to ensure a single instance
