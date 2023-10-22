@@ -38,7 +38,7 @@ void SceneInitializer::InitializeScene()
 	Actor* floorActor = new Actor("Floor");
 	Renderer* floorRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj");
 	floorActor->AddComponent(floorRenderer);
-	floorActor->transform->scale = glm::vec3(8, 1, 8);
+	floorActor->transform->scale = glm::vec3(15, 1, 15);
 	floorActor->transform->Translate(0, -5, 0);
 	
 	
@@ -82,18 +82,24 @@ void SceneInitializer::InitializeScene()
 
 	Actor* pointLight = new Actor("Point Light", "PointLight1");
 	PointLight* pointLightComponent = pointLight->AddComponent<PointLight>();
-	//pointLightComponent->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	//pointLightComponent->color = glm::vec3(0.0f, 0.0f, 0.0f);
 	pointLight->transform->Translate(0, -3, 10);
 	Renderer* pointLightRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterial);
 	pointLight->AddComponent(pointLightRenderer);
 	pointLight->transform->scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	pointLightRenderer->castShadows = false;
-	pointLight->transform->SetParent(testActor->transform);
+	pointLightComponent->strength = 5;
+	//pointLight->transform->SetParent(testActor->transform);
 
-	/*Actor* pointLight2 = new Actor("Point Light", "PointLight2");
+	Actor* pointLight2 = new Actor("Point Light", "PointLight2");
 	PointLight* pointLightComponent2 = pointLight2->AddComponent<PointLight>();
-	pointLightComponent2->color = glm::vec3(0.0f, 0.0f, 1.0f);
-	pointLight2->transform->Translate(0, -3, 4);*/
+	//pointLightComponent2->color = glm::vec3(0.0f, 0.0f, 1.0f);
+	pointLight2->transform->Translate(0, -3, 5);
+	Renderer* pointLightRenderer2 = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterial);
+	pointLight2->AddComponent(pointLightRenderer2);
+	pointLight2->transform->scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	pointLightRenderer2->castShadows = false;
+	pointLightComponent2->strength = 5;
 
 	/*Actor* pointLight3 = new Actor("Point Light", "PointLight3");
 	PointLight* pointLightComponent3 = pointLight3->AddComponent<PointLight>();

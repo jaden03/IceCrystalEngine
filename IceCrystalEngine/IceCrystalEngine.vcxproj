@@ -172,6 +172,7 @@
     <ClCompile Include="Classes\glad.c" />
     <ClCompile Include="Classes\Rendering\Material.cpp" />
     <ClCompile Include="Classes\Components\Renderer.cpp" />
+    <ClCompile Include="Classes\Rendering\PostProcessor.cpp" />
     <ClCompile Include="Classes\Rendering\Shader.cpp" />
     <ClCompile Include="Classes\Rendering\Texture.cpp" />
     <ClCompile Include="Classes\Utils\FileUtil.cpp" />
@@ -435,6 +436,7 @@
     <ClInclude Include="Include\Ice\Rendering\Material.h" />
     <ClInclude Include="Include\Ice\Rendering\MeshHolder.h" />
     <ClInclude Include="Include\Ice\Components\Renderer.h" />
+    <ClInclude Include="Include\Ice\Rendering\PostProcessor.h" />
     <ClInclude Include="Include\Ice\Rendering\Shader.h" />
     <ClInclude Include="Include\Ice\Rendering\Texture.h" />
     <ClInclude Include="Include\Ice\Utils\FileUtil.h" />
@@ -457,6 +459,8 @@
     <None Include="Assets\Materials\unlit.mat" />
     <None Include="Assets\Shaders\default.frag" />
     <None Include="Assets\Shaders\default.vert" />
+    <None Include="Assets\Shaders\hdr.frag" />
+    <None Include="Assets\Shaders\hdr.vert" />
     <None Include="Assets\Shaders\shadows.frag" />
     <None Include="Assets\Shaders\shadows.vert" />
     <None Include="Assets\Shaders\skybox.frag" />
