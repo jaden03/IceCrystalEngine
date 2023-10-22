@@ -48,7 +48,9 @@ void WindowManager::InitializeWindow()
 // glfw: whenever the window size changed
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	WindowManager::GetInstance().windowWidth = width;
-	WindowManager::GetInstance().windowHeight = height;
+	WindowManager& windowManager = WindowManager::GetInstance();
+
+    windowManager.windowWidth = width;
+    windowManager.windowHeight = height;
     glViewport(0, 0, width, height);
 }

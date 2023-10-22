@@ -8,7 +8,6 @@
 #include <string>
 
 class Actor;
-
 class Camera;
 
 
@@ -27,7 +26,6 @@ public:
 	
 	Camera* mainCamera;
 	float deltaTime;
-
 	
 	void Update();
 	void AddActor(Actor* actor);
@@ -38,14 +36,13 @@ public:
 	// Returns all actors with the given tag
 	std::vector<Actor*> GetActorsByTag(std::string tag);
 
-	
-
 	// Returns the first component of the given type
 	template <typename T>
 	T* GetComponentOfType();
 	
 
 private:
+
 
 	std::vector<Actor*>* actors;
 	
