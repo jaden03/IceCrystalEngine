@@ -1,18 +1,26 @@
 #version 330 core
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 BrightColor;
 
 in vec2 TexCoords;
 
-uniform sampler2D hdrColorBuffer;
+uniform sampler2D colorBuffer;
+uniform sampler2D bloomBuffer;
+
 uniform float exposure;
+uniform bool bloom;
 
 void main()
 {
     const float gamma = 1.2;
-    vec3 hdrColor = texture(hdrColorBuffer, TexCoords).rgb;
+    vec3 hdrColor = texture(colorBuffer, TexCoords).rgb;
 
-    // this is reinhard tone mapping, it essentially scales the image's color to the range [0, 1]
-    // vec3 result = hdrColor / (hdrColor + vec3(1.0));
+    // bloom
+    if (bloom)
+    {
+        vec3 bloomColor = texture(bloomBuffer, TexCoords).rgb;
+        hdrColor += bloomColor;
+    }
 
     // this is exposure, basically its how your eyes adjust to the light, the higher the exposure the brighter the image
     vec3 result = vec3(1.0) - exp(-hdrColor * exposure);
