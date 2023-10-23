@@ -12,3 +12,4 @@ Game engine I am writing to learn C++
 - Parenting
 - Skybox
 - HDR
+- Bloom

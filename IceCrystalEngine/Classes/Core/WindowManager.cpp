@@ -40,7 +40,6 @@ void WindowManager::InitializeWindow()
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-	glEnable(GL_MULTISAMPLE);
 }
 
 

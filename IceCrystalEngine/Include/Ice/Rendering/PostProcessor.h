@@ -22,7 +22,6 @@ public:
 
 	void Bind();
 	void Render();
-	void Resize();
 	
 	float exposure = 1.0f;
 	bool bloom = true;
@@ -37,9 +36,16 @@ private:
 	int lastScreenHeight;
 
 	Shader* hdrShader;
-	unsigned int colorBuffer;
+	unsigned int colorBuffers[2];
 	unsigned int hdrFBO;
 	unsigned int depthRBO;
+
+	
+	// Bloom
+	Shader* blurShader;
+	unsigned int pingpongFBO[2];
+	unsigned int pingpongBuffer[2];
+	
 
 	void RenderFullscreenQuad();
 
