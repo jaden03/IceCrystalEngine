@@ -23,8 +23,14 @@ public:
 	void Bind();
 	void Render();
 	
+	// Post Processing
 	float exposure = 1.0f;
+	
 	bool bloom = true;
+
+	// this will blur the entire scene, useful if you want to blur the background
+	// when you display UI or something
+	int blurIterations = 0;
 	
 
 private:
@@ -43,8 +49,12 @@ private:
 	
 	// Bloom
 	Shader* blurShader;
-	unsigned int pingpongFBO[2];
-	unsigned int pingpongBuffer[2];
+	unsigned int bloomPingpongFBO[2];
+	unsigned int bloomPingpongBuffer[2];
+
+	// Blur
+	unsigned int blurPingpongFBO[2];
+	unsigned int blurPingpongBuffer[2];
 	
 
 	void RenderFullscreenQuad();
