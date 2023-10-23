@@ -1301,6 +1301,8 @@
     <None Include="Assets\Shaders\unlit.vert" />
     <None Include="Assets\Shaders\hdr.frag" />
     <None Include="Assets\Shaders\hdr.vert" />
+    <None Include="Assets\Shaders\blur.frag" />
+    <None Include="Assets\Shaders\blur.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Textures\cubeTest.png">

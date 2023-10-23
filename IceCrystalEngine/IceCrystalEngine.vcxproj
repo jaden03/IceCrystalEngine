@@ -457,6 +457,8 @@
     <None Include="Assets\Materials\default.mat" />
     <None Include="Assets\Materials\spock.mat" />
     <None Include="Assets\Materials\unlit.mat" />
+    <None Include="Assets\Shaders\blur.frag" />
+    <None Include="Assets\Shaders\blur.vert" />
     <None Include="Assets\Shaders\default.frag" />
     <None Include="Assets\Shaders\default.vert" />
     <None Include="Assets\Shaders\hdr.frag" />
