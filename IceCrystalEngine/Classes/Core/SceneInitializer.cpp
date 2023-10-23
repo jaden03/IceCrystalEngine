@@ -16,7 +16,12 @@ SceneInitializer::SceneInitializer()
 void SceneInitializer::InitializeScene()
 {
 	Material* unlitMaterial = new Material(FileUtil::AssetDir + "Materials/unlit.mat");
-	//unlitMaterial->color = glm::vec3(1.0f, 1.0f, 1.0f);
+	
+	Material* unlitMaterialBlue = new Material(FileUtil::AssetDir + "Materials/unlit.mat");
+	unlitMaterialBlue->color = glm::vec3(0.0f, 0.0f, 15.0f); // making the color higher than 1.0 will make it glow with bloom
+
+	Material* unlitMaterialRed = new Material(FileUtil::AssetDir + "Materials/unlit.mat");
+	unlitMaterialRed->color = glm::vec3(10.0f, 0.0f, 0.0f);
 
 
     Actor* cameraActor = new Actor("Main Camera");
@@ -84,10 +89,11 @@ void SceneInitializer::InitializeScene()
 	PointLight* pointLightComponent = pointLight->AddComponent<PointLight>();
 	//pointLightComponent->color = glm::vec3(0.0f, 0.0f, 0.0f);
 	pointLight->transform->Translate(0, -3, 10);
-	Renderer* pointLightRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterial);
+	Renderer* pointLightRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterialBlue);
 	pointLight->AddComponent(pointLightRenderer);
 	pointLight->transform->scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	pointLightRenderer->castShadows = false;
+	pointLightComponent->color = glm::vec3(0.0f, 0.0f, 1.0f);
 	pointLightComponent->strength = 5;
 	//pointLight->transform->SetParent(testActor->transform);
 
@@ -95,10 +101,11 @@ void SceneInitializer::InitializeScene()
 	PointLight* pointLightComponent2 = pointLight2->AddComponent<PointLight>();
 	//pointLightComponent2->color = glm::vec3(0.0f, 0.0f, 1.0f);
 	pointLight2->transform->Translate(0, -3, 5);
-	Renderer* pointLightRenderer2 = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterial);
+	Renderer* pointLightRenderer2 = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterialRed);
 	pointLight2->AddComponent(pointLightRenderer2);
 	pointLight2->transform->scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	pointLightRenderer2->castShadows = false;
+	pointLightComponent2->color = glm::vec3(1.0f, 0.0f, 0.0f);
 	pointLightComponent2->strength = 5;
 
 	/*Actor* pointLight3 = new Actor("Point Light", "PointLight3");
