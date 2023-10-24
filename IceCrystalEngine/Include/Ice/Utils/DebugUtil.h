@@ -7,6 +7,9 @@
 #include <Ice/Core/WindowManager.h>
 #include <Ice/Core/SceneManager.h>
 
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
+
 #include <iostream>
 #include <sstream>
 
@@ -25,6 +28,10 @@ class DebugUtil
 	std::streambuf* oldbuf;
 
 	std::string currentConsoleText;
+
+	ImFont* font;
+	ImFont* fontBig;
+
 	
 public:
 	
