@@ -110,7 +110,7 @@ void PostProcessor::Render()
 	bool bloomBlurHorizontal = true, bloomBlurFirstIteration = true;
 	if (bloom)
 	{
-		int amount = 4;
+		int amount = 2;
 		blurShader->Use();
 		for (unsigned int i = 0; i < amount * 2; i++)
 		{
