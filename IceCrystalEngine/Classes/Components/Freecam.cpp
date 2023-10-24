@@ -23,12 +23,29 @@ void Freecam::Ready()
 	// but for now you will just have to create them yourself in the code
 	input.CreateAxis("Horizontal", GLFW_KEY_D, GLFW_KEY_A);
 	input.CreateAxis("Vertical", GLFW_KEY_W, GLFW_KEY_S);
-	
-	input.lockCursor = true;
 }
 
 void Freecam::Update()
 {
+	double mouseX, mouseY;
+	input.GetMousePosition(&mouseX, &mouseY);
+
+	if (requireRightClick)
+	{
+		input.lockCursor = false;
+
+		if (!input.GetMouseButton(GLFW_MOUSE_BUTTON_RIGHT))
+		{
+			lastMouseX = mouseX;
+			lastMouseY = mouseY;
+			return;
+		}
+	}
+	else
+	{
+		input.lockCursor = true;
+	}
+	
 	float horizontal = input.GetAxis("Horizontal");
 	float vertical = input.GetAxis("Vertical");
 
@@ -50,8 +67,6 @@ void Freecam::Update()
 	transform->TranslateDelta(movement);
 
 	// Rotate the camera
-	double mouseX, mouseY;
-	input.GetMousePosition(&mouseX, &mouseY);
 
 	float deltaX = mouseX - lastMouseX;
 	float deltaY = mouseY - lastMouseY;

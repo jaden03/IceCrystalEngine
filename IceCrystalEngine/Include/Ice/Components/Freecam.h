@@ -32,6 +32,8 @@ public:
 
 	double lastMouseX;
 	double lastMouseY;
+
+	bool requireRightClick = true;
 	
 	Freecam();
 
