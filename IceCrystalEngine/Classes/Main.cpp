@@ -3,6 +3,8 @@
 
 #ifdef _DEBUG
 	#include <Ice/Utils/DebugUtil.h>
+	#include <imgui/imgui_impl_glfw.h>
+	#include <imgui/imgui_impl_opengl3.h>
 #endif
 
 #include <glad/glad.h>
@@ -31,11 +33,6 @@ int main()
 
     // Get a reference to the WindowManager (this will initialize the window)
 	WindowManager& windowManager = WindowManager::GetInstance();
-
-#ifdef _DEBUG
-	// Get a reference to the debugUtil
-	DebugUtil& debugUtil = DebugUtil::GetInstance();
-#endif
 	
 	// Get a reference to the SceneManager (this has to happen before the scene is initialized)
 	SceneManager &sceneManager = SceneManager::GetInstance();
@@ -50,6 +47,12 @@ int main()
     // Get a reference to Input
 	Input& input = Input::GetInstance();
 
+	
+#ifdef _DEBUG
+	// Get a reference to the debugUtil
+	DebugUtil& debugUtil = DebugUtil::GetInstance();
+#endif
+
 
     Actor* pointLight1 = sceneManager.GetActorByTag("PointLight1");
     Actor* pointLight2 = sceneManager.GetActorByTag("PointLight2");
@@ -57,6 +60,7 @@ int main()
 	
 	Actor* sun = sceneManager.GetActorByTag("sun");
 	Actor* testActor = sceneManager.GetActorByTag("Test");
+
 
 	
 

@@ -28,6 +28,9 @@ public:
 	float deltaTime;
 	
 	void Update();
+	
+	int GetActorCount();
+
 	void AddActor(Actor* actor);
 
 	// Returns the first actor with the given tag
