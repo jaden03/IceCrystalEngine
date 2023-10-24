@@ -23,6 +23,10 @@ public:
 	int windowWidth = 1920;
 	int windowHeight = 1080;
 
+	// this cannot be changed at runtime (yet)
+	// also this is borderless, because fullscreen is trash
+	bool isFullscreen = false;
+
 private:
 
 	WindowManager(); // Private constructor to ensure a single instance

@@ -23,6 +23,10 @@ void SceneInitializer::InitializeScene()
 	Material* unlitMaterialRed = new Material(FileUtil::AssetDir + "Materials/unlit.mat");
 	unlitMaterialRed->color = glm::vec3(10.0f, 0.0f, 0.0f);
 
+	Material* unlitMaterialGreen = new Material(FileUtil::AssetDir + "Materials/unlit.mat");
+	unlitMaterialGreen->color = glm::vec3(0.0f, 10.0f, 0.0f);
+	
+
 
     Actor* cameraActor = new Actor("Main Camera");
     Camera* cameraComponent = cameraActor->AddComponent<Camera>();
@@ -48,17 +52,17 @@ void SceneInitializer::InitializeScene()
 	
 	
 	// Cube
-	Actor* cubeActor = new Actor("Cube");
-	Renderer* cubeRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj");
-	cubeActor->AddComponent(cubeRenderer);
-	cubeActor->transform->scale = glm::vec3(0.5f, 0.5f, 0.5f);
-	cubeActor->transform->Translate(0, -3, 3);
+	Actor* icosphereActor = new Actor("Icosphere");
+	Renderer* icosphereRenderer = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj");
+	icosphereActor->AddComponent(icosphereRenderer);
+	icosphereActor->transform->scale = glm::vec3(0.25f, 0.25f, 0.25f);
+	icosphereActor->transform->Translate(0, -3, 5);
 
 
 
 
 	Actor* sun = new Actor("Sun", "sun");
-    Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj", unlitMaterial);
+    Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
 	sun->AddComponent(sunRenderer);
     DirectionalLight* sunLight = sun->AddComponent<DirectionalLight>();
 	sunRenderer->castShadows = false;
@@ -87,26 +91,43 @@ void SceneInitializer::InitializeScene()
 
 	Actor* pointLight = new Actor("Point Light", "PointLight1");
 	PointLight* pointLightComponent = pointLight->AddComponent<PointLight>();
-	//pointLightComponent->color = glm::vec3(0.0f, 0.0f, 0.0f);
-	pointLight->transform->Translate(0, -3, 10);
+	pointLight->transform->Translate(0, -3, 6);
 	Renderer* pointLightRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterialBlue);
 	pointLight->AddComponent(pointLightRenderer);
 	pointLight->transform->scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	pointLightRenderer->castShadows = false;
 	pointLightComponent->color = glm::vec3(0.0f, 0.0f, 1.0f);
 	pointLightComponent->strength = 5;
-	//pointLight->transform->SetParent(testActor->transform);
 
 	Actor* pointLight2 = new Actor("Point Light", "PointLight2");
 	PointLight* pointLightComponent2 = pointLight2->AddComponent<PointLight>();
-	//pointLightComponent2->color = glm::vec3(0.0f, 0.0f, 1.0f);
 	pointLight2->transform->Translate(0, -3, 5);
-	Renderer* pointLightRenderer2 = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterialRed);
+	Renderer* pointLightRenderer2 = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterialGreen);
 	pointLight2->AddComponent(pointLightRenderer2);
 	pointLight2->transform->scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	pointLightRenderer2->castShadows = false;
-	pointLightComponent2->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	pointLightComponent2->color = glm::vec3(0.0f, 1.0f, 0.0f);
 	pointLightComponent2->strength = 5;
+
+	Actor* pointLight3 = new Actor("Point Light", "PointLight3");
+	PointLight* pointLightComponent3 = pointLight3->AddComponent<PointLight>();
+	pointLight3->transform->Translate(1, -3, 5.5f);
+	Renderer* pointLightRenderer3 = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterialRed);
+	pointLight3->AddComponent(pointLightRenderer3);
+	pointLight3->transform->scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	pointLightRenderer3->castShadows = false;
+	pointLightComponent3->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	pointLightComponent3->strength = 5;
+
+	Actor* pointLight4 = new Actor("Point Light", "PointLight4");
+	PointLight* pointLightComponent4 = pointLight4->AddComponent<PointLight>();
+	pointLight4->transform->Translate(0, -1, 5);
+	Renderer* pointLightRenderer4 = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterial);
+	pointLight4->AddComponent(pointLightRenderer4);
+	pointLight4->transform->scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	pointLightRenderer4->castShadows = false;
+
+	
 
 	/*Actor* pointLight3 = new Actor("Point Light", "PointLight3");
 	PointLight* pointLightComponent3 = pointLight3->AddComponent<PointLight>();
