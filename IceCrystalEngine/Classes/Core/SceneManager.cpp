@@ -186,3 +186,11 @@ T* SceneManager::GetComponentOfType()
 	}
 	return nullptr;
 }
+
+
+
+// Get Actor Count
+int SceneManager::GetActorCount()
+{
+	return actors->size();
+}
