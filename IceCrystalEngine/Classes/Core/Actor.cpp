@@ -37,6 +37,8 @@ Actor::Actor(std::string name, std::string tag)
 // Deconstructor
 Actor::~Actor()
 {
+	SceneManager::GetInstance().RemoveActor(this);
+
 	delete transform;
 	for (Component* component : *components)
 	{
