@@ -1,10 +1,14 @@
 #version 330 core
 layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 BrightColor;
+layout (location = 2) out vec4 PickColor;
 
 in vec2 fragUV;
 in vec3 fragNormal;
 in vec3 fragPos;
+
+// poor mans raycasting
+uniform vec3 uniqueColor;
 
 uniform sampler2D fragTexture;
 uniform vec3 fragColor;
@@ -80,7 +84,7 @@ void main()
             float closestDepth = texture(directionalShadowMap[i], projCoords.xy).r;
             float currentDepth = projCoords.z;
 
-            float bias = 0.0001;
+            float bias = 0.0003;
            
             vec2 texelSize = 1.0 / textureSize(directionalShadowMap[i], 0);
             float shadowSum = 0.0;
@@ -154,4 +158,8 @@ void main()
         BrightColor = vec4(FragColor.rgb, 1.0);
     else
         BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
+
+    // poor mans raycasting
+    // put uniqueColor into a range of 0-1
+    PickColor = vec4(uniqueColor, 1.0);
 }

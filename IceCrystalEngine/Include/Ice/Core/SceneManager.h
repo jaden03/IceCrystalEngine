@@ -7,6 +7,8 @@
 #include <vector>
 #include <string>
 
+#include <glm/glm.hpp>
+
 class Actor;
 class Camera;
 
@@ -32,6 +34,9 @@ public:
 	int GetActorCount();
 
 	void AddActor(Actor* actor);
+	void RemoveActor(Actor* actor);
+
+	Actor* GetHoveredActor();
 
 	// Returns the first actor with the given tag
 	Actor* GetActorByTag(std::string tag);
@@ -48,6 +53,7 @@ private:
 
 
 	std::vector<Actor*>* actors;
+	std::vector<glm::vec3> usedActorColors;
 	
 	SceneManager(); // Private constructor to ensure a single instance
 	~SceneManager();

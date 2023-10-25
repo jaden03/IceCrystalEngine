@@ -24,6 +24,7 @@ SceneManager::SceneManager()
 	mainCamera = nullptr;
 	deltaTime = 0.0f;
 	actors = new std::vector<Actor*>();
+	usedActorColors = std::vector<glm::vec3>();
 }
 
 // Deconstructor
@@ -136,6 +137,56 @@ void SceneManager::Update()
 void SceneManager::AddActor(Actor* actor)
 {
 	actors->push_back(actor);
+	
+	// generate a random color 1-255 1-255 1-255
+	glm::vec3 color = glm::vec3(rand() % 255 + 1, rand() % 255 + 1, rand() % 255 + 1);
+	// if the color is already used, generate a new one
+	while (std::find(usedActorColors.begin(), usedActorColors.end(), color) != usedActorColors.end())
+	{
+		color = glm::vec3(rand() % 255 + 1, rand() % 255 + 1, rand() % 255 + 1);
+	}
+	// add the color to the used colors
+	usedActorColors.push_back(color);
+	// set the color
+	actor->uniqueColor = color;
+}
+
+// Remove Actor
+void SceneManager::RemoveActor(Actor* actor)
+{
+	// loop through the actors
+	for (int i = 0; i < actors->size(); i++)
+	{
+		// if the actor is found
+		if (actors->at(i) == actor)
+		{
+			// remove actor->uniqueColor from usedActorColors
+			usedActorColors.erase(std::remove(usedActorColors.begin(), usedActorColors.end(), actor->uniqueColor), usedActorColors.end());
+			// remove the actor
+			actors->erase(actors->begin() + i);
+			// break out of the loop
+			break;
+		}
+	}
+}
+
+
+// Get Hovered Actor
+Actor* SceneManager::GetHoveredActor()
+{
+	glm::vec3 hoveredColor = postProcessor.hoveredActorColor;
+	
+	// loop through the actors
+	for (int i = 0; i < actors->size(); i++)
+	{
+		// if the actor is found
+		if (actors->at(i)->uniqueColor == hoveredColor)
+		{
+			// return the actor
+			return actors->at(i);
+		}
+	}
+	return nullptr;
 }
 
 

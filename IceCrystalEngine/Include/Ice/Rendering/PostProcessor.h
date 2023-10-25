@@ -31,6 +31,9 @@ public:
 	// this will blur the entire scene, useful if you want to blur the background
 	// when you display UI or something
 	int blurIterations = 0;
+
+	// this is for the poor mans raycasting
+	glm::vec3 hoveredActorColor;
 	
 
 private:
@@ -42,7 +45,7 @@ private:
 	int lastScreenHeight;
 
 	Shader* hdrShader;
-	unsigned int colorBuffers[2];
+	unsigned int colorBuffers[3];
 	unsigned int hdrFBO;
 	unsigned int depthRBO;
 
