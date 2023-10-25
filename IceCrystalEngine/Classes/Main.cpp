@@ -19,6 +19,7 @@
 #include <Ice/Core/LightingManager.h>
 #include <Ice/Core/Input.h>
 #include <Ice/Utils/FileUtil.h>
+#include <Ice/Rendering/PostProcessor.h>
 
 #include <Ice/Core/Transform.h>
 #include <Ice/Components/Renderer.h>
@@ -115,13 +116,13 @@ int main()
 		}
 		if (input.GetKeyDown(GLFW_KEY_5))
 		{
-			std::cout << "5" << std::endl;
+			std::cout << "Test actor uniqueColor: " << testActor->uniqueColor.x << ", " << testActor->uniqueColor.y << ", " << testActor->uniqueColor.z << std::endl;
 		}
 		if (input.GetKeyDown(GLFW_KEY_4))
 		{
 			std::cout << "4" << std::endl;
 		}
-
+		
 		
 		pointLight1->transform->position.x = 0 + 3 * cos(glfwGetTime());
 		pointLight1->transform->position.z = 5 + 3 * sin(glfwGetTime());

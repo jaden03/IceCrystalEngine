@@ -2,6 +2,8 @@
 
 #include <Ice/Utils/FileUtil.h>
 
+#include <Ice/Core/Actor.h>
+
 DebugUtil::DebugUtil()
 {
 	ImGui::CreateContext();
@@ -102,7 +104,7 @@ void DebugUtil::EndOfFrame()
 {
 	ImGui::PushFont(font);
 
-	ImGui::SetNextWindowSize(ImVec2(200, 300));
+	ImGui::SetNextWindowSize(ImVec2(300, 300));
 	ImGui::SetNextWindowPos(ImVec2(50, 50));
 	ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
 	
@@ -114,38 +116,39 @@ void DebugUtil::EndOfFrame()
 	ImGui::Checkbox("Show Console", &showConsole);
 	ImGui::Separator();
 
-	ImGui::Text("FPS: %f", 1.0f / sceneManager.deltaTime);
+	ImGui::Text("FPS: %i", (int)round(1.0f / sceneManager.deltaTime));
 	ImGui::Text("Actors: %i", sceneManager.GetActorCount());
+
+	if (sceneManager.GetHoveredActor() != nullptr)
+		ImGui::Text("Hovered Actor: %s", sceneManager.GetHoveredActor()->name.c_str());
+	else
+		ImGui::Text("Hovered Actor: None");
+
+	
+	
 	ImGui::End();
 
 
 	if (showConsole)
 	{
-		ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, 135));
-		ImGui::SetNextWindowPos(ImVec2(0, ImGui::GetIO().DisplaySize.y - 135));
+		ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, 32));
+		ImGui::SetNextWindowPos(ImVec2(0, ImGui::GetIO().DisplaySize.y - 32));
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::Begin("Console", &showConsole, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 		ImGui::PopStyleVar();
 
 		float consoleWidthFraction = 0.9;
-		ImGui::SetWindowPos(ImVec2(0, ImGui::GetIO().DisplaySize.y - 135), ImGuiCond_Always);
+		ImGui::SetWindowPos(ImVec2(0, ImGui::GetIO().DisplaySize.y - 32), ImGuiCond_Always);
 		ImGui::SetWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * consoleWidthFraction, 0), ImGuiCond_Always);
 
+		
 		std::string ssText = ss.str();
-
-		std::vector<std::string> lines;
-		std::istringstream ssStream(ssText);
-		std::string line;
-		while (std::getline(ssStream, line)) {
-			lines.push_back(line);
-		}
-		std::reverse(lines.begin(), lines.end());
-
-		const int maxLines = 7;
-		for (int i = 0; i < std::min(static_cast<int>(lines.size()), maxLines); ++i) {
-			ImGui::Text("%s", lines[i].c_str());
-		}
+		ImGui::Text("%s", ssText.c_str());
+		ss.str("");
+		
+		
+		
 		ImGui::End();
 	}
 

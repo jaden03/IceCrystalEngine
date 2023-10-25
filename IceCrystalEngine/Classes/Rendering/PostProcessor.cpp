@@ -13,9 +13,9 @@ PostProcessor::PostProcessor()
 	glGenFramebuffers(1, &hdrFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
 
-	glGenTextures(2, colorBuffers);
+	glGenTextures(3, colorBuffers);
 	
-	for (unsigned int i = 0; i < 2; i++)
+	for (unsigned int i = 0; i < 3; i++)
 	{
 		glBindTexture(GL_TEXTURE_2D, colorBuffers[i]);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, windowManager.windowWidth, windowManager.windowHeight, 0, GL_RGBA, GL_FLOAT, NULL);
@@ -26,14 +26,14 @@ PostProcessor::PostProcessor()
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0);
 	}
 
+	unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	glDrawBuffers(3, attachments);
+
 	glGenRenderbuffers(1, &depthRBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthRBO);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, windowManager.windowWidth, windowManager.windowHeight);
 
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRBO);
-
-	unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-	glDrawBuffers(2, attachments);
 
 	
 	lastScreenHeight = windowManager.windowHeight;
@@ -85,15 +85,35 @@ PostProcessor::PostProcessor()
 
 void PostProcessor::Render()
 {
+	// get the hovered actor color
+	float* buffer = new float[3];
+	double mouseX, mouseY;
+	glReadBuffer(GL_COLOR_ATTACHMENT2);
+	glfwGetCursorPos(windowManager.window, &mouseX, &mouseY);
+	glReadPixels(mouseX, windowManager.windowHeight - mouseY, 1, 1, GL_RGB, GL_FLOAT, buffer);
+	
+	glm::vec3 decodedColor = glm::vec3(buffer[0], buffer[1], buffer[2]);
+	delete[] buffer;
+	
+	decodedColor *= 255.0f;
+
+	decodedColor.x = round(decodedColor.x);
+	decodedColor.y = round(decodedColor.y);
+	decodedColor.z = round(decodedColor.z);
+
+	hoveredActorColor = decodedColor;
+	
 	if (lastScreenHeight != windowManager.windowHeight || lastScreenWidth != windowManager.windowWidth)
 	{
-		for (unsigned int i = 0; i < 2; i++)
+		for (unsigned int i = 0; i < 3; i++)
 		{
 			glBindTexture(GL_TEXTURE_2D, colorBuffers[i]);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, windowManager.windowWidth, windowManager.windowHeight, 0, GL_RGBA, GL_FLOAT, NULL);
 			glBindRenderbuffer(GL_RENDERBUFFER, depthRBO);
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, windowManager.windowWidth, windowManager.windowHeight);
-			
+		}
+		for (unsigned int i = 0; i < 2; i++)
+		{
 			glBindTexture(GL_TEXTURE_2D, bloomPingpongBuffer[i]);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, windowManager.windowWidth, windowManager.windowHeight, 0, GL_RGBA, GL_FLOAT, NULL);
 

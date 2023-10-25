@@ -25,6 +25,9 @@ public:
 	Transform* transform;
 	std::vector<Component*>* components;
 
+	glm::vec3 uniqueColor;
+	
+
 	Actor();
 	Actor(std::string name);
 	Actor(std::string name, std::string tag);
