@@ -255,8 +255,8 @@ void Renderer::Update()
 
 			glActiveTexture(GL_TEXTURE0 + i + usedTextureCount);
 			glBindTexture(GL_TEXTURE_2D, lightingManager.directionalLights[i]->depthMap);
-			material->shader->setInt("directionalShadowMap[" + std::to_string(i) + "]", 1 + i);
-			usedTextureCount += 1;
+			material->shader->setInt("directionalShadowMap[" + std::to_string(i) + "]", i + usedTextureCount);
+			usedTextureCount++;
 		}
 
 		int numberOfPointLights = lightingManager.pointLights.size();
@@ -270,6 +270,31 @@ void Renderer::Update()
 			material->shader->setVec3("pointLights[" + std::to_string(i) + "].color", lightingManager.pointLights[i]->color);
 			material->shader->setFloat("pointLights[" + std::to_string(i) + "].strength", lightingManager.pointLights[i]->strength);
 			material->shader->setFloat("pointLights[" + std::to_string(i) + "].radius", lightingManager.pointLights[i]->radius);
+		}
+
+		int numberOfSpotLights = lightingManager.spotLights.size();
+		int maxSpotLights = lightingManager.maxSpotLights;
+		if (numberOfSpotLights > maxSpotLights)
+			numberOfSpotLights = maxSpotLights;
+		
+		for (int i = 0; i < numberOfSpotLights; i++)
+		{
+			material->shader->setVec3("spotLights[" + std::to_string(i) + "].position", lightingManager.spotLights[i]->transform->position);
+			material->shader->setVec3("spotLights[" + std::to_string(i) + "].direction", lightingManager.spotLights[i]->transform->forward);
+			material->shader->setVec3("spotLights[" + std::to_string(i) + "].color", lightingManager.spotLights[i]->color);
+			material->shader->setFloat("spotLights[" + std::to_string(i) + "].strength", lightingManager.spotLights[i]->strength);
+			material->shader->setFloat("spotLights[" + std::to_string(i) + "].distance", lightingManager.spotLights[i]->distance);
+			material->shader->setFloat("spotLights[" + std::to_string(i) + "].angle", glm::cos(glm::radians(lightingManager.spotLights[i]->angle)));
+			material->shader->setFloat("spotLights[" + std::to_string(i) + "].outerAngle", glm::cos(glm::radians(lightingManager.spotLights[i]->angle + 5)));
+			material->shader->setBool("spotLights[" + std::to_string(i) + "].castShadows", lightingManager.spotLights[i]->castShadows);
+
+			glm::mat4 lightSpaceMatrix = lightingManager.spotLights[i]->GetLightSpaceMatrix();
+			material->shader->setMat4("spotLights[" + std::to_string(i) + "].lightSpaceMatrix", lightSpaceMatrix);
+
+			glActiveTexture(GL_TEXTURE0 + i + usedTextureCount);
+			glBindTexture(GL_TEXTURE_2D, lightingManager.spotLights[i]->depthMap);
+			material->shader->setInt("spotShadowMap[" + std::to_string(i) + "]", i + usedTextureCount);
+			usedTextureCount++;
 		}
 		
 

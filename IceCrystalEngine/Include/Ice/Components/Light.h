@@ -55,4 +55,31 @@ public:
 	
 };
 
+
+class SpotLight : public Component
+{
+
+	void Initialize();
+	
+public: 
+
+	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
+	float strength = 1;
+	float distance = 10;
+	float angle = 25;
+	
+	SpotLight();
+	SpotLight(glm::vec3 color, float strength, float distance, float angle);
+	
+	~SpotLight();
+
+
+
+	int shadowMapResolution = 1024;
+	bool castShadows = true;
+	unsigned int depthMap;
+	
+	glm::mat4 GetLightSpaceMatrix();
+};
+
 #endif

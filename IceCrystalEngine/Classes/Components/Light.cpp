@@ -70,3 +70,52 @@ PointLight::~PointLight()
 {
 	LightingManager::GetInstance().RemovePointLight(this);
 }
+
+
+
+
+SpotLight::SpotLight() : Component()
+{
+	Initialize();
+}
+
+SpotLight::SpotLight(glm::vec3 color, float strength, float distance, float angle) : Component()
+{
+	this->color = color;
+	this->strength = strength;
+	this->distance = distance;
+	this->angle = angle;
+
+	Initialize();
+}
+
+SpotLight::~SpotLight()
+{
+	LightingManager::GetInstance().RemoveSpotLight(this);
+}
+
+
+void SpotLight::Initialize()
+{
+	glGenTextures(1, &depthMap);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowMapResolution, shadowMapResolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	
+	LightingManager::GetInstance().AddSpotLight(this);
+}
+
+glm::mat4 SpotLight::GetLightSpaceMatrix()
+{
+	glm::mat4 lightProjection = glm::perspective(glm::radians((angle + 5) * 2.0f), 1.0f, 0.1f, distance + 10);
+
+	glm::mat4 lightView = glm::lookAt(transform->position, transform->position + transform->forward, transform->up);
+	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+
+	return lightSpaceMatrix;
+}

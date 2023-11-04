@@ -125,6 +125,13 @@ void DebugUtil::EndOfFrame()
 		ImGui::Text("Hovered Actor: None");
 
 	
+	ImGui::Separator();
+	
+	ImGui::Text("Directional Lights: %i", lightingManager.directionalLights.size());
+	ImGui::Text("Point Lights: %i", lightingManager.pointLights.size());
+	ImGui::Text("Spot Lights: %i", lightingManager.spotLights.size());
+
+	
 	
 	ImGui::End();
 

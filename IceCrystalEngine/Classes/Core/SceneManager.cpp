@@ -105,6 +105,44 @@ void SceneManager::Update()
 		}
 	}
 
+	// loop through spot lights
+	for (int i = 0; i < lightingManager.spotLights.size(); i++)
+	{
+		SpotLight* light = lightingManager.spotLights[i];
+
+		// if the light doesnt cast shadows, move on to the next one
+		if (!light->castShadows) continue;
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, light->depthMap, 0);
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+
+		// clear the framebuffer
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		// set the light space matrix
+		lightingManager.shadowShader->setMat4("lightSpaceMatrix", light->GetLightSpaceMatrix());
+
+		// set the viewport
+		glViewport(0, 0, light->shadowMapResolution, light->shadowMapResolution);
+
+
+		// loop through the actors
+		for (int j = 0; j < actors->size(); j++)
+		{
+			Actor* actor = actors->at(j);
+
+			// get the renderer
+			Renderer* renderer = actor->GetComponent<Renderer>();
+
+			if (renderer != nullptr && renderer->castShadows)
+			{
+				// draw the renderer
+				renderer->UpdateShadows();
+			}
+		}
+	}
+
 	// bind to the hdr framebuffer
 	postProcessor.Bind();
 	// reset the viewport
