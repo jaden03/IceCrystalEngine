@@ -15,3 +15,4 @@ Game engine I am writing to learn C++
 - Bloom
 - ImGui
 - Object picking/Color picking
+- MSAA
