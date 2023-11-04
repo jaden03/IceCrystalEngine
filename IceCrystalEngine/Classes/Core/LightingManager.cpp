@@ -10,8 +10,7 @@ LightingManager::LightingManager() {}
 
 LightingManager::~LightingManager()
 {
-	delete[] directionalLightData;
-	delete[] pointLightData;
+	
 }
 
 
@@ -35,6 +34,11 @@ void LightingManager::AddPointLight(PointLight* light)
 	pointLights.push_back(light);
 }
 
+void LightingManager::AddSpotLight(SpotLight* light)
+{
+	spotLights.push_back(light);
+}
+
 
 void LightingManager::RemoveDirectionalLight(DirectionalLight* light)
 {
@@ -55,6 +59,18 @@ void LightingManager::RemovePointLight(PointLight* light)
 		if (pointLights[i] == light)
 		{
 			pointLights.erase(pointLights.begin() + i);
+			return;
+		}
+	}
+}
+
+void LightingManager::RemoveSpotLight(SpotLight* light)
+{
+	for (int i = 0; i < spotLights.size(); i++)
+	{
+		if (spotLights[i] == light)
+		{
+			spotLights.erase(spotLights.begin() + i);
 			return;
 		}
 	}
