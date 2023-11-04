@@ -14,3 +14,4 @@ Game engine I am writing to learn C++
 - HDR
 - Bloom
 - ImGui
+- Object picking/Color picking
