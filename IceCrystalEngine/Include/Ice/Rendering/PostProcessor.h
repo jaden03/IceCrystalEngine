@@ -44,6 +44,10 @@ private:
 	int lastScreenWidth;
 	int lastScreenHeight;
 
+	unsigned int multisampledColorBuffers[3];
+	unsigned int multisampledFBO;
+	unsigned int multisampledRBO;
+
 	Shader* hdrShader;
 	unsigned int colorBuffers[3];
 	unsigned int hdrFBO;

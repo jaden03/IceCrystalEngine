@@ -10,6 +10,36 @@
 
 PostProcessor::PostProcessor()
 {
+	// Multisampled FBO
+	glGenFramebuffers(1, &multisampledFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, multisampledFBO);
+
+	glGenTextures(3, multisampledColorBuffers);
+
+	for (unsigned int i = 0; i < 3; i++)
+	{
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multisampledColorBuffers[i]);
+		glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB16F, windowManager.windowWidth, windowManager.windowHeight, GL_TRUE);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D_MULTISAMPLE, multisampledColorBuffers[i], 0);
+	}
+
+	unsigned int multisampledAttachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	glDrawBuffers(3, multisampledAttachments);
+
+	glGenRenderbuffers(1, &multisampledRBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, multisampledRBO);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, windowManager.windowWidth, windowManager.windowHeight);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, multisampledRBO);
+	
+	
+	// Check if the framebuffer is complete
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "ERROR::POSTPROCESSOR: Failed to initialize multisampled FBO" << std::endl;
+	// ------------------------------- \\
+
+
+
+	// HDR FBO
 	glGenFramebuffers(1, &hdrFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
 
@@ -32,16 +62,18 @@ PostProcessor::PostProcessor()
 	glGenRenderbuffers(1, &depthRBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthRBO);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, windowManager.windowWidth, windowManager.windowHeight);
-
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRBO);
-
 	
-	lastScreenHeight = windowManager.windowHeight;
-	lastScreenWidth = windowManager.windowWidth;
-
+	
 	// Check if the framebuffer is complete
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "Framebuffer not complete!" << std::endl;
+	// ------------------------------- \\
+
+	
+	
+	lastScreenHeight = windowManager.windowHeight;
+	lastScreenWidth = windowManager.windowWidth;
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -85,6 +117,17 @@ PostProcessor::PostProcessor()
 
 void PostProcessor::Render()
 {
+	// blit multisampledFBO to hdrFBO
+	for (int i = 0; i < 3; i++)
+	{
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, multisampledFBO);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, hdrFBO);
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
+		glDrawBuffer(GL_COLOR_ATTACHMENT0 + i);
+		glBlitFramebuffer(0, 0, windowManager.windowWidth, windowManager.windowHeight, 0, 0, windowManager.windowWidth, windowManager.windowHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+
 	// get the hovered actor color
 	float* buffer = new float[3];
 	double mouseX, mouseY;
@@ -105,13 +148,13 @@ void PostProcessor::Render()
 	
 	if (lastScreenHeight != windowManager.windowHeight || lastScreenWidth != windowManager.windowWidth)
 	{
+		// HDR Color Buffers
 		for (unsigned int i = 0; i < 3; i++)
 		{
 			glBindTexture(GL_TEXTURE_2D, colorBuffers[i]);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, windowManager.windowWidth, windowManager.windowHeight, 0, GL_RGBA, GL_FLOAT, NULL);
-			glBindRenderbuffer(GL_RENDERBUFFER, depthRBO);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, windowManager.windowWidth, windowManager.windowHeight);
 		}
+		// Bloom and Blur Buffers
 		for (unsigned int i = 0; i < 2; i++)
 		{
 			glBindTexture(GL_TEXTURE_2D, bloomPingpongBuffer[i]);
@@ -120,6 +163,19 @@ void PostProcessor::Render()
 			glBindTexture(GL_TEXTURE_2D, blurPingpongBuffer[i]);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, windowManager.windowWidth, windowManager.windowHeight, 0, GL_RGBA, GL_FLOAT, NULL);
 		}
+		// Multisampled Color Buffers
+		for (unsigned int i = 0; i < 3; i++)
+		{
+			glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multisampledColorBuffers[i]);
+			glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB16F, windowManager.windowWidth, windowManager.windowHeight, GL_TRUE);
+		}
+		// Depth Buffers
+		glBindRenderbuffer(GL_RENDERBUFFER, depthRBO);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, windowManager.windowWidth, windowManager.windowHeight);
+		
+		glBindRenderbuffer(GL_RENDERBUFFER, multisampledRBO);
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, windowManager.windowWidth, windowManager.windowHeight);
+		
 		
 		lastScreenHeight = windowManager.windowHeight;
 		lastScreenWidth = windowManager.windowWidth;
@@ -191,7 +247,7 @@ void PostProcessor::Render()
 
 void PostProcessor::Bind()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, multisampledFBO);
 }
 
 // Rendering the fullscreen quad

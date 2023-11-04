@@ -112,7 +112,7 @@ void SpotLight::Initialize()
 
 glm::mat4 SpotLight::GetLightSpaceMatrix()
 {
-	glm::mat4 lightProjection = glm::perspective(glm::radians((angle + 5) * 2.0f), 1.0f, 0.1f, distance + 10);
+	glm::mat4 lightProjection = glm::perspective(glm::radians((angle + 5) * 2.0f), 1.0f, 0.1f, 100.0f);
 
 	glm::mat4 lightView = glm::lookAt(transform->position, transform->position + transform->forward, transform->up);
 	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
