@@ -61,16 +61,16 @@ void SceneInitializer::InitializeScene()
 
 
 
-	Actor* sun = new Actor("Sun", "sun");
-    Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
-	sun->AddComponent(sunRenderer);
-    DirectionalLight* sunLight = sun->AddComponent<DirectionalLight>();
-	sunRenderer->castShadows = false;
+	//Actor* sun = new Actor("Sun", "sun");
+ //   Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
+	//sun->AddComponent(sunRenderer);
+ //   DirectionalLight* sunLight = sun->AddComponent<DirectionalLight>();
+	//sunRenderer->castShadows = false;
 
-	// set the rotation quat to be at an angle and angled down
-	sun->transform->Translate(0, 5, -12.5f);
-	sun->transform->Rotate(-30, 0, 0);
-	sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
+	//// set the rotation quat to be at an angle and angled down
+	//sun->transform->Translate(0, 5, -12.5f);
+	//sun->transform->Rotate(-30, 0, 0);
+	//sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
 
 
 	
