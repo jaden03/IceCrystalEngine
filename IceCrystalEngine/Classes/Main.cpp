@@ -26,6 +26,7 @@
 #include <Ice/Rendering/Material.h>
 #include <Ice/Rendering/Shader.h>
 #include <Ice/Components/Freecam.h>
+#include <Ice/Components/Light.h>
 
 int main()
 {
@@ -62,7 +63,7 @@ int main()
 	Actor* sun = sceneManager.GetActorByTag("sun");
 	Actor* testActor = sceneManager.GetActorByTag("Test");
 
-
+	Actor* spotLight = sceneManager.GetActorByTag("SpotLight1");
 	
 
 	
@@ -112,7 +113,7 @@ int main()
 		}
 		if (input.GetKey(GLFW_KEY_6))
 		{
-			pointLight1->transform->RotateLocalDelta(90, 0, 0);
+			spotLight->transform->RotateDelta(90, 0, 0);
 		}
 		if (input.GetKeyDown(GLFW_KEY_5))
 		{
@@ -122,16 +123,25 @@ int main()
 		{
 			std::cout << "4" << std::endl;
 		}
+
+		if (input.GetKey(GLFW_KEY_P))
+		{
+			spotLight->GetComponent<SpotLight>()->angle += 15.0f * sceneManager.deltaTime;
+		}
+		if (input.GetKey(GLFW_KEY_O))
+		{
+			spotLight->GetComponent<SpotLight>()->angle -= 15.0f * sceneManager.deltaTime;
+		}
 		
 		
-		pointLight1->transform->position.x = 0 + 3 * cos(glfwGetTime());
-		pointLight1->transform->position.z = 5 + 3 * sin(glfwGetTime());
+		pointLight1->transform->position.x = 0 + 2 * cos(glfwGetTime());
+		pointLight1->transform->position.z = 0 + 2 * sin(glfwGetTime());
 		
-		pointLight2->transform->position.x = 0 + 3 * cos(glfwGetTime() +  2);
-        pointLight2->transform->position.z = 5 + 3 * sin(glfwGetTime() + 2);
+		pointLight2->transform->position.x = 0 + 2 * cos(glfwGetTime() +  2);
+        pointLight2->transform->position.z = 0 + 2 * sin(glfwGetTime() + 2);
 		
-		pointLight3->transform->position.x = 0 + 3 * cos(glfwGetTime() + 4);
-        pointLight3->transform->position.z = 5 + 3 * sin(glfwGetTime() + 4);
+		pointLight3->transform->position.x = 0 + 2 * cos(glfwGetTime() + 4);
+        pointLight3->transform->position.z = 0 + 2 * sin(glfwGetTime() + 4);
 		
 
 		

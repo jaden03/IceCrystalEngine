@@ -56,7 +56,7 @@ void SceneInitializer::InitializeScene()
 	Renderer* icosphereRenderer = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj");
 	icosphereActor->AddComponent(icosphereRenderer);
 	icosphereActor->transform->scale = glm::vec3(0.25f, 0.25f, 0.25f);
-	icosphereActor->transform->Translate(0, -3, 5);
+	icosphereActor->transform->Translate(0, -3, 0);
 
 
 
@@ -66,10 +66,8 @@ void SceneInitializer::InitializeScene()
 	sun->AddComponent(sunRenderer);
     DirectionalLight* sunLight = sun->AddComponent<DirectionalLight>();
 	sunRenderer->castShadows = false;
-	//sunLight->castShadows = false;
 
 	// set the rotation quat to be at an angle and angled down
-	//sun->transform->Rotate(230, 0, 0);
 	sun->transform->Translate(0, 5, -12.5f);
 	sun->transform->Rotate(-30, 0, 0);
 	sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
@@ -91,47 +89,56 @@ void SceneInitializer::InitializeScene()
 
 	Actor* pointLight = new Actor("Blue Light", "PointLight1");
 	PointLight* pointLightComponent = pointLight->AddComponent<PointLight>();
-	pointLight->transform->Translate(0, -3, 6);
-	Renderer* pointLightRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterialBlue);
+	pointLight->transform->Translate(0, -3, 0);
+	Renderer* pointLightRenderer = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterialBlue);
 	pointLight->AddComponent(pointLightRenderer);
-	pointLight->transform->scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	pointLight->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
 	pointLightRenderer->castShadows = false;
 	pointLightComponent->color = glm::vec3(0.0f, 0.0f, 1.0f);
 	pointLightComponent->strength = 5;
 
 	Actor* pointLight2 = new Actor("Green Light", "PointLight2");
 	PointLight* pointLightComponent2 = pointLight2->AddComponent<PointLight>();
-	pointLight2->transform->Translate(0, -3, 5);
-	Renderer* pointLightRenderer2 = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterialGreen);
+	pointLight2->transform->Translate(0, -3, 0);
+	Renderer* pointLightRenderer2 = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterialGreen);
 	pointLight2->AddComponent(pointLightRenderer2);
-	pointLight2->transform->scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	pointLight2->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
 	pointLightRenderer2->castShadows = false;
 	pointLightComponent2->color = glm::vec3(0.0f, 1.0f, 0.0f);
 	pointLightComponent2->strength = 5;
 
 	Actor* pointLight3 = new Actor("Red Light", "PointLight3");
 	PointLight* pointLightComponent3 = pointLight3->AddComponent<PointLight>();
-	pointLight3->transform->Translate(1, -3, 5.5f);
-	Renderer* pointLightRenderer3 = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterialRed);
+	pointLight3->transform->Translate(0, -3, 0);
+	Renderer* pointLightRenderer3 = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterialRed);
 	pointLight3->AddComponent(pointLightRenderer3);
-	pointLight3->transform->scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	pointLight3->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
 	pointLightRenderer3->castShadows = false;
 	pointLightComponent3->color = glm::vec3(1.0f, 0.0f, 0.0f);
 	pointLightComponent3->strength = 5;
 
 	Actor* pointLight4 = new Actor("White Light", "PointLight4");
 	PointLight* pointLightComponent4 = pointLight4->AddComponent<PointLight>();
-	pointLight4->transform->Translate(0, -1, 5);
-	Renderer* pointLightRenderer4 = new Renderer(FileUtil::AssetDir + "Models/cube.obj", unlitMaterial);
+	pointLight4->transform->Translate(0, -1, 0);
+	Renderer* pointLightRenderer4 = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterial);
 	pointLight4->AddComponent(pointLightRenderer4);
-	pointLight4->transform->scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	pointLight4->transform->scale = glm::vec3(0.025f, 0.025f, 0.025f);
 	pointLightRenderer4->castShadows = false;
 
-	
 
-	/*Actor* pointLight3 = new Actor("Point Light", "PointLight3");
-	PointLight* pointLightComponent3 = pointLight3->AddComponent<PointLight>();
-	pointLightComponent3->color = glm::vec3(0.0f, 0.0f, 1.0f);*/
+
+
+	Actor* spotLight = new Actor("Spot Light", "SpotLight1");
+	SpotLight* spotLightComponent = spotLight->AddComponent<SpotLight>();
+	spotLight->transform->Translate(0, 0, -5);
+	spotLight->transform->Rotate(-25, 0, 0);
+	Renderer* spotLightRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj", unlitMaterial);
+	spotLight->AddComponent(spotLightRenderer);
+	spotLight->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
+	spotLightRenderer->castShadows = false;
+	spotLightComponent->strength = 5;
+
+
 
      //This takes a few seconds to load because spock49.obj is not an optimized model at all
 	/*Actor* testActor2 = new Actor("Test Actor 2", "Test");
