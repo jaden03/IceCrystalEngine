@@ -6,6 +6,7 @@
 
 #include <Ice/Core/WindowManager.h>
 #include <Ice/Core/SceneManager.h>
+#include <Ice/Core/LightingManager.h>
 
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -18,6 +19,7 @@ class DebugUtil
 
 	WindowManager& windowManager = WindowManager::GetInstance();
 	SceneManager& sceneManager = SceneManager::GetInstance();
+	LightingManager& lightingManager = LightingManager::GetInstance();
 
 	DebugUtil();
 	DebugUtil(DebugUtil const&) = delete;

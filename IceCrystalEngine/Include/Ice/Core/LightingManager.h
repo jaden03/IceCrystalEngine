@@ -12,6 +12,7 @@
 
 class DirectionalLight;
 class PointLight;
+class SpotLight;
 
 class LightingManager
 {
@@ -28,13 +29,12 @@ public:
 	glm::vec3 ambientLightingColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
 	int maxDirectionalLights = 5;
-	int maxPointLights = 128;
+	int maxPointLights = 64;
+	int maxSpotLights = 64;
 
 	std::vector<DirectionalLight*> directionalLights = std::vector<DirectionalLight*>();
 	std::vector<PointLight*> pointLights = std::vector<PointLight*>();
-
-	glm::mat3* directionalLightData = nullptr;
-	glm::mat3* pointLightData = nullptr;
+	std::vector<SpotLight*> spotLights = std::vector<SpotLight*>();
 
 	Shader* shadowShader;
 	unsigned int shadowMapFBO = 0;
@@ -44,9 +44,11 @@ public:
 
 	void AddDirectionalLight(DirectionalLight* light);
 	void AddPointLight(PointLight* light);
+	void AddSpotLight(SpotLight* light);
 
 	void RemoveDirectionalLight(DirectionalLight* light);
 	void RemovePointLight(PointLight* light);
+	void RemoveSpotLight(SpotLight* light);
 
 private:
 
