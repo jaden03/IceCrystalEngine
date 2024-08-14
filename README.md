@@ -17,4 +17,4 @@ Game engine I am writing to learn C++
 - Object picking/Color picking
 - MSAA
 
-![IceCrystal Engine](https://github.com/jaden03/IceCrystalEngine/blob/main/image.png?raw=true)
+![IceCrystal Engine](https://github.com/jaden03/IceCrystalEngine/blob/master/image.png?raw=true)
