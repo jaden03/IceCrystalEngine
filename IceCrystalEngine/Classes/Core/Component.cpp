@@ -14,3 +14,7 @@ void Component::Ready()
 void Component::Update()
 {
 }
+
+void Component::LateUpdate()
+{
+}

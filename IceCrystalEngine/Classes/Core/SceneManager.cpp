@@ -156,12 +156,24 @@ void SceneManager::Update()
 	// loop through actors
 	for (int i = 0; i < actors->size(); i++)
 	{
-		// update the transform
+		// for some reason I needed to update the child positions in Update and the rotations in LateUpdate
 		actors->at(i)->transform->Update();
+		
 		// loop through components
 		for (int j = 0; j < actors->at(i)->components->size(); j++)
 		{
 			actors->at(i)->components->at(j)->Update();
+		}
+	}
+	// loop through actors again for LateUpdate and transform update
+	for (int i = 0; i < actors->size(); i++)
+	{
+		// update the transform
+		actors->at(i)->transform->LateUpdate();
+		// loop through components
+		for (int j = 0; j < actors->at(i)->components->size(); j++)
+		{
+			actors->at(i)->components->at(j)->LateUpdate();
 		}
 	}
 

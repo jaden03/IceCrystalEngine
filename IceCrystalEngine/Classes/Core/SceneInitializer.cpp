@@ -32,6 +32,16 @@ void SceneInitializer::InitializeScene()
     Camera* cameraComponent = cameraActor->AddComponent<Camera>();
     cameraActor->AddComponent<Freecam>();
 
+	//This takes a few seconds to load because spock49.obj is a very high poly model, but mostly its just because my fbx loader is just slow
+	// Actor* testActor2 = new Actor("Test Actor 2", "Test");
+	// Material* material2 = new Material(FileUtil::AssetDir + "Materials/spock.mat");
+	// Renderer* renderer2 = new Renderer(FileUtil::AssetDir + "Models/spock49.obj", material2);
+	// testActor2->AddComponent(renderer2);
+	// testActor2->transform->Rotate(0, 90, 0);
+	// testActor2->transform->Translate(-.05f, -1.5, -.15f);
+	// testActor2->transform->SetParent(cameraActor->transform);
+	
+
 
 	// Airship
     Actor* testActor = new Actor("Airship", "Test");
@@ -61,16 +71,16 @@ void SceneInitializer::InitializeScene()
 
 
 
-	//Actor* sun = new Actor("Sun", "sun");
- //   Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
-	//sun->AddComponent(sunRenderer);
- //   DirectionalLight* sunLight = sun->AddComponent<DirectionalLight>();
-	//sunRenderer->castShadows = false;
+	Actor* sun = new Actor("Sun", "sun");
+    Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
+	sun->AddComponent(sunRenderer);
+    DirectionalLight* sunLight = sun->AddComponent<DirectionalLight>();
+	sunRenderer->castShadows = false;
 
 	//// set the rotation quat to be at an angle and angled down
-	//sun->transform->Translate(0, 5, -12.5f);
-	//sun->transform->Rotate(-30, 0, 0);
-	//sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
+	sun->transform->Translate(0, 5, -12.5f);
+	sun->transform->Rotate(-30, 0, 0);
+	sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
 
 
 	
@@ -128,24 +138,15 @@ void SceneInitializer::InitializeScene()
 
 
 
-	Actor* spotLight = new Actor("Spot Light", "SpotLight1");
-	SpotLight* spotLightComponent = spotLight->AddComponent<SpotLight>();
-	spotLight->transform->Translate(0, 0, -5);
-	spotLight->transform->Rotate(-25, 0, 0);
-	Renderer* spotLightRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj", unlitMaterial);
-	spotLight->AddComponent(spotLightRenderer);
-	spotLight->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
-	spotLightRenderer->castShadows = false;
-	spotLightComponent->strength = 5;
-
-
-
-     //This takes a few seconds to load because spock49.obj is not an optimized model at all
-	/*Actor* testActor2 = new Actor("Test Actor 2", "Test");
-	Material* material2 = new Material(FileUtil::AssetDir + "Materials/spock.mat");
-	Renderer* renderer2 = new Renderer(FileUtil::AssetDir + "Models/spock49.obj", material2);
-	testActor2->AddComponent(renderer2);
-	testActor2->transform->Rotate(0, 90, 0);*/
+	// Actor* spotLight = new Actor("Spot Light", "SpotLight1");
+	// SpotLight* spotLightComponent = spotLight->AddComponent<SpotLight>();
+	// spotLight->transform->Translate(0, 0, -5);
+	// spotLight->transform->Rotate(-25, 0, 0);
+	// Renderer* spotLightRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj", unlitMaterial);
+	// spotLight->AddComponent(spotLightRenderer);
+	// spotLight->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
+	// spotLightRenderer->castShadows = false;
+	// spotLightComponent->strength = 5;
 
 	
 }
