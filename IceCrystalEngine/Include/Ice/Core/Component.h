@@ -24,6 +24,9 @@ public:
 	// Called every frame (only fires when "attached" to an actor)
 	virtual void Update(); // this needs to be virtual to allow it to be overridden by derived classes
 
+	// Called every frame but later than Update
+	virtual void LateUpdate();
+
 };
 
 #endif

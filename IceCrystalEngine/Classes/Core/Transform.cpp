@@ -26,25 +26,35 @@ Transform::Transform(Actor* owner)
 // Update
 void Transform::Update()
 {
-	forward = Forward();
-	right = Right();
-	up = Up();
-
 	if (parent != nullptr)
 	{
-		rotation = parent->rotation * localRotation;
-		eulerAngles = glm::degrees(glm::eulerAngles(rotation));
+		position = parent->position + (localPosition.z * forward + -localPosition.x * right + localPosition.y * up);
 	}
-	localRotation = glm::quat(glm::radians(localEulerAngles));
+}
 
+void Transform::LateUpdate()
+{
 	// loop through children
 	for (int i = 0; i < children->size(); i++)
 	{
 		// update child
 		Transform* child = children->at(i);
-		child->SetPosition(position + glm::vec3(child->localPosition.z * forward) + glm::vec3(-child->localPosition.x * right) + glm::vec3(child->localPosition.y * up));
+		//child->SetPosition(position + glm::vec3(child->localPosition.z * forward) + glm::vec3(-child->localPosition.x * right) + glm::vec3(child->localPosition.y * up));
+		child->LateUpdate();
+	}
+	
+	forward = Forward();
+	right = Right();
+	up = Up();
+
+	localRotation = glm::quat(glm::radians(localEulerAngles));
+	if (parent != nullptr)
+	{
+		rotation = parent->rotation * localRotation;
+		eulerAngles = glm::degrees(glm::eulerAngles(rotation));
 	}
 }
+
 
 
 void Transform::SetParent(Transform* parent)

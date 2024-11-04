@@ -138,26 +138,45 @@ void DebugUtil::EndOfFrame()
 
 	if (showConsole)
 	{
-		ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, 32));
-		ImGui::SetNextWindowPos(ImVec2(0, ImGui::GetIO().DisplaySize.y - 32));
+		// Set the initial size for the console window, but allow the user to resize it.
+		ImGui::SetNextWindowSize(ImVec2(600, 200), ImGuiCond_FirstUseEver);
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-		ImGui::Begin("Console", &showConsole, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
-		ImGui::PopStyleVar();
+		// Begin a window with title and resizing options enabled
+		ImGui::Begin("Console", &showConsole, ImGuiWindowFlags_None);
 
-		float consoleWidthFraction = 0.9;
-		ImGui::SetWindowPos(ImVec2(0, ImGui::GetIO().DisplaySize.y - 32), ImGuiCond_Always);
-		ImGui::SetWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * consoleWidthFraction, 0), ImGuiCond_Always);
-
-		
+		// Display console content
 		std::string ssText = ss.str();
-		ImGui::Text("%s", ssText.c_str());
-		ss.str("");
-		
-		
-		
+		ImGui::TextWrapped("%s", ssText.c_str());
+
+		// Move the cursor to the bottom of the window to place the input box
+		ImGui::SetCursorPosY(ImGui::GetWindowHeight() - ImGui::GetTextLineHeightWithSpacing() - 16); // Adjust as needed for padding
+
+		// Input buffer for user input
+		static char inputBuffer[256] = "";
+		// Stretch the input box across the entire width
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+
+		// Input box for commands or messages
+		if (ImGui::InputText("##ConsoleInput", inputBuffer, IM_ARRAYSIZE(inputBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			// Handle input when the user presses Enter
+			std::string inputText(inputBuffer);
+
+			// Example: You can add inputText to your console's output or handle it as a command
+			ss << "> " << inputText << "\n";  // Echo the input back to the console
+			// Clear the input buffer
+			inputBuffer[0] = '\0';
+
+			// set focus back on input box
+			ImGui::SetKeyboardFocusHere(-1);
+		}
+
+		ImGui::PopItemWidth();
+
 		ImGui::End();
 	}
+
+
 
 
 	ImGui::PopFont();

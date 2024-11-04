@@ -36,6 +36,7 @@ public:
 
 	// Update (dont use)
 	void Update();
+	void LateUpdate();
 
 	void SetParent(Transform* parent);
 
