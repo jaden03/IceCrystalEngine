@@ -124,14 +124,14 @@ int main()
 			std::cout << "4" << std::endl;
 		}
 
-		if (input.GetKey(GLFW_KEY_P))
-		{
-			spotLight->GetComponent<SpotLight>()->angle += 15.0f * sceneManager.deltaTime;
-		}
-		if (input.GetKey(GLFW_KEY_O))
-		{
-			spotLight->GetComponent<SpotLight>()->angle -= 15.0f * sceneManager.deltaTime;
-		}
+		// if (input.GetKey(GLFW_KEY_P))
+		// {
+		// 	spotLight->GetComponent<SpotLight>()->angle += 15.0f * sceneManager.deltaTime;
+		// }
+		// if (input.GetKey(GLFW_KEY_O))
+		// {
+		// 	spotLight->GetComponent<SpotLight>()->angle -= 15.0f * sceneManager.deltaTime;
+		// }
 		
 		
 		pointLight1->transform->position.x = 0 + 2 * cos(glfwGetTime());

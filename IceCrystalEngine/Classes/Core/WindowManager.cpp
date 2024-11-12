@@ -36,6 +36,9 @@ void WindowManager::InitializeWindow()
         exit(-1);
     }
     glfwMakeContextCurrent(win);
+    
+    // Turns vSync off (set back to 1 to turn it on)
+    glfwSwapInterval(0);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
