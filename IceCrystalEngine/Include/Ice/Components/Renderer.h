@@ -22,6 +22,13 @@ class Renderer : public Component
 	SceneManager& sceneManager = SceneManager::GetInstance();
 	LightingManager& lightingManager = LightingManager::GetInstance();
 
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
+	glm::mat3 normalMatrix = glm::mat3(1.0f);
+
+	glm::vec3 lastPosition = glm::vec3(0.0f);
+	glm::vec3 lastEulerAngles = glm::vec3(0.0f);
+	glm::vec3 lastScale = glm::vec3(1.0f);
+
 public:
 	
 	bool castShadows = true;
