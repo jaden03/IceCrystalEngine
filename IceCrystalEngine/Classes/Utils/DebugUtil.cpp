@@ -88,8 +88,12 @@ DebugUtil::DebugUtil()
 	
 	style.FramePadding = ImVec2(10.0f, 6.0f);
 
+	// Setup the buffer to output to the console
 	oldbuf = std::cout.rdbuf(ss.rdbuf());
-	std::cout << "Press ""~"" or use the debug menu to toggle this console." << std::endl;
+
+	std::cout << "Setting up debug commands." << "\n";
+	SetupCommands();
+	std::cout << "Press ""~"" or use the debug menu to toggle this console." << "\n";
 }
 
 
@@ -98,6 +102,15 @@ void DebugUtil::StartOfFrame()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+
+	// Calculate FPS and store it in the fpsHistory buffer
+	float currentFPS = 1.0f / sceneManager.deltaTime;
+	fpsHistory.push_back(currentFPS);
+
+	// Remove the oldest FPS entry if the buffer exceeds the max history size
+	if (fpsHistory.size() > static_cast<size_t>(fpsHistorySize)) {
+		fpsHistory.pop_front();
+	}
 }
 
 void DebugUtil::EndOfFrame()
@@ -116,8 +129,16 @@ void DebugUtil::EndOfFrame()
 	ImGui::Checkbox("Show Console", &showConsole);
 	ImGui::Separator();
 
-	ImGui::Text("FPS: %i", (int)round(1.0f / sceneManager.deltaTime));
+	
+	// Calculate the average FPS from fpsHistory for a smoother display
+	float avgFPS = 0.0f;
+	for (float fps : fpsHistory)
+		avgFPS += fps;
+	avgFPS /= fpsHistory.size();
+	ImGui::Text("FPS: %i", static_cast<int>(round(avgFPS)));
+	
 	ImGui::Text("Actors: %i", sceneManager.GetActorCount());
+	
 
 	if (sceneManager.GetHoveredActor() != nullptr)
 		ImGui::Text("Hovered Actor: %s", sceneManager.GetHoveredActor()->name.c_str());
@@ -162,7 +183,8 @@ void DebugUtil::EndOfFrame()
 			// Handle input when the user presses Enter
 			std::string inputText(inputBuffer);
 
-			// Example: You can add inputText to your console's output or handle it as a command
+			RunDebugCommand(inputText);
+			
 			ss << "> " << inputText << "\n";  // Echo the input back to the console
 			// Clear the input buffer
 			inputBuffer[0] = '\0';
@@ -189,4 +211,41 @@ void DebugUtil::Cleanup()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+}
+
+
+void DebugUtil::RegisterCommand(const std::string& commandName, const CommandHandler& handler)
+{
+	std::cout << "Registered command: " << commandName << "\n";
+	commandMap[commandName] = handler;
+}
+
+void DebugUtil::RunDebugCommand(const std::string& command)
+{
+	std::istringstream iss(command);
+	std::vector<std::string> tokens;
+	std::string token;
+
+	// Split command by spaces
+	while (iss >> token)
+	{
+		tokens.push_back(token);
+	}
+
+	if (tokens.empty())
+	{
+		std::cout << "No command entered!\n";
+		return;
+	}
+
+	// Find and execute the command handler
+	auto it = commandMap.find(tokens[0]);
+	if (it != commandMap.end())
+	{
+		it->second(tokens); // call the handler with the tokens
+	}
+	else
+	{
+		std::cout << "Unknown command entered: " << tokens[0] << "\n";
+	}
 }

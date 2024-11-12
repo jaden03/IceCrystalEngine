@@ -177,10 +177,20 @@ void SceneManager::Update()
 		}
 	}
 
+	// Get the current polygon mode
+	GLint currentPolygonMode;
+	glGetIntegerv(GL_POLYGON_MODE, &currentPolygonMode);
+
+	// set the polygon mode to fill
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	
 	// render the skybox
 	skybox.Render();
 
 	postProcessor.Render();
+
+	// set the polygon mode back to what it was before
+	glPolygonMode(GL_FRONT_AND_BACK, currentPolygonMode);
 }
 
 // Add Actor

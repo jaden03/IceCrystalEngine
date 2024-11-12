@@ -4,6 +4,7 @@
 
 #define DEBUG_UTIL_H
 
+#include <functional>
 #include <Ice/Core/WindowManager.h>
 #include <Ice/Core/SceneManager.h>
 #include <Ice/Core/LightingManager.h>
@@ -13,9 +14,11 @@
 
 #include <iostream>
 #include <sstream>
+#include <deque>
 
 class DebugUtil
 {
+	using CommandHandler = std::function<void(const std::vector<std::string>&)>;
 
 	WindowManager& windowManager = WindowManager::GetInstance();
 	SceneManager& sceneManager = SceneManager::GetInstance();
@@ -34,6 +37,44 @@ class DebugUtil
 	ImFont* font;
 	ImFont* fontBig;
 
+
+	std::deque<float> fpsHistory;
+	const int fpsHistorySize = 60;
+
+	
+	
+	std::unordered_map<std::string, CommandHandler> commandMap;
+
+	void SetupCommands()
+	{
+		RegisterCommand("exit", ExitCommand);
+		RegisterCommand("close", CloseCommand);
+		RegisterCommand("wireframe", WireframeCommand);
+	}
+
+	static void ExitCommand(const std::vector<std::string>& args)
+	{
+		glfwSetWindowShouldClose(WindowManager::GetInstance().window, true);
+	}
+
+	static void CloseCommand(const std::vector<std::string>& args)
+	{
+		GetInstance().showConsole = false;
+	}
+	
+	static void WireframeCommand(const std::vector<std::string>& args)
+	{
+		// if (args.size() != 2 || args[1] != "on" && args[1] != "off")
+		// {
+		// 	std::cout << "Error: wireframe on/off" << "\n";
+		// 	return;
+		// }
+
+		// GetInstance().wireframeMode = args[1] == "on";
+
+		GetInstance().wireframeMode = !GetInstance().wireframeMode;
+		glPolygonMode(GL_FRONT_AND_BACK, GetInstance().wireframeMode ? GL_LINE : GL_FILL);
+	}
 	
 public:
 	
@@ -47,9 +88,12 @@ public:
 	void EndOfFrame();
 
 	void Cleanup();
-
-
+	
+	void RegisterCommand(const std::string& commandName, const CommandHandler& handler);
+	void RunDebugCommand(const std::string& command);
+	
 	bool showConsole = true;
+	bool wireframeMode = false;
 
 };
 
