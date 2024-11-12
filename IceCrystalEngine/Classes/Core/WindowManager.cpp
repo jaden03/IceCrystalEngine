@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "Ice/Utils/stb_image.h"
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -51,6 +53,12 @@ void WindowManager::InitializeWindow()
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+
+    // Set the window icon to Assets/Logo.png
+    GLFWimage images[1];
+    images[0].pixels = stbi_load("Assets/Logo.png", &images[0].width, &images[0].height, 0, 4); // load rgba channels
+    glfwSetWindowIcon(window, 1, images);
+    stbi_image_free(images[0].pixels);
 }
 
 

@@ -935,6 +935,9 @@
     <ClInclude Include="Include\Ice\Utils\DebugUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Libraries\GLFW\glfw3.lib" />
@@ -1390,8 +1393,16 @@
     <Image Include="Assets\Textures\skybox\top.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="C:\Users\jaden\Pictures\IceCrystal Engine\Logo.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\Fonts\Varela.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="IceCrystalEngine.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
