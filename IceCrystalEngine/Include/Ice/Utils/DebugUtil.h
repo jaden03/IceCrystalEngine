@@ -28,8 +28,7 @@ class DebugUtil
 	DebugUtil(DebugUtil const&) = delete;
 	void operator=(DebugUtil const&) = delete;
 
-	
-	std::stringstream ss;
+
 	std::streambuf* oldbuf;
 
 	std::string currentConsoleText;
@@ -77,6 +76,8 @@ class DebugUtil
 	}
 	
 public:
+
+	std::stringstream ss;
 	
 	static DebugUtil& GetInstance()
 	{

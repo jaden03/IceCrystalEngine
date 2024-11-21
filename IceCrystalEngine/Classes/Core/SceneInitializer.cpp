@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+#include "Ice/Core/LuaManager.h"
+
 SceneInitializer::SceneInitializer()
 {
 	InitializeScene();
@@ -26,8 +28,6 @@ void SceneInitializer::InitializeScene()
 	Material* unlitMaterialGreen = new Material(FileUtil::AssetDir + "Materials/unlit.mat");
 	unlitMaterialGreen->color = glm::vec3(0.0f, 10.0f, 0.0f);
 	
-
-
     Actor* cameraActor = new Actor("Main Camera");
     Camera* cameraComponent = cameraActor->AddComponent<Camera>();
     cameraActor->AddComponent<Freecam>();
