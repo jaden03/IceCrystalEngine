@@ -132,8 +132,9 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);lua54.lib</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <AdditionalLibraryDirectories>$(ProjectDir)/Libraries/lua/</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -161,6 +162,10 @@
     <Content Include="Assets\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Libraries\lua\lua54.lib" />
+    <Content Include="lua54.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Classes\Components\Camera.cpp" />
@@ -170,6 +175,7 @@
     <ClCompile Include="Classes\Core\Component.cpp" />
     <ClCompile Include="Classes\Core\Input.cpp" />
     <ClCompile Include="Classes\Core\LightingManager.cpp" />
+    <ClCompile Include="Classes\Core\LuaManager.cpp" />
     <ClCompile Include="Classes\Core\SceneInitializer.cpp" />
     <ClCompile Include="Classes\Core\SceneManager.cpp" />
     <ClCompile Include="Classes\Core\Skybox.cpp" />
@@ -442,6 +448,7 @@
     <ClInclude Include="Include\Ice\Core\Component.h" />
     <ClInclude Include="Include\Ice\Core\Input.h" />
     <ClInclude Include="Include\Ice\Core\LightingManager.h" />
+    <ClInclude Include="Include\Ice\Core\LuaManager.h" />
     <ClInclude Include="Include\Ice\Core\SceneInitializer.h" />
     <ClInclude Include="Include\Ice\Core\SceneManager.h" />
     <ClInclude Include="Include\Ice\Core\Skybox.h" />
@@ -471,6 +478,11 @@
     <ClInclude Include="Include\imgui\imstb_truetype.h" />
     <ClInclude Include="Include\JSON\json.h" />
     <ClInclude Include="Include\KHR\khrplatform.h" />
+    <ClInclude Include="Include\lua\lauxlib.h" />
+    <ClInclude Include="Include\lua\lua.h" />
+    <ClInclude Include="Include\lua\lua.hpp" />
+    <ClInclude Include="Include\lua\luaconf.h" />
+    <ClInclude Include="Include\lua\lualib.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Libraries\GLFW\glfw3.lib" />

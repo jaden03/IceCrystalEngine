@@ -17,6 +17,7 @@
 #include <Ice/Core/SceneManager.h>
 #include <Ice/Core/SceneInitializer.h>
 #include <Ice/Core/LightingManager.h>
+#include <Ice/Core/LuaManager.h>
 #include <Ice/Core/Input.h>
 #include <Ice/Utils/FileUtil.h>
 #include <Ice/Rendering/PostProcessor.h>
@@ -48,6 +49,9 @@ int main()
 	
     // Get a reference to Input
 	Input& input = Input::GetInstance();
+
+	// Setup the Lua
+	LuaManager& luaManager = LuaManager::GetInstance();
 
 	
 #ifdef _DEBUG
@@ -123,6 +127,11 @@ int main()
 		{
 			std::cout << "4" << std::endl;
 		}
+
+    	if (input.GetKeyDown(GLFW_KEY_E))
+    	{
+    		LuaManager::RunString("print('This is printing from Lua')");
+    	}
 
 		// if (input.GetKey(GLFW_KEY_P))
 		// {
