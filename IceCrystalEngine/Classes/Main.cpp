@@ -134,7 +134,7 @@ int main()
 				local sm = SceneManager.GetInstance()
 				local airshipActor = sm:GetActorByTag("Test")
 				while true do
-					airshipActor.transform:Translate(airshipActor.transform.forward * .2)
+					airshipActor.transform:TranslateDelta(airshipActor.transform.forward * 5)
 					wait(10)
 				end
 			)");

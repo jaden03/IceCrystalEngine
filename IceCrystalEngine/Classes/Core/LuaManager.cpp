@@ -130,7 +130,7 @@ void LuaManager::RegisterBindings() {
             static_cast<void (Transform::*)(glm::vec3)>(&Transform::LookAt)
         ),
 
-        // Transform methods
+        // Additive methods
         "Translate", sol::overload(
             static_cast<void (Transform::*)(glm::vec3)>(&Transform::Translate),
             static_cast<void (Transform::*)(float, float, float)>(&Transform::Translate)
@@ -139,9 +139,71 @@ void LuaManager::RegisterBindings() {
             static_cast<void (Transform::*)(glm::vec3)>(&Transform::Rotate),
             static_cast<void (Transform::*)(float, float, float)>(&Transform::Rotate)
         ),
+        "Scale", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::Scale),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::Scale)
+        ),
+        "TranslateLocal", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::TranslateLocal),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::TranslateLocal)
+        ),
+        "RotateLocal", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::RotateLocal),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::RotateLocal)
+        ),
+        "ScaleLocal", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::ScaleLocal),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::ScaleLocal)
+        ),
+        // Additive delta methods
+        "TranslateDelta", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::TranslateDelta),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::TranslateDelta)
+        ),
+        "RotateDelta", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::RotateDelta),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::RotateDelta)
+        ),
+        "ScaleDelta", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::ScaleDelta),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::ScaleDelta)
+        ),
+        "TranslateLocalDelta", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::TranslateLocalDelta),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::TranslateLocalDelta)
+        ),
+        "RotateLocalDelta", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::RotateLocalDelta),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::RotateLocalDelta)
+        ),
+        "ScaleLocalDelta", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::ScaleLocalDelta),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::ScaleLocalDelta)
+        ),
+        // Delarative methods
         "SetPosition", sol::overload(
             static_cast<void (Transform::*)(glm::vec3)>(&Transform::SetPosition),
             static_cast<void (Transform::*)(float, float, float)>(&Transform::SetPosition)
+        ),
+        "SetRotation", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::SetRotation),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::SetRotation)
+        ),
+        "SetScale", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::SetScale),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::SetScale)
+        ),
+        "SetLocalPosition", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::SetLocalPosition),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::SetLocalPosition)
+        ),
+        "SetLocalRotation", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::SetLocalRotation),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::SetLocalRotation)
+        ),
+        "SetLocalScale", sol::overload(
+            static_cast<void (Transform::*)(glm::vec3)>(&Transform::SetLocalScale),
+            static_cast<void (Transform::*)(float, float, float)>(&Transform::SetLocalScale)
         )
     );
     
