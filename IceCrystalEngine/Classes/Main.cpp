@@ -130,7 +130,14 @@ int main()
 
     	if (input.GetKeyDown(GLFW_KEY_E))
     	{
-    		LuaManager::RunString("print('This is printing from Lua')");
+    		LuaManager::RunString(R"(
+				local sm = SceneManager.GetInstance()
+				local airshipActor = sm:GetActorByTag("Test")
+				while true do
+					airshipActor.transform:Translate(airshipActor.transform.forward * .2)
+					wait(10)
+				end
+			)");
     	}
 
 		// if (input.GetKey(GLFW_KEY_P))
