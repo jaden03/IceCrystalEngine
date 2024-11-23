@@ -4,6 +4,8 @@
 
 #include <Ice/Core/Actor.h>
 
+#include "imgui/imgui_internal.h"
+
 DebugUtil::DebugUtil()
 {
 	ImGui::CreateContext();
@@ -167,10 +169,15 @@ void DebugUtil::EndOfFrame()
 
 		// Display console content
 		std::string ssText = ss.str();
+
+		// Start a child region to allow the console content to scroll
+		ImGui::BeginChild("ConsoleOutput", ImVec2(0, -ImGui::GetTextLineHeightWithSpacing() - 16), true);
 		ImGui::TextWrapped("%s", ssText.c_str());
 
-		// Move the cursor to the bottom of the window to place the input box
-		ImGui::SetCursorPosY(ImGui::GetWindowHeight() - ImGui::GetTextLineHeightWithSpacing() - 16); // Adjust as needed for padding
+		// Auto-scroll to the bottom
+		if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+			ImGui::SetScrollHereY(1.0f);
+		ImGui::EndChild();
 
 		// Input buffer for user input
 		static char inputBuffer[256] = "";
@@ -184,18 +191,24 @@ void DebugUtil::EndOfFrame()
 			std::string inputText(inputBuffer);
 
 			RunDebugCommand(inputText);
-			
+
 			ss << "> " << inputText << "\n";  // Echo the input back to the console
 			// Clear the input buffer
 			inputBuffer[0] = '\0';
 
-			// set focus back on input box
+			// Set focus back on input box
 			ImGui::SetKeyboardFocusHere(-1);
 		}
 
 		ImGui::PopItemWidth();
 
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+		{
+			ImGui::ClearActiveID();
+		}
+
 		ImGui::End();
+
 	}
 
 

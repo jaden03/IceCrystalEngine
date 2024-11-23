@@ -47,11 +47,9 @@ public:
 	// Returns the first component of the given type
 	template <typename T>
 	T* GetComponentOfType();
-	
 
 private:
-
-
+	
 	std::vector<Actor*>* actors;
 	std::vector<glm::vec3> usedActorColors;
 	

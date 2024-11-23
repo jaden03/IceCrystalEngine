@@ -3,46 +3,53 @@
 #ifndef LUA_MANAGER_H
 #define LUA_MANAGER_H
 
-
+#include <sol/sol.hpp>
 #include <lua/lua.hpp>
+#include <thread>
 
 class LuaManager
 {
 public:
+	sol::state lua;
 
-	lua_State* L;
 	static LuaManager& GetInstance()
 	{
 		static LuaManager instance; // Static local variable ensures a single instance
 		return instance;
 	}
+
+	// Run a Lua file on a separate thread
 	static void RunFile(const char* filePath)
 	{
-		if (luaL_dofile(LuaManager::GetInstance().L, filePath) != LUA_OK) {
-			const char* error = lua_tostring(LuaManager::GetInstance().L, -1);
-			// Log or handle the error
-			fprintf(stderr, "Error running file: %s\n", error);
-			lua_pop(LuaManager::GetInstance().L, 1); // Remove error message from stack
-		}
+		std::thread([filePath]() {
+			try {
+				LuaManager::GetInstance().lua.script_file(filePath);
+			} catch (const sol::error& e) {
+				fprintf(stderr, "Error running file: %s\n", e.what());
+			}
+		}).detach(); // Detach the thread to run independently
 	}
+
+	// Run a Lua string on a separate thread
 	static void RunString(const char* string)
 	{
-		if (luaL_dostring(LuaManager::GetInstance().L, string) != LUA_OK) {
-			const char* error = lua_tostring(LuaManager::GetInstance().L, -1);
-			// Log or handle the error
-			fprintf(stderr, "Error running string: %s\n", error);
-			lua_pop(LuaManager::GetInstance().L, 1); // Remove error message from stack
-		} 
+		std::thread([string]() {
+			try {
+				LuaManager::GetInstance().lua.script(string);
+			} catch (const sol::error& e) {
+				fprintf(stderr, "Error running string: %s\n", e.what());
+			}
+		}).detach(); // Detach the thread to run independently
 	}
-	
 
 private:
+	void RegisterBindings(); // Bind C++ classes and functions to Lua
 
-	void InitializeLuaState();
+	static int LuaWait(lua_State* L);
 	static int LuaPrint(lua_State* L);
-
-	LuaManager(); // Private constructor to ensure a single instance
-	~LuaManager();
+	
+	LuaManager();
+	// ~LuaManager();
 
 	LuaManager(LuaManager const&) = delete; // Delete copy constructor
 	void operator=(LuaManager const&) = delete; // Delete assignment operator
