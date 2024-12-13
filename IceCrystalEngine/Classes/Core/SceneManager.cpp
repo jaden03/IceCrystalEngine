@@ -5,6 +5,7 @@
 #include <Ice/Rendering/PostProcessor.h>
 #include <Ice/Core/LightingManager.h>
 #include <Ice/Core/WindowManager.h>
+#include <Ice/Core/UIManager.h>
 #include <Ice/Utils/FileUtil.h>
 
 #include <Ice/Components/Camera.h>
@@ -16,6 +17,7 @@
 PostProcessor& postProcessor = PostProcessor::GetInstance();
 LightingManager& lightingManager = LightingManager::GetInstance();
 WindowManager& windowManager = WindowManager::GetInstance();
+UIManager& uiManager = UIManager::GetInstance();
 Skybox& skybox = Skybox::GetInstance();
 
 // Constructor
@@ -187,7 +189,13 @@ void SceneManager::Update()
 	// render the skybox
 	skybox.Render();
 
+	// render the scene onto the quad
 	postProcessor.Render();
+
+	// render UI
+	glm::vec2 uiTestPos = glm::vec2(0.0f, 0.0f);
+	glm::vec2 uiTestSize = glm::vec2(100.0f, 100.0f);
+	uiManager.RenderTest(uiTestPos, uiTestSize);
 
 	// set the polygon mode back to what it was before
 	glPolygonMode(GL_FRONT_AND_BACK, currentPolygonMode);
