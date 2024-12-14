@@ -128,17 +128,17 @@ int main()
 			std::cout << "4" << std::endl;
 		}
 
-    	if (input.GetKeyDown(GLFW_KEY_E))
-    	{
-    		LuaManager::RunString(R"(
-				local sm = SceneManager.GetInstance()
-				local airshipActor = sm:GetActorByTag("Test")
-				while true do
-					airshipActor.transform:TranslateDelta(airshipActor.transform.forward * 5)
-					wait(10)
-				end
-			)");
-    	}
+   //  	if (input.GetKeyDown(GLFW_KEY_E))
+   //  	{
+   //  		LuaManager::RunString(R"(
+			// 	local sm = SceneManager.GetInstance()
+			// 	local airshipActor = sm:GetActorByTag("Test")
+			// 	while true do
+			// 		airshipActor.transform:TranslateDelta(airshipActor.transform.forward * 15)
+			// 		wait(10)
+			// 	end
+			// )");
+   //  	}
 
 		// if (input.GetKey(GLFW_KEY_P))
 		// {

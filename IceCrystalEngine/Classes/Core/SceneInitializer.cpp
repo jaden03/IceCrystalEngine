@@ -40,9 +40,9 @@ void SceneInitializer::InitializeScene()
 	// testActor2->transform->Rotate(0, 90, 0);
 	// testActor2->transform->Translate(-.05f, -1.5, -.15f);
 	// testActor2->transform->SetParent(cameraActor->transform);
+
 	
-
-
+	
 	// Airship
     Actor* testActor = new Actor("Airship", "Test");
     Material* material = new Material(FileUtil::AssetDir + "Materials/object.mat");

@@ -180,6 +180,7 @@
     <ClCompile Include="Classes\Core\SceneManager.cpp" />
     <ClCompile Include="Classes\Core\Skybox.cpp" />
     <ClCompile Include="Classes\Core\Transform.cpp" />
+    <ClCompile Include="Classes\Core\UIManager.cpp" />
     <ClCompile Include="Classes\Core\WindowManager.cpp" />
     <ClCompile Include="Classes\glad.c" />
     <ClCompile Include="Classes\imgui\imgui.cpp" />
@@ -453,6 +454,7 @@
     <ClInclude Include="Include\Ice\Core\SceneManager.h" />
     <ClInclude Include="Include\Ice\Core\Skybox.h" />
     <ClInclude Include="Include\Ice\Core\Transform.h" />
+    <ClInclude Include="Include\Ice\Core\UIManager.h" />
     <ClInclude Include="Include\Ice\Core\WindowManager.h" />
     <ClInclude Include="Include\Ice\Rendering\Material.h" />
     <ClInclude Include="Include\Ice\Rendering\MeshHolder.h" />
