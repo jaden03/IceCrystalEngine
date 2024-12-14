@@ -4,6 +4,7 @@
 
 #include <Ice/Core/Actor.h>
 
+#include "glm/gtc/type_ptr.inl"
 #include "imgui/imgui_internal.h"
 
 DebugUtil::DebugUtil()
@@ -154,6 +155,10 @@ void DebugUtil::EndOfFrame()
 	ImGui::Text("Point Lights: %i", lightingManager.pointLights.size());
 	ImGui::Text("Spot Lights: %i", lightingManager.spotLights.size());
 
+
+	// Testing Stuff
+	ImGui::DragFloat2("UI Position", glm::value_ptr(sceneManager.uiPosition), .5f);
+	ImGui::DragFloat2("UI Size", glm::value_ptr(sceneManager.uiSize), .5f);
 	
 	
 	ImGui::End();
@@ -210,9 +215,7 @@ void DebugUtil::EndOfFrame()
 		ImGui::End();
 
 	}
-
-
-
+	
 
 	ImGui::PopFont();
 	ImGui::Render();

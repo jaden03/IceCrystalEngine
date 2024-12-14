@@ -107,7 +107,7 @@ void SceneManager::Update()
 		}
 	}
 
-	// loop through spot lights
+	// loop through spotlights
 	for (int i = 0; i < lightingManager.spotLights.size(); i++)
 	{
 		SpotLight* light = lightingManager.spotLights[i];
@@ -193,12 +193,15 @@ void SceneManager::Update()
 	postProcessor.Render();
 
 	// render UI
-	glm::vec2 uiTestPos = glm::vec2(0.0f, 0.0f);
-	glm::vec2 uiTestSize = glm::vec2(100.0f, 100.0f);
-	uiManager.RenderTest(uiTestPos, uiTestSize);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	uiManager.RenderTest(uiPosition, uiSize);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 
 	// set the polygon mode back to what it was before
 	glPolygonMode(GL_FRONT_AND_BACK, currentPolygonMode);
+	
 }
 
 // Add Actor

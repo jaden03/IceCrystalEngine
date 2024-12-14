@@ -22,6 +22,8 @@ public:
 
 private:
 
+    unsigned int uiManagerVAO, uiManagerVBO;
+    
     WindowManager& windowManager = WindowManager::GetInstance();
 
     Material* material = nullptr;
