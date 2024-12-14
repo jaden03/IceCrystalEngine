@@ -16,6 +16,8 @@
 #include <sstream>
 #include <deque>
 
+#include "glm/gtx/compatibility.hpp"
+
 class DebugUtil
 {
 	using CommandHandler = std::function<void(const std::vector<std::string>&)>;

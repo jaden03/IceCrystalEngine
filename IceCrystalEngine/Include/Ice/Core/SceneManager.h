@@ -48,6 +48,10 @@ public:
 	template <typename T>
 	T* GetComponentOfType();
 
+
+	glm::vec2 uiPosition = glm::vec2(0, 0);
+	glm::vec2 uiSize = glm::vec2(50, 50);
+
 private:
 	
 	std::vector<Actor*>* actors;

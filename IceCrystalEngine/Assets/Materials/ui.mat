@@ -1,0 +1,6 @@
+﻿{
+  "Name": "Default UI Material",
+  "Texture": "{ASSET_DIR}Textures/balls.png",
+  "Shader": "{ASSET_DIR}Shaders/ui",
+  "Color": [ 1.0, 1.0, 1.0 ]
+}
