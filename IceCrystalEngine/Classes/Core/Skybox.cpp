@@ -26,6 +26,9 @@ void Skybox::InitializeSkybox()
 		"back.png"
 	};
 
+	// Flip the image, for some reason the images in the cubemap randomly went upside down
+	stbi_set_flip_vertically_on_load(false);
+	
 	// Load the image
 	int width, height, nrChannels;
 	for (unsigned int i = 0; i < faces.size(); i++)
@@ -49,9 +52,6 @@ void Skybox::InitializeSkybox()
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-
-
 
 	// Load the model
 	float skyboxVertices[] = {
