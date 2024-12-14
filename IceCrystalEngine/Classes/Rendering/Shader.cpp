@@ -3,6 +3,7 @@
 #include <Ice/Utils/FileUtil.h>
 #include <iostream>
 #include <fstream>
+#include <GLFW/glfw3.h>
 
 std::int32_t Handle;
 
@@ -22,6 +23,9 @@ Shader::Shader(std::string vertexShaderPath, std::string fragmentShaderPath)
 void Shader::Use()
 {
 	glUseProgram(Handle);
+
+    float time = glfwGetTime();
+    setFloat("time", time);
 }
 
 Shader::~Shader()
