@@ -27,6 +27,9 @@ public:
 	// Called every frame but later than Update
 	virtual void LateUpdate();
 
+	// Called every frame but after rendering everything off, has no culling or depth test
+	virtual void OverlayUpdate();
+
 };
 
 #endif
