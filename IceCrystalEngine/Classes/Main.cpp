@@ -29,6 +29,8 @@
 #include <Ice/Components/Freecam.h>
 #include <Ice/Components/Light.h>
 
+#include "Ice/Core/PhysicsManager.h"
+
 int main()
 {
     // Initialize FileUtils
@@ -52,6 +54,9 @@ int main()
 
 	// Setup the Lua
 	LuaManager& luaManager = LuaManager::GetInstance();
+
+	// Physics System (Jolt)
+	PhysicsManager& physicsManager = PhysicsManager::GetInstance();
 
 	
 #ifdef _DEBUG

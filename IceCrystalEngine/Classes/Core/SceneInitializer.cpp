@@ -49,17 +49,23 @@ void SceneInitializer::InitializeScene()
 	sun->transform->RotateLocal(-30, 0, 0);
 	sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
 
-	Actor* testImage = new Actor("Test Image", "testImage");
-	RawImage* rawImage = new RawImage(FileUtil::AssetDir + "Materials/ui.mat");
-	testImage->AddComponent(rawImage);
-	testImage->transform->SetScale(glm::vec3(224, 126, 100));
-	testImage->transform->Translate(600, 500, 0);
-
-	Actor* testImage2 = new Actor();
-	RawImage* rawImage2 = new RawImage(FileUtil::AssetDir + "Materials/ui.mat");
-	testImage2->AddComponent(rawImage2);
-	testImage2->transform->SetScale(glm::vec3(224, 126, 100));
-	testImage2->transform->Translate(1000, 500, 0);
+	// Actor* testImage = new Actor("Test Image", "testImage");
+	// RawImage* rawImage = new RawImage(FileUtil::AssetDir + "Textures/balls.png");
+	// testImage->AddComponent(rawImage);
+	// testImage->transform->SetScale(glm::vec3(224, 126, 100));
+	// testImage->transform->Translate(600, 500, 0);
+	//
+	// Actor* testImage2 = new Actor();
+	// RawImage* rawImage2 = new RawImage(FileUtil::AssetDir + "Textures/wla.png");
+	// testImage2->AddComponent(rawImage2);
+	// testImage2->transform->SetScale(glm::vec3(224, 126, 100));
+	// testImage2->transform->Translate(1000, 500, 0);
+	//
+	// Actor* testImage3 = new Actor();
+	// RawImage* rawImage3 = new RawImage(FileUtil::AssetDir + "Textures/crate.png");
+	// testImage3->AddComponent(rawImage3);
+	// testImage3->transform->SetScale(glm::vec3(224, 224, 100));
+	// testImage3->transform->Translate(1500, 750, 0);
 	
 
 	

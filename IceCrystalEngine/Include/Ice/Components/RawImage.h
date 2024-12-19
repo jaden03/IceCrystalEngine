@@ -15,10 +15,12 @@
 class RawImage : public Component
 {
 public:
-    RawImage(std::string path);
+    RawImage(std::string texturePath);
+    RawImage(std::string texturePath, std::string shaderPath);
     ~RawImage();
 
-    Material* material;
+    Shader* shader;
+    Texture* texture;
 
     void OverlayUpdate() override;
     

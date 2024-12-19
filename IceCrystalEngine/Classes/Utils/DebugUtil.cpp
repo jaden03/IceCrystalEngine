@@ -157,8 +157,7 @@ void DebugUtil::EndOfFrame()
 
 
 	// Testing Stuff
-	ImGui::DragFloat2("UI Position", glm::value_ptr(sceneManager.uiPosition), .5f);
-	ImGui::DragFloat2("UI Size", glm::value_ptr(sceneManager.uiSize), .5f);
+
 	
 	
 	ImGui::End();

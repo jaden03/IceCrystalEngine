@@ -6,6 +6,7 @@
 #include <Ice/Core/LightingManager.h>
 #include <Ice/Core/WindowManager.h>
 #include <Ice/Core/UIManager.h>
+#include <Ice/Core/PhysicsManager.h>
 #include <Ice/Utils/FileUtil.h>
 
 #include <Ice/Components/Camera.h>
@@ -19,6 +20,7 @@ LightingManager& lightingManager = LightingManager::GetInstance();
 WindowManager& windowManager = WindowManager::GetInstance();
 UIManager& uiManager = UIManager::GetInstance();
 Skybox& skybox = Skybox::GetInstance();
+PhysicsManager& physicsManager = PhysicsManager::GetInstance();
 
 // Constructor
 SceneManager::SceneManager()
@@ -58,6 +60,8 @@ void SceneManager::Update()
 		}
 	}
 
+	// update physics
+	physicsManager.Update(deltaTime);
 	
 	// shadows
 	
