@@ -195,7 +195,17 @@ void SceneManager::Update()
 	// render UI
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
-	uiManager.RenderTest(uiPosition, uiSize);
+
+	// loop through actors again for OverlayUpdate
+	for (int i = 0; i < actors->size(); i++)
+	{
+		// loop through components
+		for (int j = 0; j < actors->at(i)->components->size(); j++)
+		{
+			actors->at(i)->components->at(j)->OverlayUpdate();
+		}
+	}
+	
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 

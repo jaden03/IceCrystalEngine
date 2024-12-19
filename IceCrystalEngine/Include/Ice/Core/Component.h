@@ -27,6 +27,9 @@ public:
 	// Called every frame but later than Update
 	virtual void LateUpdate();
 
+	// Called at the end of every frame with no depth testing or culling
+	virtual void OverlayUpdate();
+
 };
 
 #endif

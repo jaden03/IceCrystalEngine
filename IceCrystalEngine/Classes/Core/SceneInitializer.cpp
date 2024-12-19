@@ -50,16 +50,16 @@ void SceneInitializer::InitializeScene()
 	sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
 
 	Actor* testImage = new Actor("Test Image", "testImage");
-	RawImage* rawImage = new RawImage(FileUtil::AssetDir + "Textures/balls.png");
+	RawImage* rawImage = new RawImage(FileUtil::AssetDir + "Textures/ObjectGrid.png");
 	testImage->AddComponent(rawImage);
-	testImage->transform->SetScale(glm::vec3(224, 126, 100));
-	testImage->transform->Translate(600, 500, 0);
+	testImage->transform->SetScale(glm::vec3(150, 150, 100));
+	testImage->transform->Translate(400, 50, 0);
 
 	Actor* testImage2 = new Actor();
-	RawImage* rawImage2 = new RawImage(FileUtil::AssetDir + "Textures/wla.png");
+	RawImage* rawImage2 = new RawImage(FileUtil::AssetDir + "Textures/crate.png");
 	testImage2->AddComponent(rawImage2);
-	testImage2->transform->SetScale(glm::vec3(224, 126, 100));
-	testImage2->transform->Translate(1000, 500, 0);
+	testImage2->transform->SetScale(glm::vec3(100, 100, 100));
+	testImage2->transform->Translate(600, 50, 0);
 	
 
 	
