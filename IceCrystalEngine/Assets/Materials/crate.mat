@@ -1,0 +1,6 @@
+{
+  "Name": "Crate Material",
+  "Texture": "{ASSET_DIR}Textures/crate.png",
+  "Shader": "{ASSET_DIR}Shaders/default",
+	"Color": [ 0.5, 0.5, 0.5 ]
+}
