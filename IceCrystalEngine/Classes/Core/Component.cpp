@@ -18,7 +18,3 @@ void Component::Update()
 void Component::LateUpdate()
 {
 }
-
-void Component::OverlayUpdate()
-{
-}

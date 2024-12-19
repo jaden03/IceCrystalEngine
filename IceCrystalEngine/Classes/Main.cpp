@@ -68,9 +68,8 @@ int main()
 	Actor* testActor = sceneManager.GetActorByTag("Test");
 
 	Actor* spotLight = sceneManager.GetActorByTag("SpotLight1");
-
-	Actor* testImage = sceneManager.GetActorByTag("testImage");
 	
+
 	
     // program loop
     float lastFrameTime = 0.0f;
@@ -91,32 +90,43 @@ int main()
 		// update the scene (this will update all components)
         sceneManager.Update();
 
+        if (input.GetKey(GLFW_KEY_UP))
+			testActor->transform->TranslateDelta(testActor->transform->forward * 5.0f);
+		if (input.GetKey(GLFW_KEY_DOWN))
+			testActor->transform->TranslateDelta(-testActor->transform->forward * 5.0f);
+		if (input.GetKey(GLFW_KEY_LEFT))
+			testActor->transform->RotateDelta(0, -90, 0);
+		if (input.GetKey(GLFW_KEY_RIGHT))
+			testActor->transform->RotateDelta(0, 90, 0);
+
 		if (input.GetKey(GLFW_KEY_0))
 		{
-			sun->transform->RotateLocalDelta(90, 0, 0);
+			sun->transform->RotateDelta(90, 0, 0);
 		}
 		if (input.GetKey(GLFW_KEY_9))
 		{
-			sun->transform->RotateLocalDelta(-90, 0, 0);
+			sun->transform->RotateDelta(-90, 0, 0);
 		}
-
-    	if (input.GetKey(GLFW_KEY_UP))
-    	{
-    		testImage->transform->TranslateDelta(glm::vec3(0, -100, 0));
-    	}
-    	if (input.GetKey(GLFW_KEY_DOWN))
-    	{
-    		testImage->transform->TranslateDelta(glm::vec3(0, 100, 0));
-    	}
-    	if (input.GetKey(GLFW_KEY_LEFT))
-    	{
-    		testImage->transform->TranslateDelta(glm::vec3(-100, 0, 0));
-    	}
-    	if (input.GetKey(GLFW_KEY_RIGHT))
-    	{
-    		testImage->transform->TranslateDelta(glm::vec3(100, 0, 0));
-    	}
-
+		if (input.GetKey(GLFW_KEY_8))
+		{
+			testActor->transform->RotateDelta(-90, 0, 0);
+		}
+		if (input.GetKey(GLFW_KEY_7))
+		{
+			testActor->transform->RotateDelta(90, 0, 0);
+		}
+		if (input.GetKey(GLFW_KEY_6))
+		{
+			spotLight->transform->RotateDelta(90, 0, 0);
+		}
+		if (input.GetKeyDown(GLFW_KEY_5))
+		{
+			std::cout << "Test actor uniqueColor: " << testActor->uniqueColor.x << ", " << testActor->uniqueColor.y << ", " << testActor->uniqueColor.z << std::endl;
+		}
+		if (input.GetKeyDown(GLFW_KEY_4))
+		{
+			std::cout << "4" << std::endl;
+		}
 
    //  	if (input.GetKeyDown(GLFW_KEY_E))
    //  	{
@@ -129,7 +139,15 @@ int main()
 			// 	end
 			// )");
    //  	}
-    	
+
+		// if (input.GetKey(GLFW_KEY_P))
+		// {
+		// 	spotLight->GetComponent<SpotLight>()->angle += 15.0f * sceneManager.deltaTime;
+		// }
+		// if (input.GetKey(GLFW_KEY_O))
+		// {
+		// 	spotLight->GetComponent<SpotLight>()->angle -= 15.0f * sceneManager.deltaTime;
+		// }
 		
 		
 		pointLight1->transform->position.x = 0 + 2 * cos(glfwGetTime());
