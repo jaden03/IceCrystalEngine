@@ -160,6 +160,7 @@ void SceneManager::Update()
 	{
 		// for some reason I needed to update the child positions in Update and the rotations in LateUpdate
 		actors->at(i)->transform->Update();
+		
 		// loop through components
 		for (int j = 0; j < actors->at(i)->components->size(); j++)
 		{
@@ -194,21 +195,13 @@ void SceneManager::Update()
 	// render UI
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
-	// uiManager.RenderTest(uiPosition, uiSize);
-	// loop through actors again for OverlayUpdate (this happens at the end of the frame with no culling, this is for UI)
-	for (int i = 0; i < actors->size(); i++)
-	{
-		// loop through components
-		for (int j = 0; j < actors->at(i)->components->size(); j++)
-		{
-			actors->at(i)->components->at(j)->OverlayUpdate();
-		}
-	}
+	uiManager.RenderTest(uiPosition, uiSize);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
 	// set the polygon mode back to what it was before
 	glPolygonMode(GL_FRONT_AND_BACK, currentPolygonMode);
+	
 }
 
 // Add Actor
