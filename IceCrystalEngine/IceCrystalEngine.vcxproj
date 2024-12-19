@@ -171,7 +171,6 @@
     <ClCompile Include="Classes\Components\Camera.cpp" />
     <ClCompile Include="Classes\Components\Light.cpp" />
     <ClCompile Include="Classes\Components\Freecam.cpp" />
-    <ClCompile Include="Classes\Components\RawImage.cpp" />
     <ClCompile Include="Classes\Core\Actor.cpp" />
     <ClCompile Include="Classes\Core\Component.cpp" />
     <ClCompile Include="Classes\Core\Input.cpp" />
@@ -446,7 +445,6 @@
     <ClInclude Include="Include\Ice\Components\Camera.h" />
     <ClInclude Include="Include\Ice\Components\Light.h" />
     <ClInclude Include="Include\Ice\Components\Freecam.h" />
-    <ClInclude Include="Include\Ice\Components\RawImage.h" />
     <ClInclude Include="Include\Ice\Core\Actor.h" />
     <ClInclude Include="Include\Ice\Core\Component.h" />
     <ClInclude Include="Include\Ice\Core\Input.h" />
