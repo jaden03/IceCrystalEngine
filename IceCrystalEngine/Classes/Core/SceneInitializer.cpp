@@ -7,7 +7,6 @@
 
 #include <iostream>
 
-#include "Ice/Components/RawImage.h"
 #include "Ice/Core/LuaManager.h"
 
 SceneInitializer::SceneInitializer()
@@ -33,64 +32,70 @@ void SceneInitializer::InitializeScene()
     Camera* cameraComponent = cameraActor->AddComponent<Camera>();
     cameraActor->AddComponent<Freecam>();
 
+	//This takes a few seconds to load because spock49.obj is a very high poly model, but mostly its just because my fbx loader is just slow
+	// Actor* testActor2 = new Actor("Test Actor 2", "Test");
+	// Material* material2 = new Material(FileUtil::AssetDir + "Materials/spock.mat");
+	// Renderer* renderer2 = new Renderer(FileUtil::AssetDir + "Models/spock49.obj", material2);
+	// testActor2->AddComponent(renderer2);
+	// testActor2->transform->Rotate(0, 90, 0);
+	// testActor2->transform->Translate(-.05f, -1.5, -.15f);
+	// testActor2->transform->SetParent(cameraActor->transform);
+
 	
+	
+	// Airship
+    Actor* testActor = new Actor("Airship", "Test");
+    Material* material = new Material(FileUtil::AssetDir + "Materials/object.mat");
+    Renderer* testRenderer = new Renderer(FileUtil::AssetDir + "Models/finch.obj", material);
+    testActor->AddComponent(testRenderer);
+
+    testActor->transform->Translate(0, 0, 5);
+
+
+
+	// Floor
+	Actor* floorActor = new Actor("Floor", "Floor");
+	Renderer* floorRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj");
+	floorActor->AddComponent(floorRenderer);
+	floorActor->transform->scale = glm::vec3(15, 1, 15);
+	floorActor->transform->Translate(0, -5, 0);
+	
+	
+	// Cube
+	Actor* icosphereActor = new Actor("Icosphere");
+	Renderer* icosphereRenderer = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj");
+	icosphereActor->AddComponent(icosphereRenderer);
+	icosphereActor->transform->scale = glm::vec3(0.25f, 0.25f, 0.25f);
+	icosphereActor->transform->Translate(0, -3, 0);
+
+
+
 
 	Actor* sun = new Actor("Sun", "sun");
-	Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
+    Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
 	sun->AddComponent(sunRenderer);
-	DirectionalLight* sunLight = sun->AddComponent<DirectionalLight>();
+    DirectionalLight* sunLight = sun->AddComponent<DirectionalLight>();
 	sunRenderer->castShadows = false;
-	// Angle the sun with a parent Actor
-	Actor* sunTilt = new Actor("Sun Tilt");
-	sun->transform->SetParent(sunTilt->transform);
-	sunTilt->transform->Rotate(glm::vec3(0.0f, 45.0f, 0.0f));
+
 	//// set the rotation quat to be at an angle and angled down
-	sun->transform->TranslateLocal(0, 5, -12.5f);
-	sun->transform->RotateLocal(-30, 0, 0);
+	sun->transform->Translate(0, 5, -12.5f);
+	sun->transform->Rotate(-30, 0, 0);
 	sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
 
-	Actor* testImage = new Actor("Test Image", "testImage");
-	RawImage* rawImage = new RawImage(FileUtil::AssetDir + "Materials/ui.mat");
-	testImage->AddComponent(rawImage);
-	testImage->transform->SetScale(glm::vec3(224, 126, 100));
-	testImage->transform->Translate(600, 500, 0);
-
-	Actor* testImage2 = new Actor();
-	RawImage* rawImage2 = new RawImage(FileUtil::AssetDir + "Materials/ui.mat");
-	testImage2->AddComponent(rawImage2);
-	testImage2->transform->SetScale(glm::vec3(224, 126, 100));
-	testImage2->transform->Translate(1000, 500, 0);
-	
 
 	
-	Material* crateMaterial = new Material(FileUtil::AssetDir + "Materials/crate.mat");
-	
-	int rows = 5;  // Number of rows in the grid
-	int cols = 5;  // Number of columns in the grid
-	float spacing = 4.0f;  // Space between crates
+	//Actor* sun2 = new Actor("Sun2");
+	//Renderer* sunRenderer2 = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
+	//sun2->AddComponent(sunRenderer2);
+	//sun2->AddComponent<DirectionalLight>();
 
-	// Calculate the offset to center the grid
-	float offsetX = (cols - 1) * spacing / 2.0f;
-	float offsetZ = (rows - 1) * spacing / 2.0f;
+	//// set the rotation quat to be at an angle and angled down (different from the first sun)
+	//sun2->transform->Rotate(210, 0, 0);
+	//sun2->transform->Translate(0, 5, 20);
+	//sun2->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
 
-	// Loop through rows and columns to create a grid of crates
-	for (int i = 0; i < rows; ++i) {
-		for (int j = 0; j < cols; ++j) {
-			// Create a new crate actor for each grid position
-			Actor* crate = new Actor();
-        
-			// Position the crate based on its row and column, adjusting by the offset
-			crate->transform->Translate(j * spacing - offsetX, -5, i * spacing - offsetZ);  // Centering the grid
 
-			// Create the crate renderer and assign the material
-			Renderer* crateRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj", crateMaterial);
-        
-			// Add the renderer to the crate actor
-			crate->AddComponent(crateRenderer);
-		}
-	}
 
-	
 
 	Actor* pointLight = new Actor("Blue Light", "PointLight1");
 	PointLight* pointLightComponent = pointLight->AddComponent<PointLight>();
@@ -101,7 +106,7 @@ void SceneInitializer::InitializeScene()
 	pointLightRenderer->castShadows = false;
 	pointLightComponent->color = glm::vec3(0.0f, 0.0f, 1.0f);
 	pointLightComponent->strength = 5;
-	
+
 	Actor* pointLight2 = new Actor("Green Light", "PointLight2");
 	PointLight* pointLightComponent2 = pointLight2->AddComponent<PointLight>();
 	pointLight2->transform->Translate(0, -3, 0);
@@ -111,7 +116,7 @@ void SceneInitializer::InitializeScene()
 	pointLightRenderer2->castShadows = false;
 	pointLightComponent2->color = glm::vec3(0.0f, 1.0f, 0.0f);
 	pointLightComponent2->strength = 5;
-	
+
 	Actor* pointLight3 = new Actor("Red Light", "PointLight3");
 	PointLight* pointLightComponent3 = pointLight3->AddComponent<PointLight>();
 	pointLight3->transform->Translate(0, -3, 0);
@@ -130,13 +135,18 @@ void SceneInitializer::InitializeScene()
 	pointLight4->transform->scale = glm::vec3(0.025f, 0.025f, 0.025f);
 	pointLightRenderer4->castShadows = false;
 
-	
 
-	// Floor
-	Actor* floorActor = new Actor("Floor", "Floor");
-	Renderer* floorRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj");
-	floorActor->AddComponent(floorRenderer);
-	floorActor->transform->scale = glm::vec3(15, 1, 15);
-	floorActor->transform->Translate(0, -7, 0);
+
+
+	// Actor* spotLight = new Actor("Spot Light", "SpotLight1");
+	// SpotLight* spotLightComponent = spotLight->AddComponent<SpotLight>();
+	// spotLight->transform->Translate(0, 0, -5);
+	// spotLight->transform->Rotate(-25, 0, 0);
+	// Renderer* spotLightRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj", unlitMaterial);
+	// spotLight->AddComponent(spotLightRenderer);
+	// spotLight->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
+	// spotLightRenderer->castShadows = false;
+	// spotLightComponent->strength = 5;
+
 	
 }
