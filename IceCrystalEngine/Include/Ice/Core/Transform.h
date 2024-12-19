@@ -7,6 +7,7 @@
 #include <Ice/Core/Actor.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <Ice/Core/SceneManager.h>
 
 class Transform
 {
@@ -17,20 +18,19 @@ public:
 	Transform* parent = nullptr;
 	std::vector<Transform*>* children = new std::vector<Transform*>();
 
-	glm::vec3 position;
-	glm::quat rotation;
-	glm::vec3 eulerAngles;
-	glm::vec3 scale;
-	
-	glm::vec3 localPosition;
-	glm::quat localRotation;
-	glm::vec3 localEulerAngles;
-	glm::vec3 localScale;
+	glm::vec3 position = glm::vec3(0.0f);
+	glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+	glm::vec3 eulerAngles = glm::vec3(0.0f);
+	glm::vec3 scale = glm::vec3(1.0f);
 
+	glm::vec3 localPosition = glm::vec3(0.0f);
+	glm::quat localRotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+	glm::vec3 localEulerAngles = glm::vec3(0.0f);
+	glm::vec3 localScale = glm::vec3(1.0f);
 
-	glm::vec3 forward;
-	glm::vec3 right;
-	glm::vec3 up;
+	glm::vec3 forward = glm::vec3(0.0f, 0.0f, 1.0f);
+	glm::vec3 right = glm::vec3(1.0f, 0.0f, 0.0f);
+	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	Transform(Actor* owner);
 

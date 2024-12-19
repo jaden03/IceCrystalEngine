@@ -1,4 +1,4 @@
-#version 330 core
+#version 430 core
 layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 BrightColor;
 layout (location = 2) out vec4 PickColor;
@@ -14,47 +14,45 @@ uniform sampler2D fragTexture;
 uniform vec3 fragColor;
 uniform vec3 viewPos;
 
-// lighting
+// Lighting
 uniform float ambientLightStrength;
 uniform vec3 ambientLightColor;
 
-#define MAX_POINT_LIGHTS 64
-#define MAX_SPOT_LIGHTS 16
-#define MAX_DIRECTIONAL_LIGHTS 5
-
-uniform int directionalLightCount;
-uniform struct DirectionalLight {
+// SSBO for lighting data'
+struct DirectionalLight {
     vec3 direction;
-	vec3 color;
-	float strength;
+    vec3 color;
+    float strength;
+    uint shadowMap;
     mat4 lightSpaceMatrix;
     bool castShadows;
-} directionalLights[MAX_DIRECTIONAL_LIGHTS];
-uniform sampler2D directionalShadowMap[MAX_DIRECTIONAL_LIGHTS];
+};
 
-
-uniform int pointLightCount;
-uniform struct PointLight {
+struct PointLight {
     vec3 position;
-	vec3 color;
-	float strength;
+    vec3 color;
+    float strength;
     float radius;
-} pointLights[MAX_POINT_LIGHTS];;
+};
 
-
-uniform int spotLightCount;
-uniform struct SpotLight {
+struct SpotLight {
     vec3 position;
     vec3 direction;
     vec3 color;
     float strength;
-    float distance;
     float angle;
     float outerAngle;
+    float distance;
+    uint shadowMap;
     mat4 lightSpaceMatrix;
     bool castShadows;
-} spotLights[MAX_SPOT_LIGHTS];;
-uniform sampler2D spotShadowMap[MAX_SPOT_LIGHTS];
+};
+
+layout(std140) uniform LightingData {
+    DirectionalLight directionalLights[64];
+    PointLight pointLights[16];
+    SpotLight spotLights[5];
+};
 
 
 void main()
@@ -97,20 +95,20 @@ void main()
 
             vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
             projCoords = projCoords * 0.5 + 0.5;
-
-            float closestDepth = texture(directionalShadowMap[i], projCoords.xy).r;
+            
+            float closestDepth = texture(sampler2D(light.shadowMap), projCoords.xy).r;
             float currentDepth = projCoords.z;
 
             float bias = 0.0003;
            
-            vec2 texelSize = 1.0 / textureSize(directionalShadowMap[i], 0);
+            vec2 texelSize = 1.0 / textureSize(sampler2D(light.shadowMap), 0);
             float shadowSum = 0.0;
 
             for (int x = -2; x <= 2; ++x)
             {
                 for (int y = -2; y <= 2; ++y)
                 {
-                    float pcfDepth = texture(directionalShadowMap[i], projCoords.xy + vec2(x, y) * texelSize).r;
+                    float pcfDepth = texture(sampler2D(light.shadowMap), projCoords.xy + vec2(x, y) * texelSize).r;
                     shadowSum += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
                 }
             }
@@ -188,20 +186,20 @@ void main()
 
             vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
             projCoords = projCoords * 0.5 + 0.5;
-
-            float closestDepth = texture(spotShadowMap[i], projCoords.xy).r;
+            
+            float closestDepth = texture(sampler2D(light.shadowMap), projCoords.xy).r;
             float currentDepth = projCoords.z;
 
             float bias = 0.0003;
 
-            vec2 texelSize = 1.0 / textureSize(spotShadowMap[i], 0);
+            vec2 texelSize = 1.0 / textureSize(sampler2D(light.shadowMap), 0);
             float shadowSum = 0.0;
 
             for (int x = -2; x <= 2; ++x)
             {
                 for (int y = -2; y <= 2; ++y)
                 {
-                    float pcfDepth = texture(spotShadowMap[i], projCoords.xy + vec2(x, y) * texelSize).r;
+                    float pcfDepth = texture(sampler2D(light.shadowMap), projCoords.xy + vec2(x, y) * texelSize).r;
                     shadowSum += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
                 }
             }

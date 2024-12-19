@@ -7,6 +7,10 @@ Component::Component()
 	transform = nullptr;
 }
 
+void Component::Initialize()
+{
+}
+
 void Component::Ready()
 {
 }

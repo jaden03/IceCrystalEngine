@@ -1,17 +1,27 @@
 #pragma once
 
 #ifndef LIGHT_H
-
 #define LIGHT_H
 
 #include <glm/glm.hpp>
 #include <Ice/Core/Component.h>
 
+#include "glad/glad.h"
+
+class Camera;
+
+struct DirectionalLightData {
+	glm::vec3 direction;
+	glm::vec3 color;
+	float strength;
+	GLuint shadowMap;
+	glm::mat4 lightSpaceMatrix;
+	bool castShadows;
+};
 class DirectionalLight : public Component
 {
-	SceneManager& sceneManager = SceneManager::GetInstance();
 
-	void Initialize();
+	void Initialize() override;
 	
 public:
 	
@@ -31,14 +41,20 @@ public:
 	// this is the resolution of the shadow map, the higher the resolution, the better the shadows will look, but the more performance it will cost
 	int shadowMapResolution = 2048;
 	bool castShadows = true;
-	unsigned int depthMap;
+	GLuint depthMap;
 	
 	
-	glm::mat4 GetLightSpaceMatrix();
+	glm::mat4 GetLightSpaceMatrix(Camera* relativeCamera);
 	
 };
 
 
+struct PointLightData {
+	glm::vec3 position;
+	glm::vec3 color;
+	float strength;
+	float radius;
+};
 class PointLight : public Component
 {
 
@@ -56,10 +72,22 @@ public:
 };
 
 
+struct SpotLightData {
+	glm::vec3 position;
+	glm::vec3 direction;
+	glm::vec3 color;
+	float strength;
+	float angle;
+	float outerAngle;
+	float distance;
+	GLuint shadowMap;
+	glm::mat4 lightSpaceMatrix;
+	bool castShadows;
+};
 class SpotLight : public Component
 {
 
-	void Initialize();
+	void Initialize() override;
 	
 public: 
 
@@ -77,7 +105,7 @@ public:
 
 	int shadowMapResolution = 1024;
 	bool castShadows = true;
-	unsigned int depthMap;
+	GLuint depthMap;
 	
 	glm::mat4 GetLightSpaceMatrix();
 };

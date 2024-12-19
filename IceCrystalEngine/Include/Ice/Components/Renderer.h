@@ -12,6 +12,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <Ice/Core/Component.h>
+#include <Ice/Core/WindowManager.h>
+#include <Ice/Core/LightingManager.h>
 
 class Renderer : public Component
 {

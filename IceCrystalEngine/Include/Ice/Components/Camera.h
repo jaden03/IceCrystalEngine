@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 
 #include <Ice/Core/Component.h>
+#include <Ice/Core/WindowManager.h>
 
 class Camera : public Component
 {

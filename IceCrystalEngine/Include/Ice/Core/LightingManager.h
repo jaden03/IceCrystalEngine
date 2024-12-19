@@ -1,66 +1,73 @@
 #pragma once
 
 #ifndef LIGHTING_MANAGER_H
-
 #define LIGHTING_MANAGER_H
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <vector>
-
 #include <Ice/Rendering/Shader.h>
-
-class DirectionalLight;
-class PointLight;
-class SpotLight;
+#include <Ice/Components/Light.h>
 
 class LightingManager
 {
-
 public:
-
 	static LightingManager& GetInstance()
 	{
-		static LightingManager instance; // Static local variable ensures a single instance
+		static LightingManager instance;
 		return instance;
 	}
 
 	float ambientLightingStrength = 0.15f;
 	glm::vec3 ambientLightingColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
-	int maxDirectionalLights = 5;
+	Camera* mainCamera;
+	
 	int maxPointLights = 64;
-	int maxSpotLights = 64;
+	int maxSpotLights = 16;
+	int maxDirectionalLights = 5;
 
-	std::vector<DirectionalLight*> directionalLights = std::vector<DirectionalLight*>();
-	std::vector<PointLight*> pointLights = std::vector<PointLight*>();
-	std::vector<SpotLight*> spotLights = std::vector<SpotLight*>();
+	std::vector<DirectionalLightData> directionalLightData;
+	std::vector<PointLightData> pointLightData;
+	std::vector<SpotLightData> spotLightData;
+
+	std::vector<DirectionalLight*> directionalLights;
+	std::vector<PointLight*> pointLights;
+	std::vector<SpotLight*> spotLights;
 
 	Shader* shadowShader;
 	unsigned int shadowMapFBO = 0;
 
+	GLuint directionalLightSSBO = 0;
+	GLuint pointLightSSBO = 0;
+	GLuint spotLightSSBO = 0;
 
 	void InitializeLighting();
-
 	void AddDirectionalLight(DirectionalLight* light);
 	void AddPointLight(PointLight* light);
 	void AddSpotLight(SpotLight* light);
-
 	void RemoveDirectionalLight(DirectionalLight* light);
 	void RemovePointLight(PointLight* light);
 	void RemoveSpotLight(SpotLight* light);
+	void UpdateSSBOs();
 
 private:
-
-	LightingManager(); // Private constructor to ensure a single instance
+	
+	LightingManager();
 	~LightingManager();
 
-	LightingManager(LightingManager const&) = delete; // Delete copy constructor
-	// this prevents the copy constructor "SceneManager copy(original);" from working
+	LightingManager(LightingManager const&) = delete;
+	void operator=(LightingManager const&) = delete;
 
-	void operator=(LightingManager const&) = delete; // Delete assignment operator
-	// this prevents copying by assignment "SceneManager another = original;" from working
+	void CreateSSBOs();
+	
+	void UpdateDirectionalLightSSBO();
+	void UpdatePointLightSSBO();
+	void UpdateSpotLightSSBO();
 
+	void UpdateDirectionalLightData();
+	void UpdatePointLightData();
+	void UpdateSpotLightData();
 };
 
 #endif

@@ -3,6 +3,7 @@
 #ifndef SKYBOX_H
 
 #include <Ice/Components/Camera.h>
+#include <Ice/Rendering/Shader.h>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 

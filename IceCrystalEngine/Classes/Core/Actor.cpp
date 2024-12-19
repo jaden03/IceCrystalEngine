@@ -87,5 +87,10 @@ void Actor::AddComponent(Component* component)
 	component->owner = this;
 	component->transform = transform;
 	component->Ready();
+	if (component->initialized == false)
+	{
+		component->initialized = true;
+		component->Initialize();
+	}
 	components->push_back(component);
 }

@@ -64,6 +64,7 @@ void SceneManager::Update()
 	// bind to the shadow framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, lightingManager.shadowMapFBO);
 	// use the shadow shader
+	lightingManager.mainCamera = mainCamera;
 	lightingManager.shadowShader->Use();
 
 	// frontface culling
@@ -85,7 +86,7 @@ void SceneManager::Update()
 		glClear(GL_DEPTH_BUFFER_BIT);
 		
 		// set the light space matrix
-		lightingManager.shadowShader->setMat4("lightSpaceMatrix", light->GetLightSpaceMatrix());
+		lightingManager.shadowShader->setMat4("lightSpaceMatrix", light->GetLightSpaceMatrix(mainCamera));
 
 		// set the viewport
 		glViewport(0, 0, light->shadowMapResolution, light->shadowMapResolution);
@@ -144,6 +145,12 @@ void SceneManager::Update()
 			}
 		}
 	}
+
+	// Update the lighting manager (updates the SSBOs for the lights)
+	glViewport(0, 0, windowManager.windowWidth, windowManager.windowHeight);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	lightingManager.UpdateSSBOs();
 
 	// bind to the hdr framebuffer
 	postProcessor.Bind();
