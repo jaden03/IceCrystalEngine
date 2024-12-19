@@ -7,7 +7,8 @@
 #include <iostream>
 
 #include <Ice/Core/WindowManager.h>
-#include <Ice/Rendering/Material.h>
+#include <Ice/Rendering/Shader.h>
+#include <Ice/Rendering/Texture.h>
 #include <Ice/Core/Component.h>
 
 #include "glad/glad.h"
@@ -15,10 +16,12 @@
 class RawImage : public Component
 {
 public:
-    RawImage(std::string path);
+    RawImage(std::string texturePath);
+    RawImage(std::string texturePath, std::string shaderPath);
     ~RawImage();
 
-    Material* material;
+    Texture* texture;
+    Shader* shader;
 
     void OverlayUpdate() override;
     
