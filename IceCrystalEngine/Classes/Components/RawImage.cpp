@@ -11,10 +11,17 @@
 GLuint RawImage::sharedVAO = 0;
 GLuint RawImage::sharedVBO = 0;
 
-RawImage::RawImage(std::string path)
+RawImage::RawImage(std::string texturePath)
 {
     InitializeSharedResources();
-    material = new Material(std::move(path));
+    shader = new Shader(FileUtil::AssetDir + "Shaders/ui.vert", FileUtil::AssetDir + "Shaders/ui.frag");
+    texture = new Texture(texturePath);
+}
+RawImage::RawImage(std::string texturePath, std::string shaderPath)
+{
+    InitializeSharedResources();
+    shader = new Shader(shaderPath + ".vert", shaderPath + ".frag");
+    texture = new Texture(texturePath);
 }
 
 RawImage::~RawImage()
@@ -57,8 +64,8 @@ void RawImage::OverlayUpdate()
 
     glBindVertexArray(sharedVAO);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, material->texture->Handle);
-    GLint textureLocation = glGetUniformLocation(material->texture->Handle, "fragTexture");
+    glBindTexture(GL_TEXTURE_2D, texture->Handle);
+    GLint textureLocation = glGetUniformLocation(texture->Handle, "fragTexture");
     glUniform1i(textureLocation, 0);
 
     glm::mat4 model = glm::mat4(1.0f);
@@ -67,9 +74,9 @@ void RawImage::OverlayUpdate()
 
     glm::mat4 projection = glm::ortho(0.0f, (float)windowManager.windowWidth, (float)windowManager.windowHeight, 0.0f, -1.0f, 1.0f);
 
-    material->shader->Use();
-    material->shader->setMat4("model", model);
-    material->shader->setMat4("projection", projection);
+    shader->Use();
+    shader->setMat4("model", model);
+    shader->setMat4("projection", projection);
 
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
