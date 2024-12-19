@@ -75,7 +75,6 @@ class DebugUtil
 
 		GetInstance().wireframeMode = !GetInstance().wireframeMode;
 		glPolygonMode(GL_FRONT_AND_BACK, GetInstance().wireframeMode ? GL_LINE : GL_FILL);
-		std::cout << "Wireframe set to: " << GetInstance().wireframeMode << "\n";
 	}
 	
 public:

@@ -302,7 +302,9 @@ void Renderer::Update()
 	
 
 		// extra stuff
-	
+	float time = glfwGetTime();
+	material->shader->setFloat("time", time);
+
 			// poor mans raycasting
 	material->shader->setVec3("uniqueColor", owner->uniqueColor / 255.0f);
 	
