@@ -7,12 +7,15 @@
 #include <Ice/Core/WindowManager.h>
 #include <Ice/Core/UIManager.h>
 #include <Ice/Utils/FileUtil.h>
+#include <Ice/Core/LuaManager.h>
 
 #include <Ice/Components/Camera.h>
 #include <Ice/Components/Renderer.h>
 #include <Ice/Components/Light.h>
 
 #include <Ice/Core/Skybox.h>
+
+using namespace std::chrono;
 
 PostProcessor& postProcessor = PostProcessor::GetInstance();
 LightingManager& lightingManager = LightingManager::GetInstance();
@@ -155,6 +158,9 @@ void SceneManager::Update()
 	// backface culling
 	glCullFace(GL_BACK);
 
+	// update LuaManager
+	LuaManager::GetInstance().Update(gameTime);
+	
 	// loop through actors
 	for (int i = 0; i < actors->size(); i++)
 	{
@@ -211,7 +217,22 @@ void SceneManager::Update()
 
 	// set the polygon mode back to what it was before
 	glPolygonMode(GL_FRONT_AND_BACK, currentPolygonMode);
+
+
 	
+	// Get current time
+	double now = duration<double>(steady_clock::now().time_since_epoch()).count();
+	// First frame bootstrap
+	if (lastFrameTime == 0.0)
+	{
+		lastFrameTime = now;
+	}
+	// deltaTime = difference
+	deltaTime = static_cast<float>(now - lastFrameTime);
+	// Accumulate game time
+	gameTime += deltaTime;
+	// Store for next frame
+	lastFrameTime = now;
 }
 
 // Add Actor

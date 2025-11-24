@@ -7,10 +7,20 @@
 #include <lua/lua.hpp>
 #include <thread>
 
+#include "Ice/Components/LuaExecutor.h"
+
 class LuaManager
 {
 public:
 	sol::state lua;
+
+	struct LuaTask {
+		sol::thread thread;
+		sol::coroutine co;
+		sol::environment env;
+		double wakeTime = 0.0;
+	};
+	std::vector<LuaTask> tasks;
 
 	static LuaManager& GetInstance()
 	{
@@ -18,35 +28,92 @@ public:
 		return instance;
 	}
 
+	void Update(double now);
+
+	// Run a LuaExecutor
+	static void RunExecutor(LuaExecutor* executor)
+	{
+		auto& manager = LuaManager::GetInstance();
+		auto& lua = manager.lua;
+
+		sol::environment env(lua, sol::create, lua.globals());
+		env["actor"] = executor->owner;
+		env["transform"] = executor->transform;
+
+		sol::load_result loader = lua.load_file(executor->filePath);
+
+		if (!loader.valid()) {
+			sol::error e = loader;
+			fprintf(stderr, "Executor Load Error: %s\n", e.what());
+			return;
+		}
+		
+		manager.StartCoroutine(env, std::move(loader));
+	}
+
+
 	// Run a Lua file on a separate thread
 	static void RunFile(const char* filePath)
 	{
-		std::thread([filePath]() {
-			try {
-				LuaManager::GetInstance().lua.script_file(filePath);
-			} catch (const sol::error& e) {
-				fprintf(stderr, "Error running file: %s\n", e.what());
-			}
-		}).detach(); // Detach the thread to run independently
+		auto& manager = LuaManager::GetInstance();
+		auto& lua = manager.lua;
+
+		sol::environment env(lua, sol::create, lua.globals());
+
+		
+		sol::load_result loader = lua.load_file(filePath);
+
+		if (!loader.valid()) {
+			sol::error e = loader;
+			fprintf(stderr, "Lua Load Error: %s\n", e.what());
+			return;
+		}
+
+		manager.StartCoroutine(env, std::move(loader));
 	}
+
 
 	// Run a Lua string on a separate thread
 	static void RunString(const char* string)
 	{
-		std::thread([string]() {
-			try {
-				LuaManager::GetInstance().lua.script(string);
-			} catch (const sol::error& e) {
-				fprintf(stderr, "Error running string: %s\n", e.what());
-			}
-		}).detach(); // Detach the thread to run independently
+		auto& manager = LuaManager::GetInstance();
+		auto& lua = manager.lua;
+
+		sol::environment env(lua, sol::create, lua.globals());
+
+		sol::load_result loader = lua.load(string);
+
+		if (!loader.valid()) {
+			sol::error e = loader;
+			fprintf(stderr, "Lua Load Error: %s\n", e.what());
+			return;
+		}
+
+		manager.StartCoroutine(env, std::move(loader));
 	}
+
 
 private:
 	void RegisterBindings(); // Bind C++ classes and functions to Lua
 
 	static int LuaWait(lua_State* L);
 	static int LuaPrint(lua_State* L);
+	
+	void StartCoroutine(sol::environment env, sol::load_result&& fx)
+	{
+		// Attach the environment to the loaded function
+		sol::function f = fx;
+		sol::set_environment(env, f);
+
+		// Create a coroutine from the main state, with the proper environment
+		sol::coroutine co = sol::coroutine(lua, f);
+
+		LuaTask task;
+		task.env = std::move(env);
+		task.co = std::move(co);
+
+		tasks.push_back(std::move(task));
+	}
 	
 	LuaManager();
 	// ~LuaManager();

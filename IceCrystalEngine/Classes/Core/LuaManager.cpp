@@ -12,7 +12,7 @@
 
 LuaManager::LuaManager()
 {
-    lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::table); // Load standard libraries
+    lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::package, sol::lib::table); // Load standard libraries
 
     // Register wait function
     lua_register(lua, "wait", LuaWait);
@@ -21,42 +21,78 @@ LuaManager::LuaManager()
     lua_pushcfunction(lua, LuaManager::LuaPrint);
     lua_setglobal(lua, "print");
 
-
-    // Operating on GLM vecs
-    auto mult_overloads = sol::overload(
-        [](const glm::vec3& v1, const glm::vec3& v2) -> glm::vec3 { return v1*v2; },
-        [](const glm::vec3& v1, float f) -> glm::vec3 { return v1*f; },
-        [](float f, const glm::vec3& v1) -> glm::vec3 { return f*v1; }
-    );
-    lua.new_usertype<glm::vec3>("vec3",
-        sol::meta_function::addition, [](const glm::vec3& v1, const glm::vec3& v2) -> glm::vec3 { return v1 + v2; },
-        sol::meta_function::subtraction, [](const glm::vec3& v1, const glm::vec3& v2) -> glm::vec3 { return v1 - v2; },
-        sol::meta_function::division, sol::overload(
-            [](const glm::vec3& v1, float f) -> glm::vec3 { return v1 / f; },
-            [](float f, const glm::vec3& v1) -> glm::vec3 { return glm::vec3(f / v1.x, f / v1.y, f / v1.z); }
-        ),
-        sol::meta_function::multiplication, mult_overloads
-    );
-
     RegisterBindings();
 }
+
+void LuaManager::Update(double now)
+{
+    for (size_t i = 0; i < tasks.size(); )
+    {
+        auto& task = tasks[i];
+
+        // If waiting, skip until time is up
+        if (task.wakeTime > now)
+        {
+            ++i;
+            continue;
+        }
+
+        // Resume the coroutine
+        sol::protected_function_result result = task.co();
+
+        if (result.status() == sol::call_status::yielded)
+        {
+            // Coroutine yielded → check if it yielded a number (from wait())
+            if (lua_gettop(result.lua_state()) >= 1 && lua_isnumber(result.lua_state(), -1))
+            {
+                double seconds = lua_tonumber(result.lua_state(), -1);
+                task.wakeTime = now + seconds;
+            }
+            else
+            {
+                // Yielded but no delay specified → resume next frame
+                task.wakeTime = now;
+            }
+            ++i; // Keep task alive
+        }
+        else if (result.status() == sol::call_status::ok)
+        {
+            // Finished normally
+            tasks.erase(tasks.begin() + i);
+            // Do NOT increment i
+        }
+        else
+        {
+            // Runtime error
+            sol::error err = result;
+            printf("Lua Error: %s\n", err.what());
+            tasks.erase(tasks.begin() + i);
+            // Do NOT increment i
+        }
+    }
+}
+
+
 
 
 int LuaManager::LuaWait(lua_State* L)
 {
+    // expects milliseconds
     if (!lua_isnumber(L, 1))
     {
-        lua_pushstring(L, "Expected a number as the argument.");
-        lua_error(L);
+        return luaL_error(L, "Expected a number (seconds)");
     }
 
-    int milliseconds = lua_tointeger(L, 1);
+    double ms = luaL_checknumber(L, 1);
+    double seconds = ms / 1000.0;
 
-    // Pause the thread
-    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+    // Push the duration so the scheduler can pick it up
+    lua_pushnumber(L, seconds);
 
-    return 0;
+    // Yield the coroutine, returning 1 value
+    return lua_yield(L, 1);
 }
+
 
 int LuaManager::LuaPrint(lua_State* L) {
     int nargs = lua_gettop(L); // Number of arguments
@@ -74,7 +110,7 @@ int LuaManager::LuaPrint(lua_State* L) {
     }
     output << "\n";
 
-    // Redirect to your custom logging system
+    // Redirect to logging system
     DebugUtil::GetInstance().ss << output.str();
 
     return 0; // Return no values to Lua
@@ -126,84 +162,84 @@ void LuaManager::RegisterBindings() {
         // Methods
         "SetParent", &Transform::SetParent,
         "LookAt", sol::overload(
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::LookAt),
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::LookAt)
+            [](Transform& self, float x, float y, float z) {self.LookAt(x, y, z);},
+            [](Transform& self, glm::vec3 vec3) {self.LookAt(vec3);}
         ),
 
         // Additive methods
         "Translate", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::Translate),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::Translate)
+            [](Transform& self, glm::vec3 vec3) {self.Translate(vec3);},
+            [](Transform& self, float x, float y, float z) {self.Translate(x, y, z);}
         ),
         "Rotate", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::Rotate),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::Rotate)
+            [](Transform& self, glm::vec3 vec3) {self.Rotate(vec3);},
+            [](Transform& self, float x, float y, float z) {self.Rotate(x, y, z);}
         ),
         "Scale", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::Scale),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::Scale)
+            [](Transform& self, glm::vec3 vec3) {self.Scale(vec3);},
+            [](Transform& self, float x, float y, float z) {self.Scale(x, y, z);}
         ),
         "TranslateLocal", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::TranslateLocal),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::TranslateLocal)
+            [](Transform& self, glm::vec3 vec3) {self.TranslateLocal(vec3);},
+            [](Transform& self, float x, float y, float z) {self.TranslateLocal(x, y, z);}
         ),
         "RotateLocal", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::RotateLocal),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::RotateLocal)
+            [](Transform& self, glm::vec3 vec3) {self.RotateLocal(vec3);},
+            [](Transform& self, float x, float y, float z) {self.RotateLocal(x, y, z);}
         ),
         "ScaleLocal", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::ScaleLocal),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::ScaleLocal)
+            [](Transform& self, glm::vec3 vec3) {self.ScaleLocal(vec3);},
+            [](Transform& self, float x, float y, float z) {self.ScaleLocal(x, y, z);}
         ),
         // Additive delta methods
         "TranslateDelta", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::TranslateDelta),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::TranslateDelta)
+            [](Transform& self, glm::vec3 vec3) {self.TranslateDelta(vec3);},
+            [](Transform& self, float x, float y, float z) {self.TranslateDelta(x, y, z);}
         ),
         "RotateDelta", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::RotateDelta),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::RotateDelta)
+            [](Transform& self, glm::vec3 vec3) {self.RotateDelta(vec3);},
+            [](Transform& self, float x, float y, float z) {self.RotateDelta(x, y, z);}
         ),
         "ScaleDelta", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::ScaleDelta),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::ScaleDelta)
+            [](Transform& self, glm::vec3 vec3) {self.ScaleDelta(vec3);},
+            [](Transform& self, float x, float y, float z) {self.ScaleDelta(x, y, z);}
         ),
         "TranslateLocalDelta", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::TranslateLocalDelta),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::TranslateLocalDelta)
+            [](Transform& self, glm::vec3 vec3) {self.TranslateLocalDelta(vec3);},
+            [](Transform& self, float x, float y, float z) {self.TranslateLocalDelta(x, y, z);}
         ),
         "RotateLocalDelta", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::RotateLocalDelta),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::RotateLocalDelta)
+            [](Transform& self, glm::vec3 vec3) {self.RotateLocalDelta(vec3);},
+            [](Transform& self, float x, float y, float z) {self.RotateLocalDelta(x, y, z);}
         ),
         "ScaleLocalDelta", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::ScaleLocalDelta),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::ScaleLocalDelta)
+            [](Transform& self, glm::vec3 vec3) {self.ScaleLocalDelta(vec3);},
+            [](Transform& self, float x, float y, float z) {self.ScaleLocalDelta(x, y, z);}
         ),
         // Delarative methods
         "SetPosition", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::SetPosition),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::SetPosition)
+            [](Transform& self, glm::vec3 vec3) {self.SetPosition(vec3);},
+            [](Transform& self, float x, float y, float z) {self.SetPosition(x, y, z);}
         ),
         "SetRotation", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::SetRotation),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::SetRotation)
+            [](Transform& self, glm::vec3 vec3) {self.SetRotation(vec3);},
+            [](Transform& self, float x, float y, float z) {self.SetRotation(x, y, z);}
         ),
         "SetScale", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::SetScale),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::SetScale)
+            [](Transform& self, glm::vec3 vec3) {self.SetScale(vec3);},
+            [](Transform& self, float x, float y, float z) {self.SetScale(x, y, z);}
         ),
         "SetLocalPosition", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::SetLocalPosition),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::SetLocalPosition)
+            [](Transform& self, glm::vec3 vec3) {self.SetLocalPosition(vec3);},
+            [](Transform& self, float x, float y, float z) {self.SetLocalPosition(x, y, z);}
         ),
         "SetLocalRotation", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::SetLocalRotation),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::SetLocalRotation)
+            [](Transform& self, glm::vec3 vec3) {self.SetLocalRotation(vec3);},
+            [](Transform& self, float x, float y, float z) {self.SetLocalRotation(x, y, z);}
         ),
         "SetLocalScale", sol::overload(
-            static_cast<void (Transform::*)(glm::vec3)>(&Transform::SetLocalScale),
-            static_cast<void (Transform::*)(float, float, float)>(&Transform::SetLocalScale)
+            [](Transform& self, glm::vec3 vec3) {self.SetLocalScale(vec3);},
+            [](Transform& self, float x, float y, float z) {self.SetLocalScale(x, y, z);}
         )
     );
     
@@ -235,5 +271,45 @@ void LuaManager::RegisterBindings() {
             // Example: Dynamically getting components
             return self.GetComponent<Component>(); // Replace with appropriate type logic
         }
+    );
+
+
+
+
+
+    // Operating on GLM vecs
+    lua.new_usertype<glm::vec3>("vec3",
+        sol::call_constructor, sol::factories(
+            []() { return glm::vec3(0.0f); },
+            [](float x, float y, float z) { return glm::vec3(x, y, z); },
+            [](float s) { return glm::vec3(s); }
+        ),
+
+        // Allow `.x .y .z` fields
+        "x", &glm::vec3::x,
+        "y", &glm::vec3::y,
+        "z", &glm::vec3::z,
+
+        // Operators
+        sol::meta_function::addition, [](const glm::vec3& a, const glm::vec3& b) {
+            return a + b;
+        },
+
+        sol::meta_function::subtraction, [](const glm::vec3& a, const glm::vec3& b) {
+            return a - b;
+        },
+
+        sol::meta_function::multiplication, sol::overload(
+            [](const glm::vec3& a, const glm::vec3& b) { return a * b; },
+            [](const glm::vec3& a, float f) { return a * f; },
+            [](float f, const glm::vec3& a) { return f * a; }
+        ),
+
+        sol::meta_function::division, sol::overload(
+            [](const glm::vec3& a, float f) { return a / f; },
+            [](float f, const glm::vec3& a) {
+                return glm::vec3(f / a.x, f / a.y, f / a.z);
+            }
+        )
     );
 }

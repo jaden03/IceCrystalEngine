@@ -90,6 +90,14 @@ void SceneInitializer::InitializeScene()
 		}
 	}
 
+
+	Actor* testCrate = new Actor("Test Crate", "testCrate");
+	testCrate->transform->SetScale(glm::vec3(2.0f, 2.0f, 2.0f));
+	Renderer* testCrateRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj", crateMaterial);
+	testCrate->AddComponent(testCrateRenderer);
+	LuaExecutor* executor = new LuaExecutor(FileUtil::AssetDir + "LuaScripts/Test.lua");
+	testCrate->AddComponent(executor);
+
 	
 
 	Actor* pointLight = new Actor("Blue Light", "PointLight1");
