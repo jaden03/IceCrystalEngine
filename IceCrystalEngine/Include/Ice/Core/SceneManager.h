@@ -27,7 +27,9 @@ public:
 	}
 	
 	Camera* mainCamera;
-	float deltaTime;
+	double gameTime = 0.0f;
+	float deltaTime = 0.0f;
+	double lastFrameTime = 0.0;
 	
 	void Update();
 	

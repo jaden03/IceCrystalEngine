@@ -1,0 +1,20 @@
+﻿#include <Ice/Components/LuaExecutor.h>
+
+#include "Ice/Core/LuaManager.h"
+
+LuaExecutor::LuaExecutor(std::string path)
+{
+    filePath = path;
+}
+
+void LuaExecutor::Execute()
+{
+    if (filePath.size() > 0)
+    LuaManager::RunExecutor(this);
+}
+
+void LuaExecutor::Ready()
+{
+    if (filePath.size() > 0 && runOnReady)
+        LuaManager::RunExecutor(this);
+}

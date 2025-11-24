@@ -127,7 +127,7 @@ int main()
 		{
 			std::cout << "4" << std::endl;
 		}
-
+    	
    //  	if (input.GetKeyDown(GLFW_KEY_E))
    //  	{
    //  		LuaManager::RunString(R"(
@@ -139,6 +139,19 @@ int main()
 			// 	end
 			// )");
    //  	}
+   //  	 	if (input.GetKeyDown(GLFW_KEY_E))
+   //  	 	{
+   //  	 		LuaManager::RunString(R"(
+   //  		local sm = SceneManager.GetInstance()
+   //  		local airshipActor = sm:GetActorByTag("Test")
+			// local i = 0
+   //  		while true do
+   //  			wait(1000)
+			// 	i = i + 1
+			// 	print(i)
+   //  		end
+   //  	)");
+   //  	 	}
 
 		// if (input.GetKey(GLFW_KEY_P))
 		// {
