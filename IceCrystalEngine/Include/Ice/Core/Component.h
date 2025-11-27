@@ -10,7 +10,6 @@ class Component
 {
 
 public:
-
 	Actor* owner;
 	Transform* transform;
 

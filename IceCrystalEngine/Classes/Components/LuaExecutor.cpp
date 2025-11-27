@@ -18,3 +18,5 @@ void LuaExecutor::Ready()
     if (filePath.size() > 0 && runOnReady)
         LuaManager::RunExecutor(this);
 }
+
+LuaExecutor::~LuaExecutor() {}
