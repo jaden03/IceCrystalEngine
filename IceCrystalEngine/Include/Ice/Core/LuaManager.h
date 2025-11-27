@@ -122,14 +122,6 @@ public:
 		};
 	}
 
-	LuaManager();
-	~LuaManager()
-	{
-		lua.collect_garbage();
-		lua.collect_garbage();
-		lua = sol::state();
-	};
-
 private:
 	void RegisterBindings(); // Bind C++ classes and functions to Lua
 	void RegisterInputBindings();
@@ -152,6 +144,14 @@ private:
 
 		tasks.push_back(std::move(task));
 	}
+
+	LuaManager();
+	~LuaManager()
+	{
+		lua.collect_garbage();
+		lua.collect_garbage();
+		lua = sol::state();
+	};
 
 	LuaManager(LuaManager const&) = delete; // Delete copy constructor
 	void operator=(LuaManager const&) = delete; // Delete assignment operator

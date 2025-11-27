@@ -29,7 +29,6 @@
 #include <Ice/Components/Freecam.h>
 #include <Ice/Components/Light.h>
 
-std::unique_ptr<LuaManager> luaManager;
 int main()
 {
     // Initialize FileUtils
@@ -52,7 +51,7 @@ int main()
 	Input& input = Input::GetInstance();
 
 	// Setup the Lua
-	luaManager = std::make_unique<LuaManager>();
+	LuaManager& luaManager = LuaManager::GetInstance();
 
 	
 #ifdef _DEBUG
@@ -185,9 +184,7 @@ int main()
         input.ClearInput();
         glfwPollEvents();
     }
-
-	luaManager.reset();
-
+	
 	// cleanup
 #ifdef _DEBUG
 	debugUtil.Cleanup();
