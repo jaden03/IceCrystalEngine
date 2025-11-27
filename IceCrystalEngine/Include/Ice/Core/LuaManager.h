@@ -9,6 +9,14 @@
 
 #include "Ice/Components/LuaExecutor.h"
 
+struct ComponentRegistryEntry {
+	std::function<sol::object(Actor&)> addFn;
+	std::function<sol::object(Actor&)> getFn;
+	std::function<bool(Actor&)> hasFn;
+};
+static std::unordered_map<std::string, ComponentRegistryEntry> componentRegistry;
+
+
 class LuaManager
 {
 public:
@@ -90,6 +98,28 @@ public:
 		}
 
 		manager.StartCoroutine(env, std::move(loader));
+	}
+
+
+	template<typename T>
+	void RegisterComponent(const std::string& name, sol::state_view lua) {
+		componentRegistry[name] = {
+			// Add<T>
+			[lua](Actor& a) -> sol::object {
+				T* comp = a.AddComponent<T>();
+				return sol::make_object(lua, comp);
+			},
+			// Get<T>
+			[lua](Actor& a) -> sol::object {
+				if (T* comp = a.GetComponent<T>())
+					return sol::make_object(lua, comp);
+				return sol::nil;
+			},
+			// Has<T>
+			[](Actor& a) -> bool {
+				return a.HasComponent<T>();
+			}
+		};
 	}
 
 

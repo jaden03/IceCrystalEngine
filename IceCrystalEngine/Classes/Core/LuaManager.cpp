@@ -3,12 +3,14 @@
 #include <iostream>
 #include <sstream>
 
+#include "Ice/Core/Component.h"
+
+#include "Ice/Components/Light.h"
 #include "Ice/Utils/DebugUtil.h"
 
-#include "Ice/core/SceneManager.h"
 #include "Ice/Core/Actor.h"
 #include "Ice/Core/Transform.h"
-#include "Ice/core/Component.h"
+#include "Ice/core/SceneManager.h"
 
 LuaManager::LuaManager()
 {
@@ -20,6 +22,14 @@ LuaManager::LuaManager()
     // Replace the global print function with LuaPrint
     lua_pushcfunction(lua, LuaManager::LuaPrint);
     lua_setglobal(lua, "print");
+
+    lua["type_name"] = [](sol::object obj) -> std::string {
+        if (!obj.is<sol::table>()) return obj.get_type() == sol::type::nil ? "nil" : "primitive";
+        sol::table mt = obj.as<sol::table>().get<sol::table>(sol::metatable_key);
+        if (!mt.valid()) return "table";
+        sol::optional<std::string> name = mt["__name"];
+        return name ? *name : "table";
+    };
 
     RegisterBindings();
 }
@@ -119,6 +129,7 @@ int LuaManager::LuaPrint(lua_State* L) {
 
 void LuaManager::RegisterBindings() {
 
+#pragma region Scene Manager
     // SceneManager
     lua.new_usertype<SceneManager>("SceneManager",
         sol::no_constructor, // Prevent creating new instances
@@ -133,7 +144,9 @@ void LuaManager::RegisterBindings() {
         "GetActorByTag", &SceneManager::GetActorByTag,
         "GetActorsByTag", &SceneManager::GetActorsByTag
     );
-    
+#pragma endregion
+
+#pragma region Transform
     // Register Transform
     lua.new_usertype<Transform>("Transform",
         sol::constructors<Transform(Actor*)>(),
@@ -242,41 +255,9 @@ void LuaManager::RegisterBindings() {
             [](Transform& self, float x, float y, float z) {self.SetLocalScale(x, y, z);}
         )
     );
-    
-    // Register Actor
-    lua.new_usertype<Actor>("Actor",
-        sol::constructors<
-            Actor(const std::string&, const std::string&),
-            Actor(const std::string&),
-            Actor()
-        >(),
+#pragma endregion 
 
-        // Member variables
-        "name", &Actor::name,
-        "tag", &Actor::tag,
-        "transform", &Actor::transform,
-
-        // Methods
-        "HasComponent", [](Actor& self, const std::string& componentType) -> bool {
-            // Example: Dynamically checking components
-            return self.HasComponent<Component>(); // Replace with appropriate type lookup logic
-        },
-
-        "AddComponent", [](Actor& self, const std::string& componentType) -> Component* {
-            // Example: Dynamically adding components
-            return self.AddComponent<Component>(); // Replace with appropriate type logic
-        },
-
-        "GetComponent", [](Actor& self, const std::string& componentType) -> Component* {
-            // Example: Dynamically getting components
-            return self.GetComponent<Component>(); // Replace with appropriate type logic
-        }
-    );
-
-
-
-
-
+#pragma region GLM
     // Operating on GLM vecs
     lua.new_usertype<glm::vec3>("vec3",
         sol::call_constructor, sol::factories(
@@ -310,6 +291,136 @@ void LuaManager::RegisterBindings() {
             [](float f, const glm::vec3& a) {
                 return glm::vec3(f / a.x, f / a.y, f / a.z);
             }
-        )
+        ),
+
+        // String
+        sol::meta_function::to_string, [](const glm::vec3& v)
+        {
+            char buf[64];
+            snprintf(buf, sizeof(buf), "vec3(%.3f, %.3f, %.3f)", v.x, v.y, v.z);
+            return std::string(buf);
+        }
     );
+
+    // GLM quats
+    lua.new_usertype<glm::quat>("quat",
+        sol::call_constructor, sol::factories(
+            []() { return glm::quat(1, 0, 0, 0); },                     // identity
+            [](float w, float x, float y, float z) { return glm::quat(w, x, y, z); },
+            [](float angle, const glm::vec3& axis) {
+                return glm::angleAxis(angle, axis);
+            }
+        ),
+
+        // Components (w, x, y, z)
+        "w", &glm::quat::w,
+        "x", &glm::quat::x,
+        "y", &glm::quat::y,
+        "z", &glm::quat::z,
+
+        // Normalize
+        "normalized", [](const glm::quat& q) {
+            return glm::normalize(q);
+        },
+
+        // Get angle + axis
+        "get_angle", [](const glm::quat& q) {
+            return glm::angle(q);
+        },
+        "get_axis", [](const glm::quat& q) {
+            return glm::axis(q);
+        },
+
+        // Multiply two quaternions
+        sol::meta_function::multiplication, sol::overload(
+            [](const glm::quat& a, const glm::quat& b) {
+                return a * b;
+            },
+
+            // quat * vec3 → vec3
+            [](const glm::quat& q, const glm::vec3& v) {
+                return q * v;
+            }
+        ),
+
+        // To string (optional)
+        sol::meta_function::to_string, [](const glm::quat& q) {
+            return std::format("quat({}, {}, {}, {})", q.w, q.x, q.y, q.z);
+        }
+    );
+#pragma endregion
+
+#pragma region Components
+
+    // Default Component
+    lua.new_usertype<Component>("Component",
+        sol::no_constructor,
+        "owner", sol::readonly_property(&Component::owner),
+        "transform", sol::readonly_property(&Component::transform)
+    );
+
+    // Directional Light
+    lua.new_usertype<DirectionalLight>("DirectionalLight",
+        sol::no_constructor,
+        sol::base_classes, sol::bases<Component>(),
+        "color", &DirectionalLight::color,
+        "strength", &DirectionalLight::strength
+    );
+    RegisterComponent<DirectionalLight>("DirectionalLight", lua);
+
+#pragma endregion
+
+#pragma region Actor
+    // Register Actor
+    lua.new_usertype<Actor>("Actor",
+        sol::constructors<
+            Actor(const std::string&, const std::string&),
+            Actor(const std::string&),
+            Actor()
+        >(),
+
+        // Member variables
+        "name", &Actor::name,
+        "tag", &Actor::tag,
+        "transform", &Actor::transform,
+
+        // HasComponent
+        "HasComponent", [](Actor& self, const std::string& typeName) -> bool {
+            auto it = componentRegistry.find(typeName);
+            if (it == componentRegistry.end()) {
+                throw std::runtime_error("Unknown Component type: " + typeName);
+            }
+            return it->second.hasFn(self);
+        },
+
+        // GetComponent
+        "GetComponent", [](sol::this_state ts, Actor& self, const std::string& typeName) -> sol::object {
+            auto it = componentRegistry.find(typeName);
+            if (it == componentRegistry.end()) {
+                return sol::nil;
+            }
+
+            return it->second.getFn(self);
+            // if (!comp) {
+            //     return sol::nil;
+            // }
+            //
+            // sol::state_view lua(ts);
+            // return sol::make_object(lua, comp);
+        },
+
+        // AddComponent
+        "AddComponent", [](sol::this_state ts, Actor& self, const std::string& typeName) -> sol::object {
+            auto it = componentRegistry.find(typeName);
+            if (it == componentRegistry.end()) {
+                throw std::runtime_error("Unknown component type: " + typeName);
+            }
+
+            return it->second.addFn(self);
+            // sol::state_view lua(ts);
+            // return sol::make_object(lua, comp);
+        }
+    );
+#pragma endregion
+
 }

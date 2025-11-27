@@ -254,7 +254,12 @@
     <ClCompile Include="Classes\Core\Component.cpp" />
     <ClCompile Include="Classes\Core\Input.cpp" />
     <ClCompile Include="Classes\Core\LightingManager.cpp" />
-    <ClCompile Include="Classes\Core\LuaManager.cpp" />
+    <ClCompile Include="Classes\Core\LuaManager.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="Classes\Core\SceneInitializer.cpp" />
     <ClCompile Include="Classes\Core\SceneManager.cpp" />
     <ClCompile Include="Classes\Core\Skybox.cpp" />

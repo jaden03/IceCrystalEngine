@@ -13,7 +13,7 @@ class LuaExecutor : public Component
 public:
     LuaExecutor();
     LuaExecutor(std::string filePath);
-    ~LuaExecutor();
+    virtual ~LuaExecutor();
 
     bool runOnReady = true;
     std::string filePath;
