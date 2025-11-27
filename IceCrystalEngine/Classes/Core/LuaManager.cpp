@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 
+#include "Ice/Components/Camera.h"
 #include "Ice/Core/Component.h"
 
 #include "Ice/Components/Light.h"
@@ -359,14 +360,50 @@ void LuaManager::RegisterBindings() {
         "transform", sol::readonly_property(&Component::transform)
     );
 
+    // Camera
+    lua.new_usertype<Camera>("Camera",
+        sol::no_constructor,
+        sol::base_classes, sol::bases<Component>(),
+        "fieldOfView", &Camera::fieldOfView,
+        "nearClippingPlane", &Camera::nearClippingPlane,
+        "farClippingPlane", &Camera::farClippingPlane
+    );
+    RegisterComponent<Camera>("Camera", lua);
+
     // Directional Light
     lua.new_usertype<DirectionalLight>("DirectionalLight",
         sol::no_constructor,
         sol::base_classes, sol::bases<Component>(),
         "color", &DirectionalLight::color,
-        "strength", &DirectionalLight::strength
+        "strength", &DirectionalLight::strength,
+        "frustumSize", &DirectionalLight::frustumSize,
+        "frustumNearPlane", &DirectionalLight::frustumNearPlane,
+        "frustumFarPlane", &DirectionalLight::frustumFarPlane,
+        "castShadows", &DirectionalLight::castShadows
     );
     RegisterComponent<DirectionalLight>("DirectionalLight", lua);
+
+    // Point Light
+    lua.new_usertype<PointLight>("PointLight",
+        sol::no_constructor,
+        sol::base_classes, sol::bases<Component>(),
+        "color", &PointLight::color,
+        "strength", &PointLight::strength,
+        "radius", &PointLight::radius
+    );
+    RegisterComponent<PointLight>("PointLight", lua);
+
+    // Spotlight
+    lua.new_usertype<SpotLight>("SpotLight",
+        sol::no_constructor,
+        sol::base_classes, sol::bases<Component>(),
+        "color", &SpotLight::color,
+        "strength", &SpotLight::strength,
+        "distance", &SpotLight::distance,
+        "angle", &SpotLight::angle,
+        "castShadows", &SpotLight::castShadows
+    );
+    RegisterComponent<SpotLight>("SpotLight", lua);
 
 #pragma endregion
 
