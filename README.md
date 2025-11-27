@@ -16,5 +16,6 @@ Game engine I am writing to learn C++
 - ImGui
 - Object picking/Color picking
 - MSAA
+- Can use Lua to interface with most things
 
 ![IceCrystal Engine](https://github.com/jaden03/IceCrystalEngine/blob/master/image.png?raw=true)
