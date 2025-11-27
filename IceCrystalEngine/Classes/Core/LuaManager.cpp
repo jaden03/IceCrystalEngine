@@ -12,6 +12,7 @@
 #include "Ice/Core/Actor.h"
 #include "Ice/Core/Transform.h"
 #include "Ice/core/SceneManager.h"
+#include <Ice/Core/Input.h>
 
 LuaManager::LuaManager()
 {
@@ -127,6 +128,121 @@ int LuaManager::LuaPrint(lua_State* L) {
     return 0; // Return no values to Lua
 }
 
+
+void LuaManager::RegisterInputBindings()
+{
+#pragma region Keycodes
+    sol::table keycode_table = lua.create_table();
+    
+    // Printable keys + symbols
+    keycode_table["Space"]         = GLFW_KEY_SPACE;
+    keycode_table["Apostrophe"]    = GLFW_KEY_APOSTROPHE;
+    keycode_table["Comma"]         = GLFW_KEY_COMMA;
+    keycode_table["Minus"]         = GLFW_KEY_MINUS;
+    keycode_table["Period"]        = GLFW_KEY_PERIOD;
+    keycode_table["Slash"]         = GLFW_KEY_SLASH;
+    keycode_table["Semicolon"]     = GLFW_KEY_SEMICOLON;
+    keycode_table["Equal"]         = GLFW_KEY_EQUAL;
+    keycode_table["LeftBracket"]   = GLFW_KEY_LEFT_BRACKET;
+    keycode_table["RightBracket"]  = GLFW_KEY_RIGHT_BRACKET;
+    keycode_table["Backslash"]     = GLFW_KEY_BACKSLASH;
+    keycode_table["GraveAccent"]   = GLFW_KEY_GRAVE_ACCENT;
+    
+    // Numbers
+    for (int i = 0; i <= 9; ++i) {
+        keycode_table[std::to_string(i)] = GLFW_KEY_0 + i;
+    }
+
+    // Letters A-Z
+    for (char c = 'A'; c <= 'Z'; ++c) {
+        keycode_table[std::string(1, c)] = GLFW_KEY_A + (c - 'A');
+    }
+
+    // Function keys
+    keycode_table["Escape"]     = GLFW_KEY_ESCAPE;
+    keycode_table["Enter"]      = GLFW_KEY_ENTER;
+    keycode_table["Tab"]        = GLFW_KEY_TAB;
+    keycode_table["Backspace"]  = GLFW_KEY_BACKSPACE;
+    keycode_table["Insert"]     = GLFW_KEY_INSERT;
+    keycode_table["Delete"]     = GLFW_KEY_DELETE;
+    keycode_table["Right"]      = GLFW_KEY_RIGHT;
+    keycode_table["Left"]       = GLFW_KEY_LEFT;
+    keycode_table["Down"]       = GLFW_KEY_DOWN;
+    keycode_table["Up"]         = GLFW_KEY_UP;
+    keycode_table["PageUp"]     = GLFW_KEY_PAGE_UP;
+    keycode_table["PageDown"]   = GLFW_KEY_PAGE_DOWN;
+    keycode_table["Home"]       = GLFW_KEY_HOME;
+    keycode_table["End"]        = GLFW_KEY_END;
+    keycode_table["CapsLock"]   = GLFW_KEY_CAPS_LOCK;
+    keycode_table["ScrollLock"] = GLFW_KEY_SCROLL_LOCK;
+    keycode_table["NumLock"]    = GLFW_KEY_NUM_LOCK;
+    keycode_table["PrintScreen"]= GLFW_KEY_PRINT_SCREEN;
+    keycode_table["Pause"]      = GLFW_KEY_PAUSE;
+    keycode_table["Menu"]       = GLFW_KEY_MENU;
+
+    // F1-F25
+    for (int i = 1; i <= 25; ++i) {
+        keycode_table["F" + std::to_string(i)] = GLFW_KEY_F1 + (i - 1);
+    }
+
+    // Numpad
+    for (int i = 0; i <= 9; ++i) {
+        keycode_table["KP_" + std::to_string(i)] = GLFW_KEY_KP_0 + i;
+    }
+    keycode_table["KP_Decimal"] = GLFW_KEY_KP_DECIMAL;
+    keycode_table["KP_Divide"]  = GLFW_KEY_KP_DIVIDE;
+    keycode_table["KP_Multiply"]= GLFW_KEY_KP_MULTIPLY;
+    keycode_table["KP_Subtract"]= GLFW_KEY_KP_SUBTRACT;
+    keycode_table["KP_Add"]     = GLFW_KEY_KP_ADD;
+    keycode_table["KP_Enter"]   = GLFW_KEY_KP_ENTER;
+    keycode_table["KP_Equal"]   = GLFW_KEY_KP_EQUAL;
+
+    // Modifiers
+    keycode_table["LeftShift"]    = GLFW_KEY_LEFT_SHIFT;
+    keycode_table["RightShift"]   = GLFW_KEY_RIGHT_SHIFT;
+    keycode_table["LeftControl"]  = GLFW_KEY_LEFT_CONTROL;
+    keycode_table["RightControl"] = GLFW_KEY_RIGHT_CONTROL;
+    keycode_table["LeftAlt"]      = GLFW_KEY_LEFT_ALT;
+    keycode_table["RightAlt"]     = GLFW_KEY_RIGHT_ALT;
+    keycode_table["LeftSuper"]    = GLFW_KEY_LEFT_SUPER;
+    keycode_table["RightSuper"]   = GLFW_KEY_RIGHT_SUPER;
+
+    // Make it globally accessible
+    lua["Key"] = keycode_table;
+#pragma endregion
+
+#pragma region Input
+    // Input
+    lua.new_usertype<Input>("Input",
+        sol::no_constructor, // Prevent creating new instances
+        "GetInstance", &Input::GetInstance,
+
+        // Properties
+        "scrolledUp", []() { return Input::scrolledUp; },
+        "scrolledDown", []() { return Input::scrolledDown; },
+
+        "lockCursor", sol::var(Input::lockCursor),
+        "hideCursor", sol::var(Input::hideCursor),
+        
+        // Methods
+        "GetKeyDown", &Input::GetKeyDown,
+        "GetKeyUp", &Input::GetKeyUp,
+        "GetKey", &Input::GetKey,
+
+        "GetMouseButtonDown", &Input::GetMouseButtonDown,
+        "GetMouseButtonUp", &Input::GetMouseButtonUp,
+        "GetMouseButton", &Input::GetMouseButton,
+
+        "GetMousePosition", sol::overload(
+            sol::resolve<glm::vec2()>(&Input::GetMousePosition),
+            [](double* x, double* y) { Input::GetMousePosition(x, y); }
+        ),
+
+        "CreateAxis", &Input::CreateAxis,
+        "GetAxis", &Input::GetAxis
+    );
+#pragma endregion
+}
 
 void LuaManager::RegisterBindings() {
 
@@ -303,6 +419,49 @@ void LuaManager::RegisterBindings() {
         }
     );
 
+    lua.new_usertype<glm::vec2>("vec2",
+        // Constructors
+        sol::call_constructor, sol::factories(
+            []() -> glm::vec2 { return glm::vec2(0.0f); },
+            [](float x, float y) -> glm::vec2 { return glm::vec2(x, y); },
+            [](float s) -> glm::vec2 { return glm::vec2(s); }
+        ),
+
+        // Component access (read/write)
+        "x", &glm::vec2::x,
+        "y", &glm::vec2::y,
+
+        // ---------------- Operators ----------------
+
+        sol::meta_function::addition, [](const glm::vec2& a, const glm::vec2& b) { return a + b; },
+
+        sol::meta_function::subtraction, [](const glm::vec2& a, const glm::vec2& b) { return a - b; },
+
+        sol::meta_function::multiplication, sol::overload(
+            [](const glm::vec2& a, const glm::vec2& b) { return a * b; },           // component-wise
+            [](const glm::vec2& a, float s)         { return a * s; },
+            [](float s,         const glm::vec2& a) { return s * a; }
+        ),
+
+        sol::meta_function::division, sol::overload(
+            [](const glm::vec2& a, float s)         { return a / s; },
+            [](float s,         const glm::vec2& a) { return glm::vec2(s / a.x, s / a.y); } // scalar / vec2
+        ),
+
+        sol::meta_function::unary_minus, [](const glm::vec2& a) { return -a; },
+
+        // Length / equality (highly useful)
+        sol::meta_function::length, [](const glm::vec2& v) { return glm::length(v); },
+        sol::meta_function::equal_to, [](const glm::vec2& a, const glm::vec2& b) { return a == b; },
+
+        // tostring
+        sol::meta_function::to_string, [](const glm::vec2& v) -> std::string {
+            char buf[64];
+            snprintf(buf, sizeof(buf), "vec2(%.3f, %.3f)", v.x, v.y);
+            return std::string(buf);
+        }
+    );
+
     // GLM quats
     lua.new_usertype<glm::quat>("quat",
         sol::call_constructor, sol::factories(
@@ -460,4 +619,6 @@ void LuaManager::RegisterBindings() {
     );
 #pragma endregion
 
+
+    RegisterInputBindings();
 }

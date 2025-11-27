@@ -125,6 +125,7 @@ public:
 
 private:
 	void RegisterBindings(); // Bind C++ classes and functions to Lua
+	void RegisterInputBindings();
 
 	static int LuaWait(lua_State* L);
 	static int LuaPrint(lua_State* L);
