@@ -20,12 +20,17 @@ public:
 	
 	float fieldOfView = 90.0f;
 	float nearClippingPlane = 0.01f;
-	float farClippingPlane = 1000.0f;
+	float farClippingPlane = 20.0f;
 
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
+	std::vector<glm::vec4> frustumCorners;
+	glm::vec3 frustumCenter;
 
 	void Update() override;
+
+private:
+	std::vector<glm::vec4> GetFrustomCorners();
 };
 
 #endif

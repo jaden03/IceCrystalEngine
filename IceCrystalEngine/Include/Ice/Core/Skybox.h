@@ -32,7 +32,7 @@ public:
 		return instance;
 	}
 
-	std::string SkyboxPath = "{ASSET_DIR}Textures/skybox"; // this is a path to a folder
+	std::string SkyboxPath = "{ASSET_DIR}Textures/spaceSkybox"; // this is a path to a folder
 	// the folder contains "right.png", "left.png", "top.png", "bottom.png", "front.png", "back.png"
 
 	void Render();

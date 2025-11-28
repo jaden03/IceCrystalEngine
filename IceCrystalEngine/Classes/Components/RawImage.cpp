@@ -24,6 +24,14 @@ RawImage::RawImage(std::string texturePath, std::string shaderPath)
     texture = new Texture(texturePath);
 }
 
+RawImage::RawImage(unsigned int textureHandle)
+{
+    InitializeSharedResources();
+    shader = new Shader(FileUtil::AssetDir + "Shaders/ui.vert", FileUtil::AssetDir + "Shaders/ui.frag");
+    sourceType = RawImageSourceType::RawHandle;
+    rawHandle = textureHandle;
+}
+
 RawImage::~RawImage()
 {
     glDeleteVertexArrays(1, &sharedVAO);
@@ -61,11 +69,15 @@ void RawImage::OverlayUpdate()
     float posX = transform->position.x + (transform->scale.x * .5f);
     float posY = transform->position.y + (transform->scale.y * .5f);
     glm::vec3 pos = glm::vec3(posX, posY, transform->position.z);
-
-    glBindVertexArray(sharedVAO);
+    
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture->Handle);
-    GLint textureLocation = glGetUniformLocation(texture->Handle, "fragTexture");
+
+    if (sourceType == RawImageSourceType::RawHandle)
+        glBindTexture(GL_TEXTURE_2D, rawHandle);
+    else
+        glBindTexture(GL_TEXTURE_2D, texture->Handle);
+    
+    GLint textureLocation = glGetUniformLocation(shader->Handle, "fragTexture");
     glUniform1i(textureLocation, 0);
 
     glm::mat4 model = glm::mat4(1.0f);
@@ -80,6 +92,7 @@ void RawImage::OverlayUpdate()
 
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
+    glBindVertexArray(sharedVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
     glEnable(GL_DEPTH_TEST);

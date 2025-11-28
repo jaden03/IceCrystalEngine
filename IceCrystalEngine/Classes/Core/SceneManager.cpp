@@ -63,6 +63,7 @@ void SceneManager::Update()
 
 	
 	// shadows
+	mainCamera->Update();
 	
 	// bind to the shadow framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, lightingManager.shadowMapFBO);

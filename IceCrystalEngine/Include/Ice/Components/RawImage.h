@@ -13,15 +13,25 @@
 
 #include "glad/glad.h"
 
+enum class RawImageSourceType
+{
+    EngineTexture,
+    RawHandle
+};
+
 class RawImage : public Component
 {
 public:
     RawImage(std::string texturePath);
     RawImage(std::string texturePath, std::string shaderPath);
+    RawImage(unsigned int textureHandle);
     ~RawImage();
 
     Texture* texture;
     Shader* shader;
+
+    GLuint rawHandle = 0;
+    RawImageSourceType sourceType = RawImageSourceType::EngineTexture;
 
     void OverlayUpdate() override;
     
