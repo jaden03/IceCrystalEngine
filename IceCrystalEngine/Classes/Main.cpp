@@ -163,8 +163,12 @@ int main()
 		// }
 		
 		
-		pointLight1->transform->position.x = 0 + 2 * cos(glfwGetTime());
-		pointLight1->transform->position.z = 0 + 2 * sin(glfwGetTime());
+		// pointLight1->transform->position.x = 0 + 2 * cos(glfwGetTime());
+		// pointLight1->transform->position.z = 0 + 2 * sin(glfwGetTime());
+
+    	Camera* mainCamera = sceneManager.mainCamera;
+    	pointLight1->transform->position = mainCamera->frustumCenter;
+    	
 		
 		pointLight2->transform->position.x = 0 + 2 * cos(glfwGetTime() +  2);
         pointLight2->transform->position.z = 0 + 2 * sin(glfwGetTime() + 2);

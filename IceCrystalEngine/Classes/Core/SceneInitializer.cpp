@@ -49,11 +49,11 @@ void SceneInitializer::InitializeScene()
 	sun->transform->RotateLocal(-30, 0, 0);
 	sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
 
-	Actor* testImage = new Actor("Test Image", "testImage");
-	RawImage* rawImage = new RawImage(FileUtil::AssetDir + "Textures/ObjectGrid.png");
-	testImage->AddComponent(rawImage);
-	testImage->transform->SetScale(glm::vec3(150, 150, 100));
-	testImage->transform->Translate(400, 50, 0);
+	Actor* shadowDebugImage = new Actor("Shadow Debug Image", "shadowDebugImage");
+	RawImage* rawImage = new RawImage(sunLight->depthMap);
+	shadowDebugImage->AddComponent(rawImage);
+	shadowDebugImage->transform->SetScale(glm::vec3(150, 150, 100));
+	shadowDebugImage->transform->Translate(400, 50, 0);
 
 	Actor* testImage2 = new Actor();
 	RawImage* rawImage2 = new RawImage(FileUtil::AssetDir + "Textures/crate.png");
