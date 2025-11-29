@@ -105,21 +105,32 @@ public:
 	void RegisterComponent(const std::string& name, sol::state_view lua) {
 		componentRegistry[name] = {
 			// Add<T>
-			[lua](Actor& a) -> sol::object {
+			[](Actor& a) -> sol::object {
 				T* comp = a.AddComponent<T>();
-				return sol::make_object(lua, comp);
+				return sol::make_object(LuaManager::GetInstance().lua, comp);
 			},
 			// Get<T>
-			[lua](Actor& a) -> sol::object {
+			[](Actor& a) -> sol::object {
 				if (T* comp = a.GetComponent<T>())
-					return sol::make_object(lua, comp);
-				return sol::nil;
+					return sol::make_object(LuaManager::GetInstance().lua, comp);
+				return sol::lua_nil;
 			},
 			// Has<T>
 			[](Actor& a) -> bool {
 				return a.HasComponent<T>();
 			}
 		};
+	}
+
+	void Cleanup()
+	{
+		tasks.clear();
+		tasks.shrink_to_fit();
+
+		componentRegistry.clear();
+
+		lua.collect_garbage();
+		lua.collect_garbage();
 	}
 
 private:
@@ -146,12 +157,6 @@ private:
 	}
 
 	LuaManager();
-	~LuaManager()
-	{
-		lua.collect_garbage();
-		lua.collect_garbage();
-		lua = sol::state();
-	};
 
 	LuaManager(LuaManager const&) = delete; // Delete copy constructor
 	void operator=(LuaManager const&) = delete; // Delete assignment operator
