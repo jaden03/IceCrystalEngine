@@ -1,0 +1,6 @@
+﻿{
+  "Name": "Test Material",
+  "Texture": "",
+  "Shader": "{ASSET_DIR}Shaders/test",
+  "Color": [ 1.0, 1.0, 1.0 ]
+}

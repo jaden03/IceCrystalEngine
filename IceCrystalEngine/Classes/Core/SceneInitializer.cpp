@@ -91,9 +91,9 @@ void SceneInitializer::InitializeScene()
 	}
 
 
+	Material* testMaterial = new Material(FileUtil::AssetDir + "Materials/test.mat");
 	Actor* testCrate = new Actor("Test Crate", "testCrate");
-	testCrate->transform->SetScale(glm::vec3(2.0f, 2.0f, 2.0f));
-	Renderer* testCrateRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj", crateMaterial);
+	Renderer* testCrateRenderer = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", testMaterial);
 	testCrate->AddComponent(testCrateRenderer);
 	LuaExecutor* executor = new LuaExecutor(FileUtil::AssetDir + "LuaScripts/Test.lua");
 	testCrate->AddComponent(executor);
@@ -146,5 +146,4 @@ void SceneInitializer::InitializeScene()
 	floorActor->AddComponent(floorRenderer);
 	floorActor->transform->scale = glm::vec3(15, 1, 15);
 	floorActor->transform->Translate(0, -7, 0);
-	
 }

@@ -42,7 +42,7 @@ void Material::InitializeMaterial()
 
 		// Get the shader path
 		std::string shaderPath = jsonData["Shader"];
-		shader = new Shader(shaderPath + ".vert", shaderPath + ".frag");
+		shader = new Shader(shaderPath);
 
 		// Get the color
 		color = glm::vec3(jsonData["Color"][0], jsonData["Color"][1], jsonData["Color"][2]);
