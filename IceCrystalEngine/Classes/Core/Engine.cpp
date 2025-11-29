@@ -17,6 +17,7 @@ Engine::Engine()
 
 Engine::~Engine()
 {
+    LuaManager::GetInstance().Cleanup();
 #ifdef _DEBUG
     DebugUtil::GetInstance().Cleanup();
 #endif
