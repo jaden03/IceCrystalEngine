@@ -6,11 +6,31 @@
 
 std::int32_t Handle;
 
-Shader::Shader() // default constructer
+Shader::Shader() // This will just use default.vert and default.frag
 {
     InitializeShader();
 }
+Shader::Shader(std::string shaderName)
+{
+    if (!FileUtil::FileExists(shaderName + ".vert"))
+    {
+        std::cerr << "Failed to load vertex shader: " << shaderName << "\n";
+        abort();
+    }
+    VertexShaderPath = shaderName + ".vert";
 
+    if (!FileUtil::FileExists(shaderName + ".frag"))
+    {
+        std::cerr << "Failed to load fragment shader: " << shaderName << "\n";
+        abort();
+    }
+    FragmentShaderPath = shaderName + ".frag";
+
+    if (FileUtil::FileExists(shaderName + ".geom"))
+        GeometryShaderPath = shaderName + ".geom";
+
+    InitializeShader();
+}
 Shader::Shader(std::string vertexShaderPath, std::string fragmentShaderPath)
 {
 	VertexShaderPath = vertexShaderPath;
@@ -18,6 +38,15 @@ Shader::Shader(std::string vertexShaderPath, std::string fragmentShaderPath)
 
     InitializeShader();
 }
+Shader::Shader(std::string vertexShaderPath, std::string fragmentShaderPath, std::string geometryShaderPath)
+{
+    VertexShaderPath = vertexShaderPath;
+    FragmentShaderPath = fragmentShaderPath;
+    GeometryShaderPath = geometryShaderPath;
+
+    InitializeShader();
+}
+
 
 void Shader::Use()
 {
@@ -49,7 +78,7 @@ void Shader::InitializeShader()
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
 
-
+    
 	// Read the fragment shader file
     std::string fragmentShaderFileContents = FileUtil::ReadFile(FragmentShaderPath);
     const char* fragmentShaderSource = fragmentShaderFileContents.c_str();
@@ -66,10 +95,35 @@ void Shader::InitializeShader()
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
 
+
+    // Read the geometry shader file
+    unsigned int geometryShader = 0;
+    if (!GeometryShaderPath.empty())
+    {
+        std::string geometryShaderFileContents = FileUtil::ReadFile(GeometryShaderPath);
+        const char* geometryShaderSource = geometryShaderFileContents.c_str();
+
+        // geometry shader
+        geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+        glShaderSource(geometryShader, 1, &geometryShaderSource, NULL);
+        glCompileShader(geometryShader);
+        
+        glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &success);
+        if (!success)
+        {
+            glGetShaderInfoLog(geometryShader, 512, NULL, infoLog);
+            std::cout << "ERROR::SHADER::GEOMETRY::COMPILATION_FAILED\n" << infoLog << std::endl;
+        }
+    }
+
     // link shaders
     Handle = glCreateProgram();
     glAttachShader(Handle, vertexShader);
     glAttachShader(Handle, fragmentShader);
+    if (geometryShader != 0)
+    {
+        glAttachShader(Handle, geometryShader);
+    }
     glLinkProgram(Handle);
 
     glGetProgramiv(Handle, GL_LINK_STATUS, &success);
@@ -79,6 +133,7 @@ void Shader::InitializeShader()
     }
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+    glDeleteShader(geometryShader);
 }
 
 

@@ -13,12 +13,12 @@ public:
     static void InitializeStaticMembers();
 
     static std::string ReadFile(const std::string& filename);
+	static bool FileExists(const std::string& filename);
 	
 	static std::string SubstituteVariables(const std::string& str);
 
 	static std::string GetProjectRoot();
 	static std::string GetAssetDir();
-	
 };
 
 

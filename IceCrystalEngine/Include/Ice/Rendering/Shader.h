@@ -15,11 +15,14 @@ public:
 	
 	std::string VertexShaderPath = "{ASSET_DIR}Shaders/default.vert"; // i dont really need these, but they might come in handy eventually
 	std::string FragmentShaderPath = "{ASSET_DIR}Shaders/default.frag";
+	std::string GeometryShaderPath = "";
 
 	std::int32_t Handle;
 
-	Shader(); // blank constructor
-	Shader(std::string vertexShaderPath, std::string fragmentShaderPath); // constructor with paths
+	Shader();
+	Shader(std::string shaderName); // Loads {shaderName}.vert/.frag/.geom
+	Shader(std::string vertexShaderPath, std::string fragmentShaderPath);
+	Shader(std::string vertexShaderPath, std::string fragmentShaderPath, std::string geometryShaderPath);
 
     ~Shader();
 

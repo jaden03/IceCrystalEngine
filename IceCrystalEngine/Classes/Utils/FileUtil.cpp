@@ -48,7 +48,6 @@ std::string FileUtil::GetAssetDir()
 
 std::string FileUtil::ReadFile(const std::string& filename) 
 {
-
 	std::string updatedFilename = SubstituteVariables(filename);
 	
     std::ifstream file(updatedFilename);
@@ -67,6 +66,13 @@ std::string FileUtil::ReadFile(const std::string& filename)
 
     return fileContents;
 }
+
+bool FileUtil::FileExists(const std::string& filename)
+{
+	std::string updatedFilename = SubstituteVariables(filename);
+	return std::filesystem::exists(updatedFilename);
+}
+
 
 std::string FileUtil::SubstituteVariables(const std::string& str)
 {

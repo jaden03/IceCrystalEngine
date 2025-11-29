@@ -94,9 +94,19 @@ DebugUtil::DebugUtil()
 	// Setup the buffer to output to the console
 	oldbuf = std::cout.rdbuf(ss.rdbuf());
 
-	std::cout << "Setting up debug commands." << "\n";
+	// First text in the console
+	std::cout << "[ IceCrystalEngine ]\n";
+	std::cout << "----------------------------------------\n";
+
+	std::cout << " Rendering Backend\n";
+	std::cout << "   OpenGL Version : " << glGetString(GL_VERSION) << "\n";
+	std::cout << "   GLSL Version   : " << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n\n";
+
+	std::cout << " Debug Console Initializing\n";
 	SetupCommands();
-	std::cout << "Press ""~"" or use the debug menu to toggle this console." << "\n";
+	std::cout << " Debug Console Initialized\n";
+	std::cout << "  Toggle with: ~\n";
+	std::cout << "----------------------------------------\n";
 }
 
 
@@ -232,7 +242,7 @@ void DebugUtil::Cleanup()
 
 void DebugUtil::RegisterCommand(const std::string& commandName, const CommandHandler& handler)
 {
-	std::cout << "Registered command: " << commandName << "\n";
+	std::cout << "   Registered command: " << commandName << "\n";
 	commandMap[commandName] = handler;
 }
 
