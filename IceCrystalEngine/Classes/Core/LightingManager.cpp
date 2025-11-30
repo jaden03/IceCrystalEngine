@@ -19,15 +19,23 @@ void LightingManager::InitializeLighting()
 	shadowShader = new Shader("{ASSET_DIR}Shaders/shadows");
 	shadowsCascadedShader = new Shader("{ASSET_DIR}Shaders/shadowsCascaded");
 	glGenFramebuffers(1, &shadowMapFBO);
-
-	directionalLights = std::vector<DirectionalLight*>();
+	
 	pointLights = std::vector<PointLight*>();
+	spotLights = std::vector<SpotLight*>();
 }
 
 
 void LightingManager::AddDirectionalLight(DirectionalLight* light)
 {
-	directionalLights.push_back(light);
+	if (directionalLight != nullptr)
+	{
+		std::cout << "Directional light already exists, deleting the new one bud" << std::endl;
+		if (light->transform != nullptr)
+			light->transform->actor->DeleteComponent(light);
+		else
+			delete &light;
+	}
+	directionalLight = light;
 }
 
 void LightingManager::AddPointLight(PointLight* light)
@@ -43,14 +51,8 @@ void LightingManager::AddSpotLight(SpotLight* light)
 
 void LightingManager::RemoveDirectionalLight(DirectionalLight* light)
 {
-	for (int i = 0; i < directionalLights.size(); i++)
-	{
-		if (directionalLights[i] == light)
-		{
-			directionalLights.erase(directionalLights.begin() + i);
-			return;
-		}
-	}
+	if (directionalLight == light)
+		directionalLight = nullptr;
 }
 
 void LightingManager::RemovePointLight(PointLight* light)

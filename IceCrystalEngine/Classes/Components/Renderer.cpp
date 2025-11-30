@@ -235,39 +235,33 @@ void Renderer::Update()
 	material->shader->setFloat("ambientLightStrength", lightingManager.ambientLightingStrength);
 	material->shader->setVec3("ambientLightColor", lightingManager.ambientLightingColor);
 	
-	material->shader->setInt("directionalLightCount", lightingManager.directionalLights.size());
 	material->shader->setInt("pointLightCount", lightingManager.pointLights.size());
 
-	int numberOfDirectionalLights = lightingManager.directionalLights.size();
-	int maxDirectionalLights = lightingManager.maxDirectionalLights;
-	if (numberOfDirectionalLights > maxDirectionalLights)
-		numberOfDirectionalLights = maxDirectionalLights;
-
-	for (int i = 0; i < numberOfDirectionalLights; i++)
+	// directional light
+	DirectionalLight* light = lightingManager.directionalLight;
+	material->shader->setInt("directionalLightExists", light != nullptr);
+	if (light != nullptr)
 	{
-		std::string prefix = "directionalLights[" + std::to_string(i) + "].";
-		material->shader->setVec3(prefix + "direction", lightingManager.directionalLights[i]->transform->forward);
-		material->shader->setVec3(prefix + "color", lightingManager.directionalLights[i]->color);
-		material->shader->setFloat(prefix + "strength", lightingManager.directionalLights[i]->strength);
-		material->shader->setBool(prefix + "castShadows", lightingManager.directionalLights[i]->castShadows);
+		material->shader->setVec3("directionalLight.direction", light->transform->forward);
+		material->shader->setVec3("directionalLight.color", light->color);
+		material->shader->setFloat("directionalLight.strength", light->strength);
+		material->shader->setBool("directionalLight.castShadows", light->castShadows);
 
-		lightingManager.directionalLights[i]->BuildCascades();
-		material->shader->setInt(prefix + "cascadeCount", lightingManager.directionalLights[i]->cascadeCount);
+		light->BuildCascades();
+		material->shader->setInt("directionalLight.cascadeCount", light->cascadeCount);
 		// Setup the data for the UBO
-		glBindBufferBase(GL_UNIFORM_BUFFER, 0, lightingManager.directionalLights[i]->cascadeMatricesUBO);
-		for (size_t c = 0; c < lightingManager.directionalLights[i]->cascadeCount; ++c)
-		{
-			material->shader->setFloat(prefix + "cascadeSplits[" + std::to_string(c) + "]", lightingManager.directionalLights[i]->cascadeSplits[c]);
-			glBufferSubData(GL_UNIFORM_BUFFER, c * sizeof(glm::mat4x4), sizeof(glm::mat4x4), &lightingManager.directionalLights[i]->cascadeMatrices[c]);
-		}
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		// glBindBuffer(GL_UNIFORM_BUFFER, light->cascadeMatricesUBO);
+		// glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4) * light->cascadeCount, light->cascadeMatrices.data());
+		// glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, light->cascadeMatricesUBO);
 		
 		glActiveTexture(GL_TEXTURE0 + sceneManager.usedTextureCount);
-		glBindTexture(GL_TEXTURE_2D_ARRAY, lightingManager.directionalLights[i]->depthMapArray);
-		material->shader->setInt("directionalShadowMaps[" + std::to_string(i) + "]", sceneManager.usedTextureCount);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, light->depthMapArray);
+		material->shader->setInt("directionalShadowMap", sceneManager.usedTextureCount);
 		sceneManager.usedTextureCount++;
 	}
 
+	// point lights
 	int numberOfPointLights = lightingManager.pointLights.size();
 	int maxPointLights = lightingManager.maxPointLights;
 	if (numberOfPointLights > maxPointLights)
@@ -282,6 +276,7 @@ void Renderer::Update()
 		material->shader->setFloat(prefix + "radius", lightingManager.pointLights[i]->radius);
 	}
 
+	// spot lights
 	int numberOfSpotLights = lightingManager.spotLights.size();
 	int maxSpotLights = lightingManager.maxSpotLights;
 	if (numberOfSpotLights > maxSpotLights)

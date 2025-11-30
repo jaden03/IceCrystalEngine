@@ -69,21 +69,19 @@ void SceneManager::Update()
 	
 	// bind to the shadow framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, lightingManager.shadowMapFBO);
-	// use the cascaded shadow shader
-	lightingManager.shadowsCascadedShader->Use();
 
 	// frontface culling
 	glCullFace(GL_FRONT);
 
-	// loop through directional lights
-	for (int i = 0; i < lightingManager.directionalLights.size(); i++)
+	// directional light
+	DirectionalLight* directionalLight = lightingManager.directionalLight;
+	// if the light doesnt cast shadows, move on to the next one
+	if (directionalLight != nullptr && directionalLight->castShadows)
 	{
-		DirectionalLight* light = lightingManager.directionalLights[i];
-
-		// if the light doesnt cast shadows, move on to the next one
-		if (!light->castShadows) continue;
-
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, light->depthMapArray, 0);
+		// use the cascaded shadow shader
+		lightingManager.shadowsCascadedShader->Use();
+		
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, directionalLight->depthMapArray, 0);
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
 
@@ -91,18 +89,15 @@ void SceneManager::Update()
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		// set the viewport
-		glViewport(0, 0, light->shadowMapResolution, light->shadowMapResolution);
+		glViewport(0, 0, directionalLight->shadowMapResolution, directionalLight->shadowMapResolution);
 
 		// Setup the data for the UBO
-		glBindBuffer(GL_UNIFORM_BUFFER, light->cascadeMatricesUBO);
-		for (size_t c = 0; c < light->cascadeCount; ++c)
-		{
-			glBufferSubData(GL_UNIFORM_BUFFER, 0,sizeof(glm::mat4x4) * light->cascadeCount, light->cascadeMatrices.data());
-		}
-		glBindBufferBase(GL_UNIFORM_BUFFER, 0, light->cascadeMatricesUBO);
+		glBindBuffer(GL_UNIFORM_BUFFER, directionalLight->cascadeMatricesUBO);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4) * directionalLight->cascadeCount, directionalLight->cascadeMatrices.data());
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, directionalLight->cascadeMatricesUBO);
 
-
+		
 		// loop through the actors
 		for (int j = 0; j < actors->size(); j++)
 		{
@@ -118,6 +113,7 @@ void SceneManager::Update()
 			}
 		}
 	}
+	
 
 	// use the normal shadow shader
 	lightingManager.shadowShader->Use();
