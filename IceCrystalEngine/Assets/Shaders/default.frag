@@ -1,4 +1,4 @@
-#version 330 core
+#version 430 core
 layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 BrightColor;
 layout (location = 2) out vec4 PickColor;
@@ -13,6 +13,7 @@ uniform vec3 uniqueColor;
 uniform sampler2D fragTexture;
 uniform vec3 fragColor;
 uniform vec3 viewPos;
+uniform mat4 view;
 
 // lighting
 uniform float ambientLightStrength;
@@ -21,16 +22,21 @@ uniform vec3 ambientLightColor;
 #define MAX_POINT_LIGHTS 64
 #define MAX_SPOT_LIGHTS 16
 #define MAX_DIRECTIONAL_LIGHTS 5
+#define MAX_CASCADES 4
 
 uniform int directionalLightCount;
 uniform struct DirectionalLight {
     vec3 direction;
 	vec3 color;
 	float strength;
-    mat4 lightSpaceMatrix;
     bool castShadows;
+    int cascadeCount;
+    float cascadeSplits[MAX_CASCADES];
 } directionalLights[MAX_DIRECTIONAL_LIGHTS];
-uniform sampler2D directionalShadowMap[MAX_DIRECTIONAL_LIGHTS];
+layout(std140, binding = 0) uniform DirectionalCascadeData {
+    mat4 cascadeMatrices[MAX_CASCADES];
+} uboCascade;
+uniform sampler2DArray directionalShadowMaps[MAX_DIRECTIONAL_LIGHTS];
 
 
 uniform int pointLightCount;
@@ -68,61 +74,99 @@ void main()
     vec3 normal = normalize(fragNormal);
 
     vec3 viewDir = normalize(viewPos - fragPos);
-
-
-	 // Directional Lights
-    for (int i = 0; i < directionalLights.length(); i++)
+    
+    // Directional Lights
+    for (int i = 0; i < directionalLightCount; i++)
     {
         DirectionalLight light = directionalLights[i];
-		
-		vec3 lightDir = normalize(-light.direction);
+
+        // -------------------------------------------------
+        // 1. Base lighting (diffuse + specular)
+        // -------------------------------------------------
+        vec3 lightDir = normalize(-light.direction);
         vec3 color = light.color;
         float strength = light.strength;
 
         float diff = max(dot(normal, lightDir), 0.0);
 
         vec3 reflectDir = reflect(-lightDir, normal);
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
 
         vec3 diffuse = diff * color;
         vec3 specular = spec * color;
 
-
-        // Shadow
+        // =================================================
+        // SHADOW CALCULATION
+        // =================================================
         float shadow = 0.0;
 
         if (light.castShadows)
         {
-            vec4 fragPosLightSpace = light.lightSpaceMatrix * vec4(fragPos, 1.0);
+            // ---------------------------------------------
+            // 2. Choose cascade based on view-space depth
+            // ---------------------------------------------
+            float depthVS = length(viewPos - fragPos);
 
-            vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-            projCoords = projCoords * 0.5 + 0.5;
-
-            float closestDepth = texture(directionalShadowMap[i], projCoords.xy).r;
-            float currentDepth = projCoords.z;
-
-            float bias = 0.0003;
-           
-            vec2 texelSize = 1.0 / textureSize(directionalShadowMap[i], 0);
-            float shadowSum = 0.0;
-
-            for (int x = -2; x <= 2; ++x)
+            int cascade = light.cascadeCount - 1;
+            for (int c = 0; c < light.cascadeCount; c++)
             {
-                for (int y = -2; y <= 2; ++y)
+                if (depthVS < light.cascadeSplits[c])
                 {
-                    float pcfDepth = texture(directionalShadowMap[i], projCoords.xy + vec2(x, y) * texelSize).r;
-                    shadowSum += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+                    cascade = c;
+                    break;
                 }
             }
 
-            shadow = shadowSum / 25.0;
+            // ---------------------------------------------
+            // 3. Transform fragment into light space
+            // ---------------------------------------------
+            vec4 fragLS = uboCascade.cascadeMatrices[cascade] * vec4(fragPos, 1.0);
+            vec3 proj = fragLS.xyz / fragLS.w;
+            proj = proj * 0.5 + 0.5;
 
-            if (projCoords.z > 1.0)
-                shadow = 0.0;
+            // -----------------------------------------
+            // 4. Check if inside shadow map bounds
+            // -----------------------------------------
+            if (proj.x >= 0.0 && proj.x <= 1.0 &&
+            proj.y >= 0.0 && proj.y <= 1.0 &&
+            proj.z >= 0.0 && proj.z <= 1.0)
+            {
+                // -------------------------------------
+                // 5. Bias (reduces shadow acne)
+                // -------------------------------------
+                float ndotl = max(dot(normal, lightDir), 0.0);
+                float bias = max(0.0005 * (1.0 - ndotl), 0.00005);
+
+                // -------------------------------------
+                // 6. PCF Sampling
+                // -------------------------------------
+                vec2 texelSize = 1.0 / vec2(textureSize(directionalShadowMaps[i], 0));
+                float shadowSum = 0.0;
+
+                for (int x = -1; x <= 1; x++)
+                {
+                    for (int y = -1; y <= 1; y++)
+                    {
+                        float sampleDepth = texture(
+                            directionalShadowMaps[i],
+                            vec3(proj.xy + vec2(x, y) * texelSize, cascade)
+                        ).r;
+                        
+                        shadowSum += (proj.z - bias > sampleDepth) ? 1.0 : 0.0;
+                    }
+                }
+
+                shadow = shadowSum / 9.0;
+            }
+
         }
-        
+
+        // =================================================
+        // Final contribution from this directional light
+        // =================================================
         lighting += (diffuse + specular) * strength * (1.0 - shadow);
     }
+
 
     // Point Lights
     for (int i = 0; i < pointLights.length(); i++)

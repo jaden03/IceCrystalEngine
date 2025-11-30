@@ -45,6 +45,8 @@ SceneManager::~SceneManager()
 // Update
 void SceneManager::Update()
 {
+	usedTextureCount = 1;
+	
 	// get the mainCamera
 	if (mainCamera == nullptr)
 	{
@@ -67,8 +69,8 @@ void SceneManager::Update()
 	
 	// bind to the shadow framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, lightingManager.shadowMapFBO);
-	// use the shadow shader
-	lightingManager.shadowShader->Use();
+	// use the cascaded shadow shader
+	lightingManager.shadowsCascadedShader->Use();
 
 	// frontface culling
 	glCullFace(GL_FRONT);
@@ -81,19 +83,24 @@ void SceneManager::Update()
 		// if the light doesnt cast shadows, move on to the next one
 		if (!light->castShadows) continue;
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, light->depthMap, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, light->depthMapArray, 0);
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
 
 		// clear the framebuffer
 		glClear(GL_DEPTH_BUFFER_BIT);
-		
-		// set the light space matrix
-		lightingManager.shadowShader->setMat4("lightSpaceMatrix", light->GetLightSpaceMatrix());
 
 		// set the viewport
 		glViewport(0, 0, light->shadowMapResolution, light->shadowMapResolution);
-		
+
+		// Setup the data for the UBO
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, light->cascadeMatricesUBO);
+		for (size_t c = 0; c < light->cascadeCount; ++c)
+		{
+			glBufferSubData(GL_UNIFORM_BUFFER, c * sizeof(glm::mat4x4), sizeof(glm::mat4x4), &light->cascadeMatrices[c]);
+		}
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
 
 		// loop through the actors
 		for (int j = 0; j < actors->size(); j++)
@@ -110,6 +117,9 @@ void SceneManager::Update()
 			}
 		}
 	}
+
+	// use the normal shadow shader
+	lightingManager.shadowShader->Use();
 
 	// loop through spotlights
 	for (int i = 0; i < lightingManager.spotLights.size(); i++)

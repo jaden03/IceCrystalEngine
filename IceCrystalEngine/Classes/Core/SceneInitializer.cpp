@@ -50,7 +50,7 @@ void SceneInitializer::InitializeScene()
 	sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
 
 	Actor* shadowDebugImage = new Actor("Shadow Debug Image", "shadowDebugImage");
-	RawImage* rawImage = new RawImage(sunLight->depthMap);
+	RawImage* rawImage = new RawImage(sunLight->depthMapArray, FileUtil::AssetDir + "Shaders/uiTest");
 	shadowDebugImage->AddComponent(rawImage);
 	shadowDebugImage->transform->SetScale(glm::vec3(150, 150, 100));
 	shadowDebugImage->transform->Translate(400, 50, 0);

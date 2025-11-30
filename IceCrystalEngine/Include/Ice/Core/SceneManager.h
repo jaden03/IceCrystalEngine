@@ -30,6 +30,8 @@ public:
 	double gameTime = 0.0f;
 	float deltaTime = 0.0f;
 	double lastFrameTime = 0.0;
+
+	int usedTextureCount = 1;
 	
 	void Update();
 	

@@ -1,5 +1,5 @@
 ﻿// vertex.glsl  (only 2 extra lines compared to your original)
-#version 330 core
+#version 430 core
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec2 aUV;
 

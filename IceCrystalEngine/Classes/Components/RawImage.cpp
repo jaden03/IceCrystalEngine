@@ -31,6 +31,13 @@ RawImage::RawImage(unsigned int textureHandle)
     sourceType = RawImageSourceType::RawHandle;
     rawHandle = textureHandle;
 }
+RawImage::RawImage(unsigned int textureHandle, std::string shaderPath)
+{
+    InitializeSharedResources();
+    shader = new Shader(shaderPath + ".vert", shaderPath + ".frag");
+    sourceType = RawImageSourceType::RawHandle;
+    rawHandle = textureHandle;
+}
 
 RawImage::~RawImage()
 {
@@ -75,10 +82,13 @@ void RawImage::OverlayUpdate()
     if (sourceType == RawImageSourceType::RawHandle)
         glBindTexture(GL_TEXTURE_2D, rawHandle);
     else
+    {
         glBindTexture(GL_TEXTURE_2D, texture->Handle);
+    }
     
     GLint textureLocation = glGetUniformLocation(shader->Handle, "fragTexture");
     glUniform1i(textureLocation, 0);
+    
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, pos);
