@@ -28,7 +28,7 @@ public:
 	float ambientLightingStrength = 0.15f;
 	glm::vec3 ambientLightingColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
-	int maxDirectionalLights = 5;
+	int maxDirectionalLights = 1;
 	int maxPointLights = 64;
 	int maxSpotLights = 64;
 	int maxCascades = 4;

@@ -21,7 +21,7 @@ uniform vec3 ambientLightColor;
 
 #define MAX_POINT_LIGHTS 64
 #define MAX_SPOT_LIGHTS 16
-#define MAX_DIRECTIONAL_LIGHTS 5
+#define MAX_DIRECTIONAL_LIGHTS 1
 #define MAX_CASCADES 4
 
 uniform int directionalLightCount;
@@ -128,8 +128,8 @@ void main()
             // 4. Check if inside shadow map bounds
             // -----------------------------------------
             if (proj.x >= 0.0 && proj.x <= 1.0 &&
-            proj.y >= 0.0 && proj.y <= 1.0 &&
-            proj.z >= 0.0 && proj.z <= 1.0)
+                proj.y >= 0.0 && proj.y <= 1.0 &&
+                proj.z >= 0.0 && proj.z <= 1.0)
             {
                 // -------------------------------------
                 // 5. Bias (reduces shadow acne)
@@ -147,11 +147,8 @@ void main()
                 {
                     for (int y = -1; y <= 1; y++)
                     {
-                        float sampleDepth = texture(
-                            directionalShadowMaps[i],
-                            vec3(proj.xy + vec2(x, y) * texelSize, cascade)
-                        ).r;
-                        
+                        float sampleDepth = texture(directionalShadowMaps[i], vec3(proj.xy + vec2(x, y) * texelSize, cascade)).r;
+
                         shadowSum += (proj.z - bias > sampleDepth) ? 1.0 : 0.0;
                     }
                 }
