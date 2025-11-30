@@ -94,11 +94,12 @@ void SceneManager::Update()
 		glViewport(0, 0, light->shadowMapResolution, light->shadowMapResolution);
 
 		// Setup the data for the UBO
-		glBindBufferBase(GL_UNIFORM_BUFFER, 0, light->cascadeMatricesUBO);
+		glBindBuffer(GL_UNIFORM_BUFFER, light->cascadeMatricesUBO);
 		for (size_t c = 0; c < light->cascadeCount; ++c)
 		{
-			glBufferSubData(GL_UNIFORM_BUFFER, c * sizeof(glm::mat4x4), sizeof(glm::mat4x4), &light->cascadeMatrices[c]);
+			glBufferSubData(GL_UNIFORM_BUFFER, 0,sizeof(glm::mat4x4) * light->cascadeCount, light->cascadeMatrices.data());
 		}
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, light->cascadeMatricesUBO);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 

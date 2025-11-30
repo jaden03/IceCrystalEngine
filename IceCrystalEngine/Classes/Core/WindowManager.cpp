@@ -52,6 +52,8 @@ void WindowManager::InitializeWindow()
     glfwSetFramebufferSizeCallback(win, framebuffer_size_callback);
 
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glDepthMask(GL_TRUE);
     glEnable(GL_CULL_FACE);
 
     // Set the window icon to Assets/Logo.png
