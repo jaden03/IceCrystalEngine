@@ -1,4 +1,5 @@
 #include <Ice/Components/Camera.h>
+#include <array>
 
 Camera::Camera() : Component()
 {
@@ -49,4 +50,34 @@ std::vector<glm::vec4> Camera::GetFrustomCorners()
 	}
 	
 	return corners;
+}
+
+std::array<glm::vec4, 8> Camera::GetFrustomCornersWorldSpace(float nearDist, float farDist)
+{
+	const float aspect = (float)windowManager.windowWidth / (float)windowManager.windowHeight;
+	const float tanFov = glm::tan(glm::radians(fieldOfView) / 2.0f);
+
+	float nh = tanFov * nearDist;
+	float nw = nh * aspect;
+	float fh = tanFov * farDist;
+	float fw = fh * aspect;
+
+	glm::vec3 forward = transform->forward;
+	glm::vec3 right   = transform->right;
+	glm::vec3 up      = transform->up;
+
+	glm::vec3 nc = transform->position + forward * nearDist;
+	glm::vec3 fc = transform->position + forward * farDist;
+
+	return std::array<glm::vec4, 8>{
+		glm::vec4(nc + up*nh - right*nw, 1.0f),
+		glm::vec4(nc + up*nh + right*nw, 1.0f),
+		glm::vec4(nc - up*nh - right*nw, 1.0f),
+		glm::vec4(nc - up*nh + right*nw, 1.0f),
+
+		glm::vec4(fc + up*fh - right*fw, 1.0f),
+		glm::vec4(fc + up*fh + right*fw, 1.0f),
+		glm::vec4(fc - up*fh - right*fw, 1.0f),
+		glm::vec4(fc - up*fh + right*fw, 1.0f)
+	};
 }

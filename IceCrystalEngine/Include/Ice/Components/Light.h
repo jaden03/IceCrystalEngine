@@ -31,11 +31,15 @@ public:
 	// this is the resolution of the shadow map, the higher the resolution, the better the shadows will look, but the more performance it will cost
 	int shadowMapResolution = 2048;
 	bool castShadows = true;
-	unsigned int depthMap;
-	
-	
-	glm::mat4 GetLightSpaceMatrix();
-	
+	unsigned int depthMapArray;
+
+	int cascadeCount = 4;
+	std::vector<float> cascadeSplits = { 10.0f, 20.0f, 30.0f, 50.0f };
+	std::vector<glm::mat4> cascadeMatrices;
+	unsigned int cascadeMatricesUBO;
+
+	glm::mat4 GetLightSpaceMatrix(float nearPlane, float farPlane);
+	void BuildCascades();
 };
 
 
