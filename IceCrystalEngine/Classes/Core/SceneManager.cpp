@@ -86,17 +86,19 @@ void SceneManager::Update()
 		glReadBuffer(GL_NONE);
 
 		// clear the framebuffer
-		glClear(GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// set the viewport
 		glViewport(0, 0, directionalLight->shadowMapResolution, directionalLight->shadowMapResolution);
 
 		// Setup the data for the UBO
+		directionalLight->BuildCascades();
 		glBindBuffer(GL_UNIFORM_BUFFER, directionalLight->cascadeMatricesUBO);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4) * directionalLight->cascadeCount, directionalLight->cascadeMatrices.data());
+		for (int i = 0; i < directionalLight->cascadeCount; ++i)
+		{
+			glBufferSubData(GL_UNIFORM_BUFFER, i * sizeof(glm::mat4x4), sizeof(glm::mat4x4), &directionalLight->cascadeMatrices[i]);
+		}
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-		glBindBufferBase(GL_UNIFORM_BUFFER, 0, directionalLight->cascadeMatricesUBO);
-
 		
 		// loop through the actors
 		for (int j = 0; j < actors->size(); j++)

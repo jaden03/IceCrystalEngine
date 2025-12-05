@@ -20,7 +20,7 @@ public:
 	
 	float fieldOfView = 90.0f;
 	float nearClippingPlane = 0.01f;
-	float farClippingPlane = 50.0f;
+	float farClippingPlane = 150.0f;
 
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);

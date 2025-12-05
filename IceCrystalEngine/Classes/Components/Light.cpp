@@ -38,10 +38,15 @@ void DirectionalLight::Initialize()
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	glTexParameterfv(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, LightingManager::GetInstance().shadowMapFBO);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthMapArray, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
 	
 	glGenBuffers(1, &cascadeMatricesUBO);
 	glBindBuffer(GL_UNIFORM_BUFFER, cascadeMatricesUBO);
-	glBufferData(GL_UNIFORM_BUFFER,  sizeof(glm::mat4x4) * 4, nullptr, GL_STATIC_DRAW);
+	glBufferData(GL_UNIFORM_BUFFER,  sizeof(glm::mat4x4) * LightingManager::GetInstance().maxCascades, nullptr, GL_STATIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER, 0, cascadeMatricesUBO);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
@@ -90,7 +95,7 @@ glm::mat4 DirectionalLight::GetLightSpaceMatrix(float nearPlane, float farPlane)
 		center += glm::vec3(v);
 	}
 	center /= corners.size();
-
+	
 	auto lightView = glm::lookAt(center - transform->forward, center, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	float minX = std::numeric_limits<float>::max();
@@ -131,18 +136,24 @@ glm::mat4 DirectionalLight::GetLightSpaceMatrix(float nearPlane, float farPlane)
 	glm::mat4 lightProjection = glm::ortho(minX, maxX, minY, maxY, minZ, maxZ);
 	return lightProjection * lightView;
 }
-
 void DirectionalLight::BuildCascades()
 {
 	Camera* cam = sceneManager.mainCamera;
-
+	
 	for (int i = 0; i < cascadeCount; i++)
 	{
-		float nearP = (i == 0) ? cam->nearClippingPlane : cascadeSplits[i - 1];
-		float farP  = (i == cascadeCount - 1) ?
-			cam->farClippingPlane : cascadeSplits[i];
-
-		cascadeMatrices[i] = GetLightSpaceMatrix(nearP, farP);
+		if (i == 0)
+		{
+			cascadeMatrices[i] = GetLightSpaceMatrix(cam->nearClippingPlane, cascadeSplits[i]);
+		}
+		else if (i < cascadeCount - 1)
+		{
+			cascadeMatrices[i] = GetLightSpaceMatrix(cascadeSplits[i - 1], cascadeSplits[i]);
+		}
+		else
+		{
+			cascadeMatrices[i] = GetLightSpaceMatrix(cascadeSplits[i - 1], cam->farClippingPlane);
+		}
 	}
 }
 
