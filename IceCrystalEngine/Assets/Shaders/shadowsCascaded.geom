@@ -5,7 +5,7 @@
 layout(triangles, invocations = MAX_CASCADES) in;
 layout(triangle_strip, max_vertices = 3) out;
 
-layout(std140, binding = 0) uniform DirectionalCascadeData {
+layout(std140, binding = 2) uniform DirectionalCascadeData {
     mat4 cascadeMatrices[MAX_CASCADES];
 };
 

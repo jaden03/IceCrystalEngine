@@ -7,10 +7,20 @@ out vec2 fragUV;
 out vec3 fragNormal;
 out vec3 fragPos;
 
+layout(std140, binding = 0) uniform GlobalData
+{
+	mat4 view;
+	mat4 projection;
+	vec3 viewPos;
+	float time;
+	float nearPlane;
+	float farPlane;
+	float _padding0;
+	float _padding1;
+};
+
 uniform mat4 model;
 uniform mat3 normalModel;
-uniform mat4 view;
-uniform mat4 projection;
 
 void main()
 {

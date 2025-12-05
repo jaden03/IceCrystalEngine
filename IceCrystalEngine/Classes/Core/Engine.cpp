@@ -2,6 +2,7 @@
 
 #include "Ice/Core/Input.h"
 #include "Ice/Core/LuaManager.h"
+#include "Ice/Core/RendererManager.h"
 #include "Ice/Core/SceneInitializer.h"
 #include "Ice/Utils/FileUtil.h"
 
@@ -36,6 +37,7 @@ void Engine::Init()
     LuaManager::GetInstance();
     LightingManager::GetInstance().InitializeLighting();
     SceneInitializer::GetInstance();
+    RendererManager::GetInstance();
 
 #ifdef _DEBUG
     DebugUtil::GetInstance();
