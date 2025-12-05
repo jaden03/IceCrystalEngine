@@ -16,7 +16,7 @@ WindowManager::WindowManager()
 void WindowManager::InitializeWindow()
 {
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
@@ -52,6 +52,8 @@ void WindowManager::InitializeWindow()
     glfwSetFramebufferSizeCallback(win, framebuffer_size_callback);
 
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glDepthMask(GL_TRUE);
     glEnable(GL_CULL_FACE);
 
     // Set the window icon to Assets/Logo.png

@@ -50,11 +50,11 @@ void SceneInitializer::InitializeScene()
 	sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
 
 	Actor* shadowDebugImage = new Actor("Shadow Debug Image", "shadowDebugImage");
-	RawImage* rawImage = new RawImage(sunLight->depthMap);
+	RawImage* rawImage = new RawImage(sunLight->depthMapArray, FileUtil::AssetDir + "Shaders/uiTest");
 	shadowDebugImage->AddComponent(rawImage);
 	shadowDebugImage->transform->SetScale(glm::vec3(150, 150, 100));
 	shadowDebugImage->transform->Translate(400, 50, 0);
-
+	
 	Actor* testImage2 = new Actor();
 	RawImage* rawImage2 = new RawImage(FileUtil::AssetDir + "Textures/crate.png");
 	testImage2->AddComponent(rawImage2);
@@ -95,6 +95,7 @@ void SceneInitializer::InitializeScene()
 	Actor* testCrate = new Actor("Test Crate", "testCrate");
 	Renderer* testCrateRenderer = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", testMaterial);
 	testCrate->AddComponent(testCrateRenderer);
+	testCrate->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
 	LuaExecutor* executor = new LuaExecutor(FileUtil::AssetDir + "LuaScripts/Test.lua");
 	testCrate->AddComponent(executor);
 

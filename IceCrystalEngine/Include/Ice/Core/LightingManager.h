@@ -27,16 +27,17 @@ public:
 
 	float ambientLightingStrength = 0.15f;
 	glm::vec3 ambientLightingColor = glm::vec3(1.0f, 1.0f, 1.0f);
-
-	int maxDirectionalLights = 5;
+	
 	int maxPointLights = 64;
 	int maxSpotLights = 64;
+	int maxCascades = 4;
 
-	std::vector<DirectionalLight*> directionalLights = std::vector<DirectionalLight*>();
+	DirectionalLight* directionalLight = nullptr;
 	std::vector<PointLight*> pointLights = std::vector<PointLight*>();
 	std::vector<SpotLight*> spotLights = std::vector<SpotLight*>();
 
 	Shader* shadowShader;
+	Shader* shadowsCascadedShader;
 	unsigned int shadowMapFBO = 0;
 
 

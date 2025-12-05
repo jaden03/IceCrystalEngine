@@ -213,20 +213,18 @@ void Renderer::Update()
 	// use the shader and set the attributes
 	material->shader->Use();
 	
-	int usedTextureCount = 0;
-
 	// bind the texture
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, material->texture->Handle);
 	GLint textureLocation = glGetUniformLocation(material->shader->Handle, "fragTexture");
 	glUniform1i(textureLocation, 0);
-	usedTextureCount++;
 
 		// position stuff
 	material->shader->setMat4("view", view);
 	material->shader->setMat4("projection", projection);
 	material->shader->setMat4("model", modelMatrix);
 	material->shader->setMat3("normalModel", normalMatrix);
+	material->shader->setFloat("farPlane", sceneManager.mainCamera->farClippingPlane);
 	
 		// material stuff
 	material->shader->setVec3("fragColor", material->color);
@@ -238,30 +236,34 @@ void Renderer::Update()
 	material->shader->setFloat("ambientLightStrength", lightingManager.ambientLightingStrength);
 	material->shader->setVec3("ambientLightColor", lightingManager.ambientLightingColor);
 	
-	material->shader->setInt("directionalLightCount", lightingManager.directionalLights.size());
 	material->shader->setInt("pointLightCount", lightingManager.pointLights.size());
 
-	int numberOfDirectionalLights = lightingManager.directionalLights.size();
-	int maxDirectionalLights = lightingManager.maxDirectionalLights;
-	if (numberOfDirectionalLights > maxDirectionalLights)
-		numberOfDirectionalLights = maxDirectionalLights;
-
-	for (int i = 0; i < numberOfDirectionalLights; i++)
+	// directional light
+	DirectionalLight* light = lightingManager.directionalLight;
+	material->shader->setInt("directionalLightExists", light != nullptr);
+	if (light != nullptr)
 	{
-		material->shader->setVec3("directionalLights[" + std::to_string(i) + "].direction", lightingManager.directionalLights[i]->transform->forward);
-		material->shader->setVec3("directionalLights[" + std::to_string(i) + "].color", lightingManager.directionalLights[i]->color);
-		material->shader->setFloat("directionalLights[" + std::to_string(i) + "].strength", lightingManager.directionalLights[i]->strength);
-		material->shader->setBool("directionalLights[" + std::to_string(i) + "].castShadows", lightingManager.directionalLights[i]->castShadows);
-		
-		glm::mat4 lightSpaceMatrix = lightingManager.directionalLights[i]->GetLightSpaceMatrix();
-		material->shader->setMat4("directionalLights[" + std::to_string(i) + "].lightSpaceMatrix", lightSpaceMatrix);
+		material->shader->setVec3("directionalLight.direction", light->transform->forward);
+		material->shader->setVec3("directionalLight.color", light->color);
+		material->shader->setFloat("directionalLight.strength", light->strength);
+		material->shader->setBool("directionalLight.castShadows", light->castShadows);
 
-		glActiveTexture(GL_TEXTURE0 + i + usedTextureCount);
-		glBindTexture(GL_TEXTURE_2D, lightingManager.directionalLights[i]->depthMap);
-		material->shader->setInt("directionalShadowMap[" + std::to_string(i) + "]", i + usedTextureCount);
-		usedTextureCount++;
+		material->shader->setInt("directionalLight.cascadeCount", light->cascadeCount);
+		for (int i = 0; i < light->cascadeCount; ++i)
+		{
+			material->shader->setFloat("directionalLight.cascadeSplits[" + std::to_string(i) + "]", light->cascadeSplits[i]);
+		}
+		
+		// Bind to the UBO
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, light->cascadeMatricesUBO);
+		
+		glActiveTexture(GL_TEXTURE0 + sceneManager.usedTextureCount);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, light->depthMapArray);
+		material->shader->setInt("directionalShadowMap", sceneManager.usedTextureCount);
+		sceneManager.usedTextureCount++;
 	}
 
+	// point lights
 	int numberOfPointLights = lightingManager.pointLights.size();
 	int maxPointLights = lightingManager.maxPointLights;
 	if (numberOfPointLights > maxPointLights)
@@ -269,12 +271,14 @@ void Renderer::Update()
 
 	for (int i = 0; i < numberOfPointLights; i++)
 	{
-		material->shader->setVec3("pointLights[" + std::to_string(i) + "].position", lightingManager.pointLights[i]->transform->position);
-		material->shader->setVec3("pointLights[" + std::to_string(i) + "].color", lightingManager.pointLights[i]->color);
-		material->shader->setFloat("pointLights[" + std::to_string(i) + "].strength", lightingManager.pointLights[i]->strength);
-		material->shader->setFloat("pointLights[" + std::to_string(i) + "].radius", lightingManager.pointLights[i]->radius);
+		std::string prefix = "pointLights[" + std::to_string(i) + "].";
+		material->shader->setVec3(prefix + "position", lightingManager.pointLights[i]->transform->position);
+		material->shader->setVec3(prefix + "color", lightingManager.pointLights[i]->color);
+		material->shader->setFloat(prefix + "strength", lightingManager.pointLights[i]->strength);
+		material->shader->setFloat(prefix + "radius", lightingManager.pointLights[i]->radius);
 	}
 
+	// spot lights
 	int numberOfSpotLights = lightingManager.spotLights.size();
 	int maxSpotLights = lightingManager.maxSpotLights;
 	if (numberOfSpotLights > maxSpotLights)
@@ -282,22 +286,23 @@ void Renderer::Update()
 	
 	for (int i = 0; i < numberOfSpotLights; i++)
 	{
-		material->shader->setVec3("spotLights[" + std::to_string(i) + "].position", lightingManager.spotLights[i]->transform->position);
-		material->shader->setVec3("spotLights[" + std::to_string(i) + "].direction", lightingManager.spotLights[i]->transform->forward);
-		material->shader->setVec3("spotLights[" + std::to_string(i) + "].color", lightingManager.spotLights[i]->color);
-		material->shader->setFloat("spotLights[" + std::to_string(i) + "].strength", lightingManager.spotLights[i]->strength);
-		material->shader->setFloat("spotLights[" + std::to_string(i) + "].distance", lightingManager.spotLights[i]->distance);
-		material->shader->setFloat("spotLights[" + std::to_string(i) + "].angle", glm::cos(glm::radians(lightingManager.spotLights[i]->angle)));
-		material->shader->setFloat("spotLights[" + std::to_string(i) + "].outerAngle", glm::cos(glm::radians(lightingManager.spotLights[i]->angle + 5)));
-		material->shader->setBool("spotLights[" + std::to_string(i) + "].castShadows", lightingManager.spotLights[i]->castShadows);
+		std::string prefix = "spotLights[" + std::to_string(i) + "].";
+		material->shader->setVec3(prefix + "position", lightingManager.spotLights[i]->transform->position);
+		material->shader->setVec3(prefix + "direction", lightingManager.spotLights[i]->transform->forward);
+		material->shader->setVec3(prefix + "color", lightingManager.spotLights[i]->color);
+		material->shader->setFloat(prefix + "strength", lightingManager.spotLights[i]->strength);
+		material->shader->setFloat(prefix + "distance", lightingManager.spotLights[i]->distance);
+		material->shader->setFloat(prefix + "angle", glm::cos(glm::radians(lightingManager.spotLights[i]->angle)));
+		material->shader->setFloat(prefix + "outerAngle", glm::cos(glm::radians(lightingManager.spotLights[i]->angle + 5)));
+		material->shader->setBool(prefix + "castShadows", lightingManager.spotLights[i]->castShadows);
 
 		glm::mat4 lightSpaceMatrix = lightingManager.spotLights[i]->GetLightSpaceMatrix();
-		material->shader->setMat4("spotLights[" + std::to_string(i) + "].lightSpaceMatrix", lightSpaceMatrix);
+		material->shader->setMat4(prefix + "lightSpaceMatrix", lightSpaceMatrix);
 
-		glActiveTexture(GL_TEXTURE0 + i + usedTextureCount);
+		glActiveTexture(GL_TEXTURE0 + sceneManager.usedTextureCount);
 		glBindTexture(GL_TEXTURE_2D, lightingManager.spotLights[i]->depthMap);
-		material->shader->setInt("spotShadowMap[" + std::to_string(i) + "]", i + usedTextureCount);
-		usedTextureCount++;
+		material->shader->setInt("spotShadowMap[" + std::to_string(i) + "]", sceneManager.usedTextureCount);
+		sceneManager.usedTextureCount++;
 	}
 	
 
@@ -314,7 +319,8 @@ void Renderer::Update()
 		// bind the vertex array object
 		glBindVertexArray(meshHolders[i].vertexArrayObject);
 		// draw the elements
-		glDrawElements(GL_TRIANGLES, meshHolders[i].indices.size() * sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+		// glDrawElements(GL_TRIANGLES, meshHolders[i].indices.size() * sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, meshHolders[i].indices.size(), GL_UNSIGNED_INT, 0);
 	}
 }
 
@@ -328,29 +334,12 @@ void Renderer::UpdateShadows()
 		// bind the vertex array object
 		glBindVertexArray(meshHolders[i].vertexArrayObject);
 
-		// Create transformations
-		glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-
-		// translation
-		model = glm::translate(model, transform->position);
-
-		// Rotate around the local right axis (pitch)
-		model = glm::rotate(model, glm::radians(-transform->eulerAngles.x), glm::vec3(1, 0, 0));
-		// Rotate around the local up axis (yaw)
-		model = glm::rotate(model, glm::radians(-transform->eulerAngles.y), glm::vec3(0, 1, 0));
-		// Rotate around the local forward axis (roll)
-		model = glm::rotate(model, glm::radians(-transform->eulerAngles.z), glm::vec3(0, 0, 1));
-
-		// scale
-		model = glm::scale(model, transform->scale);
-
 		// position stuff
-		lightingManager.shadowShader->setMat4("model", model);
-
+		lightingManager.shadowShader->setMat4("model", modelMatrix);
+		lightingManager.shadowsCascadedShader->setMat4("model", modelMatrix);
+		
 		// draw the elements
-		glDrawElements(GL_TRIANGLES, meshHolders[i].indices.size() * sizeof(unsigned int), GL_UNSIGNED_INT, 0);
-
-		glFlush();
-
+		// glDrawElements(GL_TRIANGLES, meshHolders[i].indices.size() * sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, meshHolders[i].indices.size(), GL_UNSIGNED_INT, 0);
 	}
 }

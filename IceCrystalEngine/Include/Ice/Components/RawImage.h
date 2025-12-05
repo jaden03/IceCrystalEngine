@@ -25,8 +25,9 @@ public:
     RawImage(std::string texturePath);
     RawImage(std::string texturePath, std::string shaderPath);
     RawImage(unsigned int textureHandle);
+    RawImage(unsigned int textureHandle, std::string shaderPath);
     ~RawImage();
-
+    
     Texture* texture;
     Shader* shader;
 
