@@ -161,7 +161,7 @@ void DebugUtil::EndOfFrame()
 	
 	ImGui::Separator();
 	
-	ImGui::Text("Directional Lights: %i", lightingManager.directionalLights.size());
+	ImGui::Text("Directional Light Exists: %s", lightingManager.directionalLight ? "true" : "false");
 	ImGui::Text("Point Lights: %i", lightingManager.pointLights.size());
 	ImGui::Text("Spot Lights: %i", lightingManager.spotLights.size());
 
