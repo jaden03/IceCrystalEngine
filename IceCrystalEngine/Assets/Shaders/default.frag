@@ -14,6 +14,7 @@ uniform sampler2D fragTexture;
 uniform vec3 fragColor;
 uniform vec3 viewPos;
 uniform mat4 view;
+uniform float farPlane;
 
 // lighting
 uniform float ambientLightStrength;
@@ -101,37 +102,78 @@ void main()
         // ---------------------------------------------
         // 2. Choose cascade based on view-space depth
         // ---------------------------------------------
-        float depthVS = length(viewPos - fragPos);
-
-        int cascade = directionalLight.cascadeCount - 1;
+        vec4 fragPosViewSpace = view * vec4(fragPos, 1.0);
+        float depthValue = abs(fragPosViewSpace.z);
+        
+        int cascade = -1;
         for (int c = 0; c < directionalLight.cascadeCount; c++)
         {
-            if (depthVS < directionalLight.cascadeSplits[c])
+            if (depthValue < directionalLight.cascadeSplits[c])
             {
                 cascade = c;
                 break;
             }
         }
+        if (cascade == -1)
+        {
+            cascade = directionalLight.cascadeCount;
+        }
+
+        // ---------------------------------------------
+        // SET COLOR AND RETURN BASED ON CASCADE INDEX
+        // ---------------------------------------------
+//        if (cascade == 0)
+//        {
+//            FragColor = vec4(1, 0, 0, 1);   // red
+//            return;
+//        }
+//        else if (cascade == 1)
+//        {
+//            FragColor = vec4(0, 1, 0, 1);   // green
+//            return;
+//        }
+//        else if (cascade == 2)
+//        {
+//            FragColor = vec4(0, 0, 1, 1);   // blue
+//            return;
+//        }
+//        else if (cascade == 3)
+//        {
+//            FragColor = vec4(1, 1, 0, 1);   // yellow
+//            return;
+//        }
+//
+//        // fallback in case extra cascades exist
+//        FragColor = vec4(1, 0, 1, 1);       // magenta
+//        return;
 
         // ---------------------------------------------
         // 3. Transform fragment into light space
         // ---------------------------------------------
-        vec4 fragLS = uboCascade.cascadeMatrices[cascade] * vec4(fragPos, 1.0);
-        vec3 proj = fragLS.xyz / fragLS.w;
+        vec4 fragPosLightSpace = uboCascade.cascadeMatrices[cascade] * vec4(fragPos, 1.0);
+        vec3 proj = fragPosLightSpace.xyz / fragPosLightSpace.w;
         proj = proj * 0.5 + 0.5;
-
+        
         // -----------------------------------------
         // 4. Check if inside shadow map bounds
         // -----------------------------------------
-        if (proj.x >= 0.0 && proj.x <= 1.0 &&
-            proj.y >= 0.0 && proj.y <= 1.0 &&
-            proj.z >= 0.0 && proj.z <= 1.0)
+        if (proj.z < 1.0)
         {
             // -------------------------------------
             // 5. Bias (reduces shadow acne)
             // -------------------------------------
-            float ndotl = max(dot(normal, lightDir), 0.0);
-            float bias = max(0.0005 * (1.0 - ndotl), 0.00005);
+//            vec3 normal = normalize(fragNormal);
+//            float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+//            const float biasModifier = 0.5f;
+//            if (cascade == directionalLight.cascadeCount)
+//            {
+//                bias *= 1 / (farPlane * biasModifier);
+//            }
+//            else
+//            {
+//                bias *= 1 / (directionalLight.cascadeSplits[cascade] * biasModifier);
+//            }
+
 
             // -------------------------------------
             // 6. PCF Sampling
@@ -140,18 +182,16 @@ void main()
             vec2 texelSize = 1.0 / vec2(size.xy);
 
             float shadowSum = 0.0;
-
-            for (int x = -1; x <= 1; x++)
+            for (int x = -2; x <= 2; x++)
             {
-                for (int y = -1; y <= 1; y++)
+                for (int y = -2; y <= 2; y++)
                 {
                     float sampleDepth = texture(directionalShadowMap, vec3(proj.xy + vec2(x, y) * texelSize, cascade)).r;
-
-                    shadowSum += (proj.z - bias > sampleDepth) ? 1.0 : 0.0;
+//                    shadowSum += (proj.z - bias) > sampleDepth ? 1.0 : 0.0;
+                    shadowSum += proj.z > sampleDepth ? 1.0 : 0.0;
                 }
             }
-
-            shadow = shadowSum / 9.0;
+            shadow = shadowSum / 25.0;
         }
     }
     // =================================================
@@ -225,14 +265,12 @@ void main()
             vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
             projCoords = projCoords * 0.5 + 0.5;
 
-            float closestDepth = texture(spotShadowMap[i], projCoords.xy).r;
             float currentDepth = projCoords.z;
-
             float bias = 0.0003;
 
             vec2 texelSize = 1.0 / textureSize(spotShadowMap[i], 0);
+            
             float shadowSum = 0.0;
-
             for (int x = -2; x <= 2; ++x)
             {
                 for (int y = -2; y <= 2; ++y)
@@ -241,7 +279,6 @@ void main()
                     shadowSum += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
                 }
             }
-
             shadow = shadowSum / 25.0;
 
             if (projCoords.z > 1.0)

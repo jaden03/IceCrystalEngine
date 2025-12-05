@@ -34,7 +34,8 @@ public:
 	unsigned int depthMapArray;
 
 	int cascadeCount = 4;
-	std::vector<float> cascadeSplits = { 10.0f, 20.0f, 30.0f, 50.0f };
+	std::vector<float> cascadeSplits = { 10.0f, 20.0f, 40.0f, 70.0f };
+	std::vector<float> worldSpaceCascadeSplits;
 	std::vector<glm::mat4> cascadeMatrices;
 	unsigned int cascadeMatricesUBO;
 

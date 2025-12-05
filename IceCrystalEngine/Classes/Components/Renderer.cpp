@@ -224,6 +224,7 @@ void Renderer::Update()
 	material->shader->setMat4("projection", projection);
 	material->shader->setMat4("model", modelMatrix);
 	material->shader->setMat3("normalModel", normalMatrix);
+	material->shader->setFloat("farPlane", sceneManager.mainCamera->farClippingPlane);
 	
 		// material stuff
 	material->shader->setVec3("fragColor", material->color);
@@ -247,12 +248,13 @@ void Renderer::Update()
 		material->shader->setFloat("directionalLight.strength", light->strength);
 		material->shader->setBool("directionalLight.castShadows", light->castShadows);
 
-		light->BuildCascades();
 		material->shader->setInt("directionalLight.cascadeCount", light->cascadeCount);
-		// Setup the data for the UBO
-		// glBindBuffer(GL_UNIFORM_BUFFER, light->cascadeMatricesUBO);
-		// glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4) * light->cascadeCount, light->cascadeMatrices.data());
-		// glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		for (int i = 0; i < light->cascadeCount; ++i)
+		{
+			material->shader->setFloat("directionalLight.cascadeSplits[" + std::to_string(i) + "]", light->cascadeSplits[i]);
+		}
+		
+		// Bind to the UBO
 		glBindBufferBase(GL_UNIFORM_BUFFER, 0, light->cascadeMatricesUBO);
 		
 		glActiveTexture(GL_TEXTURE0 + sceneManager.usedTextureCount);
@@ -334,7 +336,8 @@ void Renderer::UpdateShadows()
 
 		// position stuff
 		lightingManager.shadowShader->setMat4("model", modelMatrix);
-
+		lightingManager.shadowsCascadedShader->setMat4("model", modelMatrix);
+		
 		// draw the elements
 		// glDrawElements(GL_TRIANGLES, meshHolders[i].indices.size() * sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 		glDrawElements(GL_TRIANGLES, meshHolders[i].indices.size(), GL_UNSIGNED_INT, 0);
