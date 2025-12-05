@@ -8,6 +8,7 @@
 #include <Ice/Core/UIManager.h>
 #include <Ice/Utils/FileUtil.h>
 #include <Ice/Core/LuaManager.h>
+#include <Ice/Core/RendererManager.h>
 
 #include <Ice/Components/Camera.h>
 #include <Ice/Components/Renderer.h>
@@ -22,6 +23,7 @@ LightingManager& lightingManager = LightingManager::GetInstance();
 WindowManager& windowManager = WindowManager::GetInstance();
 UIManager& uiManager = UIManager::GetInstance();
 Skybox& skybox = Skybox::GetInstance();
+RendererManager& rendererManager = RendererManager::GetInstance();
 
 // Constructor
 SceneManager::SceneManager()
@@ -141,7 +143,6 @@ void SceneManager::Update()
 		// set the viewport
 		glViewport(0, 0, light->shadowMapResolution, light->shadowMapResolution);
 
-
 		// loop through the actors
 		for (int j = 0; j < actors->size(); j++)
 		{
@@ -170,6 +171,9 @@ void SceneManager::Update()
 
 	// update LuaManager
 	LuaManager::GetInstance().Update(gameTime);
+
+	// update UBOs for renderning
+	rendererManager.UpdateUBOs();
 	
 	// loop through actors
 	for (int i = 0; i < actors->size(); i++)

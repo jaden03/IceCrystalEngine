@@ -7,14 +7,23 @@ in vec2 fragUV;
 in vec3 fragNormal;
 in vec3 fragPos;
 
+layout(std140, binding = 0) uniform GlobalData
+{
+    mat4 view;
+    mat4 projection;
+    vec3 viewPos;
+    float time;
+    float nearPlane;
+    float farPlane;
+    float _padding0;
+    float _padding1;
+};
+
 // poor mans raycasting
 uniform vec3 uniqueColor;
 
 uniform sampler2D fragTexture;
 uniform vec3 fragColor;
-uniform vec3 viewPos;
-uniform mat4 view;
-uniform float farPlane;
 
 // lighting
 uniform float ambientLightStrength;
@@ -33,7 +42,7 @@ uniform struct DirectionalLight {
     int cascadeCount;
     float cascadeSplits[MAX_CASCADES];
 } directionalLight;
-layout(std140, binding = 0) uniform DirectionalCascadeData {
+layout(std140, binding = 2) uniform DirectionalCascadeData {
     mat4 cascadeMatrices[MAX_CASCADES];
 } uboCascade;
 uniform sampler2DArray directionalShadowMap;
