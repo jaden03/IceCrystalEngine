@@ -8,6 +8,8 @@
 #include <iostream>
 
 #include "Ice/Components/RawImage.h"
+#include "Ice/Components/Physics/BoxCollider.h"
+#include "Ice/Components/Physics/RigidBody.h"
 #include "Ice/Core/LuaManager.h"
 
 SceneInitializer::SceneInitializer()
@@ -69,8 +71,9 @@ void SceneInitializer::InitializeScene()
 	Actor* testCrate = new Actor("Test Crate", "testCrate");
 	Renderer* testCrateRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj", crateMaterial);
 	testCrate->AddComponent(testCrateRenderer);
-	testCrate->transform->Translate(-5, 5, 0);
-	
+	testCrate->transform->Translate(-5, 5, 1.0f);
+	testCrate->AddComponent<BoxCollider>(testCrate->transform->scale);
+	testCrate->AddComponent<RigidBody>(1.0f);
 	
 	int rows = 5;  // Number of rows in the grid
 	int cols = 5;  // Number of columns in the grid
@@ -94,6 +97,8 @@ void SceneInitializer::InitializeScene()
         
 			// Add the renderer to the crate actor
 			crate->AddComponent(crateRenderer);
+			crate->AddComponent<BoxCollider>(crate->transform->scale);
+			crate->AddComponent<RigidBody>(0.0f);
 		}
 	}
 
@@ -152,4 +157,6 @@ void SceneInitializer::InitializeScene()
 	floorActor->AddComponent(floorRenderer);
 	floorActor->transform->scale = glm::vec3(15, 1, 15);
 	floorActor->transform->Translate(0, -7, 0);
+	floorActor->AddComponent<BoxCollider>(floorActor->transform->scale);
+	RigidBody* rb = floorActor->AddComponent<RigidBody>(0.0f);
 }

@@ -1,0 +1,6 @@
+[submodule "IceCrystalEngine/Assets/LuaScripts/External/Jolt"]
+	path = IceCrystalEngine/Assets/LuaScripts/External/Jolt
+	url = https://github.com/jrouwe/JoltPhysics
+[submodule "IceCrystalEngine/External/Jolt"]
+	path = IceCrystalEngine/External/Jolt
+	url = https://github.com/jrouwe/JoltPhysics
