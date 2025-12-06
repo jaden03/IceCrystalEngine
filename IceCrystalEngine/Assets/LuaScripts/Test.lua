@@ -14,7 +14,7 @@ while true do
     if input.GetKey(Key.W) then
         if sceneManager:GetHoveredActor() ~= nil then
             if sceneManager:GetHoveredActor() == actor then
-                addedVel = addedVel + (vec3(0, 0, 1) * force)
+            addedVel = addedVel + (vec3(0, 0, 1) * force)
             end
         end
     end

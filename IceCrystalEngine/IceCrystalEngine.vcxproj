@@ -325,7 +325,7 @@
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
       <PreprocessorDefinitions>GLFW_INCLUDE_NONE;_UNICODE;UNICODE;</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>;D:\Repos\IceCrystalEngine\IceCrystalEngine\/Include/lua/;D:\Repos\IceCrystalEngine\IceCrystalEngine\External\Jolt</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>;$(ProjectDir)/Include/lua/;$(ProjectDir)\External\Jolt</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
