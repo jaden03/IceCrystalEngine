@@ -412,6 +412,10 @@ void LuaManager::RegisterBindings() {
             }
         ),
 
+        sol::meta_function::unary_minus, [](const glm::vec3& v) {
+            return -v; // or glm::vec3(-v.x, -v.y, -v.z)
+        },
+
         // String
         sol::meta_function::to_string, [](const glm::vec3& v)
         {

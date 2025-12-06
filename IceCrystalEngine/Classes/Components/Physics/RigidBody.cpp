@@ -43,7 +43,7 @@ void RigidBody::Update()
     PhysicsManager::GetInstance().GetSystem().GetBodyInterface().GetPositionAndRotation(body->GetID(), pos, rot);
 
     owner->transform->position = glm::vec3(pos.GetX(), pos.GetY(), pos.GetZ());
-    owner->transform->SetRotation(glm::quat(rot.GetW(), -rot.GetX(), rot.GetY(), -rot.GetZ()));
+    owner->transform->SetRotation(glm::quat(rot.GetW(), -rot.GetX(), -rot.GetY(), -rot.GetZ()));
 }
 
 RigidBody::~RigidBody() {
@@ -57,23 +57,28 @@ RigidBody::~RigidBody() {
 
 void RigidBody::AddForce(glm::vec3 force)
 {
+    PhysicsManager::GetInstance().GetSystem().GetBodyInterface().ActivateBody(body->GetID());
     body->AddForce(ToJolt(force));
 }
 void RigidBody::AddTorque(glm::vec3 torque)
 {
+    PhysicsManager::GetInstance().GetSystem().GetBodyInterface().ActivateBody(body->GetID());
     body->AddTorque(ToJolt(torque));
 }
 void RigidBody::AddImpulse(glm::vec3 impulse)
 {
+    PhysicsManager::GetInstance().GetSystem().GetBodyInterface().ActivateBody(body->GetID());
     body->AddImpulse(ToJolt(impulse));
 }
 void RigidBody::AddAngularImpulse(glm::vec3 impulse)
 {
+    PhysicsManager::GetInstance().GetSystem().GetBodyInterface().ActivateBody(body->GetID());
     body->AddAngularImpulse(ToJolt(impulse));
 }
 
 void RigidBody::SetLinearVelocity(glm::vec3 velocity)
 {
+    PhysicsManager::GetInstance().GetSystem().GetBodyInterface().ActivateBody(body->GetID());
     body->SetLinearVelocity(ToJolt(velocity));
 }
 glm::vec3 RigidBody::GetLinearVelocity()
@@ -83,6 +88,7 @@ glm::vec3 RigidBody::GetLinearVelocity()
 
 void RigidBody::SetAngularVelocity(glm::vec3 velocity)
 {
+    PhysicsManager::GetInstance().GetSystem().GetBodyInterface().ActivateBody(body->GetID());
     body->SetAngularVelocity(ToJolt(velocity));
 }
 glm::vec3 RigidBody::GetAngularVelocity()
