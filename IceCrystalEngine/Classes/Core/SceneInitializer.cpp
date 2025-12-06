@@ -100,7 +100,7 @@ void SceneInitializer::InitializeScene()
 			// Add the renderer to the crate actor
 			crate->AddComponent(crateRenderer);
 			crate->AddComponent<BoxCollider>(crate->transform->scale);
-			crate->AddComponent<RigidBody>(0.0f);
+			crate->AddComponent<RigidBody>(1.0f);
 		}
 	}
 
