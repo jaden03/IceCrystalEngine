@@ -485,6 +485,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="Classes\Components\Physics\SphereCollider.cpp" />
     <ClCompile Include="Classes\Components\RawImage.cpp" />
     <ClCompile Include="Classes\Core\Actor.cpp" />
     <ClCompile Include="Classes\Core\Component.cpp" />
@@ -1211,6 +1212,7 @@
     <ClInclude Include="Include\Ice\Components\Physics\BoxCollider.h" />
     <ClInclude Include="Include\Ice\Components\Physics\Collider.h" />
     <ClInclude Include="Include\Ice\Components\Physics\RigidBody.h" />
+    <ClInclude Include="Include\Ice\Components\Physics\SphereCollider.h" />
     <ClInclude Include="Include\Ice\Components\RawImage.h" />
     <ClInclude Include="Include\Ice\Core\Actor.h" />
     <ClInclude Include="Include\Ice\Core\Component.h" />

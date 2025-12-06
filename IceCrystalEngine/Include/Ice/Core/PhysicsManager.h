@@ -8,6 +8,11 @@
 #include <Jolt/Core/JobSystemThreadPool.h>
 #include <Jolt/Physics/PhysicsSystem.h>
 
+#include <glm/glm.hpp>
+
+
+
+
 // Simple stub layers (just to get things running)
 class SimpleBroadPhaseLayer : public JPH::BroadPhaseLayerInterface
 {
@@ -31,6 +36,26 @@ class SimpleObjectLayerPairFilter : public JPH::ObjectLayerPairFilter
 public:
     bool ShouldCollide(JPH::ObjectLayer, JPH::ObjectLayer) const override { return true; }
 };
+
+
+
+// Helpers
+// --------------------
+// glm::vec3 → JPH::Vec3
+// --------------------
+inline JPH::Vec3 ToJolt(const glm::vec3& v)
+{
+    return JPH::Vec3(v.x, v.y, v.z);
+}
+// --------------------
+// JPH::Vec3 → glm::vec3
+// --------------------
+inline glm::vec3 ToGLM(const JPH::Vec3& v)
+{
+    return glm::vec3(v.GetX(), v.GetY(), v.GetZ());
+}
+
+
 
 class PhysicsManager
 {

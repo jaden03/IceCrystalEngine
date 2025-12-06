@@ -14,6 +14,8 @@
 #include "Ice/core/SceneManager.h"
 #include <Ice/Core/Input.h>
 
+#include "Ice/Components/Physics/RigidBody.h"
+
 LuaManager::LuaManager()
 {
     lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::package, sol::lib::table); // Load standard libraries
@@ -560,6 +562,31 @@ void LuaManager::RegisterBindings() {
         "castShadows", &SpotLight::castShadows
     );
     RegisterComponent<SpotLight>("SpotLight", lua);
+
+    // RigidBody
+    lua.new_usertype<RigidBody>("RigidBody",
+        sol::no_constructor,
+        sol::base_classes, sol::bases<Component>(),
+        // Properties
+        "mass", &RigidBody::mass,
+        // Methods
+        "AddForce", &RigidBody::AddForce,
+        "AddTorque", &RigidBody::AddTorque,
+        "AddImpulse", &RigidBody::AddImpulse,
+        "AddAngularImpulse", &RigidBody::AddAngularImpulse,
+
+        "SetLinearVelocity", &RigidBody::SetLinearVelocity,
+        "GetLinearVelocity", &RigidBody::GetLinearVelocity,
+
+        "SetAngularVelocity", &RigidBody::SetAngularVelocity,
+        "GetAngularVelocity", &RigidBody::GetAngularVelocity,
+
+        "IsActive", &RigidBody::IsActive,
+
+        "SetKinematic", &RigidBody::SetKinematic,
+        "IsKinematic", &RigidBody::IsKinematic
+    );
+    RegisterComponent<RigidBody>("RigidBody", lua);
 
 #pragma endregion
 

@@ -1,20 +1,20 @@
 ﻿#pragma once
 
 #include <Ice/Components/Physics/Collider.h>
-#include "Jolt/Physics/Collision/Shape/BoxShape.h"
+#include "Jolt/Physics/Collision/Shape/SphereShape.h"
 
-class BoxCollider : public Collider
+class SphereCollider : public Collider
 {
 public:
-    BoxCollider(const glm::vec3 &size) : size(size)
+    SphereCollider(const float &radius) : radius(radius)
     {
-        JPH::BoxShapeSettings settings(JPH::Vec3(size.x, size.y, size.z));
+        JPH::SphereShapeSettings settings(radius);
         settings.SetEmbedded();
         JPH::ShapeSettings::ShapeResult result = settings.Create();
         shape = result.Get(); // now shape is valid
     }
 
-    glm::vec3 size;
+    float radius;
     JPH::ShapeRefC GetShape() const override { return shape; }
 
 private:

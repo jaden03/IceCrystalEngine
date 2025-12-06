@@ -24,8 +24,33 @@ public:
     float mass;
     
     Collider* collider;
-    JPH::Body* body = nullptr;
+
+    //----------------------------------
+    // Forces
+    //----------------------------------
+    void AddForce(glm::vec3 force);
+    void AddTorque(glm::vec3 torque);
+    void AddImpulse(glm::vec3 impulse);
+    void AddAngularImpulse(glm::vec3 impulse);
+
+    //------------------------------------
+    // Velocities
+    //------------------------------------
+    void SetLinearVelocity(glm::vec3 velocity);
+    glm::vec3 GetLinearVelocity();
+
+    void SetAngularVelocity(glm::vec3 velocity);
+    glm::vec3 GetAngularVelocity();
+
+    //----------------------------------
+    // Sleeping
+    //----------------------------------
+    bool IsActive();
+
+
+    void SetKinematic(bool enabled);
+    bool IsKinematic() const;
 
 private:
-
+    JPH::Body* body = nullptr;
 };

@@ -74,6 +74,8 @@ void SceneInitializer::InitializeScene()
 	testCrate->transform->Translate(-5, 5, 1.0f);
 	testCrate->AddComponent<BoxCollider>(testCrate->transform->scale);
 	testCrate->AddComponent<RigidBody>(1.0f);
+	LuaExecutor* executor = new LuaExecutor(FileUtil::AssetDir + "LuaScripts/Test.lua");
+	testCrate->AddComponent(executor);
 	
 	int rows = 5;  // Number of rows in the grid
 	int cols = 5;  // Number of columns in the grid
@@ -108,8 +110,6 @@ void SceneInitializer::InitializeScene()
 	// Renderer* testCrateRenderer = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", testMaterial);
 	// testCrate->AddComponent(testCrateRenderer);
 	// testCrate->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
-	// LuaExecutor* executor = new LuaExecutor(FileUtil::AssetDir + "LuaScripts/Test.lua");
-	// testCrate->AddComponent(executor);
 	
 	Actor* pointLight = new Actor("Blue Light", "PointLight1");
 	PointLight* pointLightComponent = pointLight->AddComponent<PointLight>();
