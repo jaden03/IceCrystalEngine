@@ -204,21 +204,6 @@ void Renderer::Update()
 		// material stuff
 	material->shader->setVec3("fragColor", material->color);
 
-	// point lights
-	int numberOfPointLights = lightingManager.pointLights.size();
-	int maxPointLights = lightingManager.maxPointLights;
-	if (numberOfPointLights > maxPointLights)
-		numberOfPointLights = maxPointLights;
-
-	for (int i = 0; i < numberOfPointLights; i++)
-	{
-		std::string prefix = "pointLights[" + std::to_string(i) + "].";
-		material->shader->setVec3(prefix + "position", lightingManager.pointLights[i]->transform->position);
-		material->shader->setVec3(prefix + "color", lightingManager.pointLights[i]->color);
-		material->shader->setFloat(prefix + "strength", lightingManager.pointLights[i]->strength);
-		material->shader->setFloat(prefix + "radius", lightingManager.pointLights[i]->radius);
-	}
-
 	// spot lights
 	int numberOfSpotLights = lightingManager.spotLights.size();
 	int maxSpotLights = lightingManager.maxSpotLights;

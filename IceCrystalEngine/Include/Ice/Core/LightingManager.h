@@ -29,7 +29,7 @@ public:
     glm::vec3 ambientLightingColor = glm::vec3(1.0f, 1.0f, 1.0f);
 	
     static constexpr int maxPointLights = 64;
-    static constexpr int maxSpotLights = 64;
+    static constexpr int maxSpotLights = 16;
     static constexpr int maxCascades = 4;
 
     static constexpr int directionalShadowMapUnit = 5; // this is the texture bound for the directional shadow map
