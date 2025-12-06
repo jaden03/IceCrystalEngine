@@ -56,18 +56,27 @@ layout(std140, binding = 3) uniform DirectionalCascadeData {
     mat4 cascadeMatrices[MAX_CASCADES];
 } uboCascade;
 
+struct PointLight
+{
+    vec3 position;
+    float pl_padding0;
+
+    vec3 color;
+    float strength;
+
+    vec3 pl_padding1;
+    float radius;
+};
+layout(std140, binding = 4) uniform PointLightData
+{
+    PointLight pointLights[MAX_POINT_LIGHTS];
+};
+
 // poor mans raycasting
 uniform vec3 uniqueColor;
 
 uniform sampler2D fragTexture;
 uniform vec3 fragColor;
-
-uniform struct PointLight {
-    vec3 position;
-	vec3 color;
-	float strength;
-    float radius;
-} pointLights[MAX_POINT_LIGHTS];;
 
 uniform struct SpotLight {
     vec3 position;
@@ -221,7 +230,7 @@ void main()
     
 
     // Point Lights
-    for (int i = 0; i < pointLights.length(); i++)
+    for (int i = 0; i < pointLightCount; i++)
     {
         PointLight light = pointLights[i];
 
@@ -248,7 +257,7 @@ void main()
     }
 
     // Spot Lights
-    for (int i = 0; i < spotLights.length(); i++)
+    for (int i = 0; i < spotLightCount; i++)
     {
         SpotLight light = spotLights[i];
 

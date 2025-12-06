@@ -3,6 +3,7 @@
 #include "Ice/Components/Camera.h"
 #include <glm/glm.hpp>
 
+// Global Data
 struct RendererGlobalData
 {
     glm::mat4 view; // 0 - 63
@@ -16,6 +17,7 @@ struct RendererGlobalData
     float _padding1;
 };
 
+// Lighting Data
 struct RendererLightingData
 {
     int directionalLightExists;
@@ -28,6 +30,7 @@ struct RendererLightingData
     int _padding0;
 };
 
+// Directional Light Data
 struct RendererCascadeSplitData
 {
     float value;
@@ -51,6 +54,23 @@ struct RendererDirectionalLightData
     RendererCascadeSplitData cascadeSplits[LightingManager::maxCascades];
 };
 
+// Point Light Data
+struct RendererIndividualPointLightData
+{
+    glm::vec3 position;
+    float _padding0;
+
+    glm::vec3 color;
+    float strength;
+
+    glm::vec3 _padding1;
+    float radius;
+};
+struct RendererPointLightData
+{
+    RendererIndividualPointLightData pointLights[LightingManager::maxPointLights];
+};
+
 class RendererManager
 {
 public:
@@ -70,6 +90,7 @@ public:
     RendererGlobalData GlobalData;
     RendererLightingData LightingData;
     RendererDirectionalLightData DirectionalLightData;
+    RendererPointLightData PointLightData;
 
     void Initialize();
 

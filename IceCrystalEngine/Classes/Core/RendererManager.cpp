@@ -32,6 +32,14 @@ void RendererManager::Initialize()
     glBindBuffer(GL_UNIFORM_BUFFER, DirectionalLightUBO);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(RendererDirectionalLightData), nullptr, GL_DYNAMIC_DRAW);
     glBindBufferBase(GL_UNIFORM_BUFFER, 2, DirectionalLightUBO);
+
+    // Cascades use the 4th UBO
+    
+    // Init the PointLight UBO
+    glGenBuffers(1, &PointLightUBO);
+    glBindBuffer(GL_UNIFORM_BUFFER, PointLightUBO);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(RendererPointLightData), nullptr, GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 4, PointLightUBO);
     
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
@@ -86,9 +94,46 @@ void RendererManager::UpdateUBOs()
         glActiveTexture(GL_TEXTURE0 + lightingManager.directionalShadowMapUnit);
         glBindTexture(GL_TEXTURE_2D_ARRAY, directionalLight->depthMapArray);
     }
-
+    
     glBindBuffer(GL_UNIFORM_BUFFER, DirectionalLightUBO);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(RendererDirectionalLightData), &DirectionalLightData);
+
+        // Point Lights
+    for (unsigned int i = 0; i < lightingManager.maxPointLights; i++)
+    {
+        if (i < lightingManager.pointLights.size())
+        {
+            PointLight* point = lightingManager.pointLights[i];
+            PointLightData.pointLights[i].position = point->transform->position;
+            PointLightData.pointLights[i].color = point->color;
+            PointLightData.pointLights[i].strength = point->strength;
+            PointLightData.pointLights[i].radius = point->radius;
+        }
+        else
+        {
+            PointLightData.pointLights[i].position = glm::vec3(0.0f);
+            PointLightData.pointLights[i].color = glm::vec3(0.0f);
+            PointLightData.pointLights[i].strength = 0.0f;
+            PointLightData.pointLights[i].radius = 0.0f;
+        }
+    }
+    
+    glBindBuffer(GL_UNIFORM_BUFFER, PointLightUBO);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(RendererPointLightData), &PointLightData);
+
+    // int numberOfPointLights = lightingManager.pointLights.size();
+    // int maxPointLights = lightingManager.maxPointLights;
+    // if (numberOfPointLights > maxPointLights)
+    //     numberOfPointLights = maxPointLights;
+    //
+    // for (int i = 0; i < numberOfPointLights; i++)
+    // {
+    //     std::string prefix = "pointLights[" + std::to_string(i) + "].";
+    //     material->shader->setVec3(prefix + "position", lightingManager.pointLights[i]->transform->position);
+    //     material->shader->setVec3(prefix + "color", lightingManager.pointLights[i]->color);
+    //     material->shader->setFloat(prefix + "strength", lightingManager.pointLights[i]->strength);
+    //     material->shader->setFloat(prefix + "radius", lightingManager.pointLights[i]->radius);
+    // }
     
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
