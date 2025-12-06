@@ -16,6 +16,41 @@ struct RendererGlobalData
     float _padding1;
 };
 
+struct RendererLightingData
+{
+    int directionalLightExists;
+    int pointLightCount;
+    int spotLightCount;
+
+    float ambientLightStrength;
+    glm::vec3 ambientLightColor;
+
+    int _padding0;
+};
+
+struct RendererCascadeSplitData
+{
+    float value;
+    float _padding0, _padding1, _padding2;
+};
+struct RendererDirectionalLightData
+{
+    glm::vec3 direction;
+    int _padding0;
+    
+    glm::vec3 color;
+    int _padding1;
+
+    // 48-63
+    float strength;
+    int castShadows;
+    int cascadeCount;
+    int _padding2;
+
+    // 64-(64 + 4*16)
+    RendererCascadeSplitData cascadeSplits[LightingManager::maxCascades];
+};
+
 class RendererManager
 {
 public:
@@ -26,12 +61,15 @@ public:
     }
 
     unsigned int GlobalDataUBO; // 0
-    unsigned int DirectionalLightUBO; // 1
-    // cascades for the directional light is 2
-    unsigned int PointLightUBO; // 3
-    unsigned int SpotLightUBO; // 4
+    unsigned int LightingDataUBO; // 1
+    unsigned int DirectionalLightUBO; // 2
+    // cascades for the directional light is 3
+    unsigned int PointLightUBO; // 4
+    unsigned int SpotLightUBO; // 5
 
     RendererGlobalData GlobalData;
+    RendererLightingData LightingData;
+    RendererDirectionalLightData DirectionalLightData;
 
     void Initialize();
 

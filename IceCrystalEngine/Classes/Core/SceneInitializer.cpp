@@ -69,6 +69,7 @@ void SceneInitializer::InitializeScene()
 	Actor* testCrate = new Actor("Test Crate", "testCrate");
 	Renderer* testCrateRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj", crateMaterial);
 	testCrate->AddComponent(testCrateRenderer);
+	testCrate->transform->Translate(-5, 5, 0);
 	
 	
 	int rows = 5;  // Number of rows in the grid
@@ -105,43 +106,43 @@ void SceneInitializer::InitializeScene()
 	// LuaExecutor* executor = new LuaExecutor(FileUtil::AssetDir + "LuaScripts/Test.lua");
 	// testCrate->AddComponent(executor);
 	
-	// Actor* pointLight = new Actor("Blue Light", "PointLight1");
-	// PointLight* pointLightComponent = pointLight->AddComponent<PointLight>();
-	// pointLight->transform->Translate(0, -3, 0);
-	// Renderer* pointLightRenderer = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterialBlue);
-	// pointLight->AddComponent(pointLightRenderer);
-	// pointLight->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
-	// pointLightRenderer->castShadows = false;
-	// pointLightComponent->color = glm::vec3(0.0f, 0.0f, 1.0f);
-	// pointLightComponent->strength = 5;
-	//
-	// Actor* pointLight2 = new Actor("Green Light", "PointLight2");
-	// PointLight* pointLightComponent2 = pointLight2->AddComponent<PointLight>();
-	// pointLight2->transform->Translate(0, -3, 0);
-	// Renderer* pointLightRenderer2 = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterialGreen);
-	// pointLight2->AddComponent(pointLightRenderer2);
-	// pointLight2->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
-	// pointLightRenderer2->castShadows = false;
-	// pointLightComponent2->color = glm::vec3(0.0f, 1.0f, 0.0f);
-	// pointLightComponent2->strength = 5;
-	//
-	// Actor* pointLight3 = new Actor("Red Light", "PointLight3");
-	// PointLight* pointLightComponent3 = pointLight3->AddComponent<PointLight>();
-	// pointLight3->transform->Translate(0, -3, 0);
-	// Renderer* pointLightRenderer3 = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterialRed);
-	// pointLight3->AddComponent(pointLightRenderer3);
-	// pointLight3->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
-	// pointLightRenderer3->castShadows = false;
-	// pointLightComponent3->color = glm::vec3(1.0f, 0.0f, 0.0f);
-	// pointLightComponent3->strength = 5;
-	//
-	// Actor* pointLight4 = new Actor("White Light", "PointLight4");
-	// PointLight* pointLightComponent4 = pointLight4->AddComponent<PointLight>();
-	// pointLight4->transform->Translate(0, -1, 0);
-	// Renderer* pointLightRenderer4 = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterial);
-	// pointLight4->AddComponent(pointLightRenderer4);
-	// pointLight4->transform->scale = glm::vec3(0.025f, 0.025f, 0.025f);
-	// pointLightRenderer4->castShadows = false;
+	Actor* pointLight = new Actor("Blue Light", "PointLight1");
+	PointLight* pointLightComponent = pointLight->AddComponent<PointLight>();
+	pointLight->transform->Translate(5, -3, 0);
+	Renderer* pointLightRenderer = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterialBlue);
+	pointLight->AddComponent(pointLightRenderer);
+	pointLight->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
+	pointLightRenderer->castShadows = false;
+	pointLightComponent->color = glm::vec3(0.0f, 0.0f, 1.0f);
+	pointLightComponent->strength = 5;
+	
+	Actor* pointLight2 = new Actor("Green Light", "PointLight2");
+	PointLight* pointLightComponent2 = pointLight2->AddComponent<PointLight>();
+	pointLight2->transform->Translate(0, -3, 5);
+	Renderer* pointLightRenderer2 = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterialGreen);
+	pointLight2->AddComponent(pointLightRenderer2);
+	pointLight2->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
+	pointLightRenderer2->castShadows = false;
+	pointLightComponent2->color = glm::vec3(0.0f, 1.0f, 0.0f);
+	pointLightComponent2->strength = 5;
+	
+	Actor* pointLight3 = new Actor("Red Light", "PointLight3");
+	PointLight* pointLightComponent3 = pointLight3->AddComponent<PointLight>();
+	pointLight3->transform->Translate(0, -3, -5);
+	Renderer* pointLightRenderer3 = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterialRed);
+	pointLight3->AddComponent(pointLightRenderer3);
+	pointLight3->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
+	pointLightRenderer3->castShadows = false;
+	pointLightComponent3->color = glm::vec3(1.0f, 0.0f, 0.0f);
+	pointLightComponent3->strength = 5;
+	
+	Actor* pointLight4 = new Actor("White Light", "PointLight4");
+	PointLight* pointLightComponent4 = pointLight4->AddComponent<PointLight>();
+	pointLight4->transform->Translate(0, -1, 0);
+	Renderer* pointLightRenderer4 = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterial);
+	pointLight4->AddComponent(pointLightRenderer4);
+	pointLight4->transform->scale = glm::vec3(0.025f, 0.025f, 0.025f);
+	pointLightRenderer4->castShadows = false;
 
 	
 

@@ -47,7 +47,7 @@ SceneManager::~SceneManager()
 // Update
 void SceneManager::Update()
 {
-	usedTextureCount = 1;
+	usedTextureCount = 10;
 	
 	// get the mainCamera
 	if (mainCamera == nullptr)

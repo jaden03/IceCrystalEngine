@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "Ice/Core/LightingManager.h"
+
 std::int32_t Handle;
 
 Shader::Shader() // This will just use default.vert and default.frag
@@ -134,6 +136,10 @@ void Shader::InitializeShader()
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     glDeleteShader(geometryShader);
+
+    // Set default values
+    Use();
+    setInt("directionalShadowMap", LightingManager::directionalShadowMapUnit);
 }
 
 

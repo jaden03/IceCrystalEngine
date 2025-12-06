@@ -24,10 +24,6 @@ public:
 	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 	float strength = 1;
 	
-	// this essentially is the shadow distance, but the shadows will be lower quality unless you increase the shadowMapResolution
-	float frustumSize = 15.0f;
-	float frustumNearPlane = 1.0f;
-	float frustumFarPlane = 100.0f;
 	// this is the resolution of the shadow map, the higher the resolution, the better the shadows will look, but the more performance it will cost
 	int shadowMapResolution = 2048;
 	bool castShadows = true;

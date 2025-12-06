@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef LIGHTING_MANAGER_H
 
@@ -19,48 +19,50 @@ class LightingManager
 
 public:
 
-	static LightingManager& GetInstance()
-	{
-		static LightingManager instance; // Static local variable ensures a single instance
-		return instance;
-	}
+    static LightingManager& GetInstance()
+    {
+        static LightingManager instance; // Static local variable ensures a single instance
+        return instance;
+    }
 
-	float ambientLightingStrength = 0.15f;
-	glm::vec3 ambientLightingColor = glm::vec3(1.0f, 1.0f, 1.0f);
+    float ambientLightingStrength = 0.15f;
+    glm::vec3 ambientLightingColor = glm::vec3(1.0f, 1.0f, 1.0f);
 	
-	int maxPointLights = 64;
-	int maxSpotLights = 64;
-	int maxCascades = 4;
+    static constexpr int maxPointLights = 64;
+    static constexpr int maxSpotLights = 64;
+    static constexpr int maxCascades = 4;
 
-	DirectionalLight* directionalLight = nullptr;
-	std::vector<PointLight*> pointLights = std::vector<PointLight*>();
-	std::vector<SpotLight*> spotLights = std::vector<SpotLight*>();
+    static constexpr int directionalShadowMapUnit = 5; // this is the texture bound for the directional shadow map
 
-	Shader* shadowShader;
-	Shader* shadowsCascadedShader;
-	unsigned int shadowMapFBO = 0;
+    DirectionalLight* directionalLight = nullptr;
+    std::vector<PointLight*> pointLights = std::vector<PointLight*>();
+    std::vector<SpotLight*> spotLights = std::vector<SpotLight*>();
+
+    Shader* shadowShader;
+    Shader* shadowsCascadedShader;
+    unsigned int shadowMapFBO = 0;
 
 
-	void InitializeLighting();
+    void InitializeLighting();
 
-	void AddDirectionalLight(DirectionalLight* light);
-	void AddPointLight(PointLight* light);
-	void AddSpotLight(SpotLight* light);
+    void AddDirectionalLight(DirectionalLight* light);
+    void AddPointLight(PointLight* light);
+    void AddSpotLight(SpotLight* light);
 
-	void RemoveDirectionalLight(DirectionalLight* light);
-	void RemovePointLight(PointLight* light);
-	void RemoveSpotLight(SpotLight* light);
+    void RemoveDirectionalLight(DirectionalLight* light);
+    void RemovePointLight(PointLight* light);
+    void RemoveSpotLight(SpotLight* light);
 
 private:
 
-	LightingManager(); // Private constructor to ensure a single instance
-	~LightingManager();
+    LightingManager(); // Private constructor to ensure a single instance
+    ~LightingManager();
 
-	LightingManager(LightingManager const&) = delete; // Delete copy constructor
-	// this prevents the copy constructor "SceneManager copy(original);" from working
+    LightingManager(LightingManager const&) = delete; // Delete copy constructor
+    // this prevents the copy constructor "SceneManager copy(original);" from working
 
-	void operator=(LightingManager const&) = delete; // Delete assignment operator
-	// this prevents copying by assignment "SceneManager another = original;" from working
+    void operator=(LightingManager const&) = delete; // Delete assignment operator
+    // this prevents copying by assignment "SceneManager another = original;" from working
 
 };
 

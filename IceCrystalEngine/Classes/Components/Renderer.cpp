@@ -204,34 +204,6 @@ void Renderer::Update()
 		// material stuff
 	material->shader->setVec3("fragColor", material->color);
 
-		// lighting stuff
-	material->shader->setFloat("ambientLightStrength", lightingManager.ambientLightingStrength);
-	material->shader->setVec3("ambientLightColor", lightingManager.ambientLightingColor);
-	
-	material->shader->setInt("pointLightCount", lightingManager.pointLights.size());
-
-	// directional light
-	DirectionalLight* light = lightingManager.directionalLight;
-	material->shader->setInt("directionalLightExists", light != nullptr);
-	if (light != nullptr)
-	{
-		material->shader->setVec3("directionalLight.direction", light->transform->forward);
-		material->shader->setVec3("directionalLight.color", light->color);
-		material->shader->setFloat("directionalLight.strength", light->strength);
-		material->shader->setBool("directionalLight.castShadows", light->castShadows);
-
-		material->shader->setInt("directionalLight.cascadeCount", light->cascadeCount);
-		for (int i = 0; i < light->cascadeCount; ++i)
-		{
-			material->shader->setFloat("directionalLight.cascadeSplits[" + std::to_string(i) + "]", light->cascadeSplits[i]);
-		}
-		
-		glActiveTexture(GL_TEXTURE0 + sceneManager.usedTextureCount);
-		glBindTexture(GL_TEXTURE_2D_ARRAY, light->depthMapArray);
-		material->shader->setInt("directionalShadowMap", sceneManager.usedTextureCount);
-		sceneManager.usedTextureCount++;
-	}
-
 	// point lights
 	int numberOfPointLights = lightingManager.pointLights.size();
 	int maxPointLights = lightingManager.maxPointLights;
