@@ -8,7 +8,7 @@ Game engine I am writing to learn C++
 - Import OBJ Models with UV maps
 - Custom Material file format
 - Lighting
-- Shadows (only directional lights as of right now)
+- Shadows (no point lights yet, but we do got CSM)
 - Parenting
 - Skybox
 - HDR
@@ -17,6 +17,7 @@ Game engine I am writing to learn C++
 - Object picking/Color picking
 - MSAA
 - Can use Lua to interface with most things
+- Jolt Physics
 
 ![IceCrystal Engine](https://github.com/jaden03/IceCrystalEngine/blob/master/image.png?raw=true)
 
