@@ -247,7 +247,7 @@
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
       <PreprocessorDefinitions>GLFW_INCLUDE_NONE;_UNICODE;UNICODE;</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>;D:\Repos\IceCrystalEngine\IceCrystalEngine\/Include/lua/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>;$(ProjectDir)/Include/lua/</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
