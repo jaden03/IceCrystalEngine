@@ -11,7 +11,7 @@ while true do
     --if input.GetKeyDown(Key.E) then
         if sceneManager:GetHoveredActor() ~= nil then
             if sceneManager:GetHoveredActor() == actor then
-                rb:SetLinearVelocity(vec3(0, 1, 0)) 
+                rb:SetLinearVelocity(transform.up) 
             end
         end
     --end
