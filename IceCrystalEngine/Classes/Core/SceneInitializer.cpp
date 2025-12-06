@@ -79,11 +79,11 @@ void SceneInitializer::InitializeScene()
 	
 	int rows = 5;  // Number of rows in the grid
 	int cols = 5;  // Number of columns in the grid
-	float spacing = 4.0f;  // Space between crates
+	float spacing = 6.0f;  // Space between crates
 	
 	// Calculate the offset to center the grid
-	float offsetX = (cols - 1) * spacing / 2.0f;
-	float offsetZ = (rows - 1) * spacing / 2.0f;
+	float offsetX = (cols - 1) * spacing / 3.0f;
+	float offsetZ = (rows - 1) * spacing / 3.0f;
 	
 	// Loop through rows and columns to create a grid of crates
 	for (int i = 0; i < rows; ++i) {
