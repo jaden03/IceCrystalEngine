@@ -1,4 +1,5 @@
 #version 430 core
+
 layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 BrightColor;
 layout (location = 2) out vec4 PickColor;
@@ -15,9 +16,45 @@ layout(std140, binding = 0) uniform GlobalData
     float time;
     float nearPlane;
     float farPlane;
-    float _padding0;
-    float _padding1;
+    float gd_padding0;
+    float gd_padding1;
 };
+
+#define MAX_POINT_LIGHTS 64
+#define MAX_SPOT_LIGHTS 16
+#define MAX_CASCADES 4
+
+layout(std140, binding = 1) uniform LightingData
+{
+    int directionalLightExists;
+    int pointLightCount;
+    int spotLightCount;
+    
+    float ambientLightStrength;
+    vec3 ambientLightColor;
+
+    int ld_padding0;
+};
+
+layout(std140, binding = 2) uniform DirectionalLightData
+{
+    vec3 direction;
+    float dld_padding0;
+    
+    vec3 color;
+    float dld_padding1;
+    
+    float strength;
+    int castShadows;
+    int cascadeCount;
+    int dld_padding2;
+    
+    float cascadeSplits[MAX_CASCADES];
+} directionalLight;
+uniform sampler2DArray directionalShadowMap;
+layout(std140, binding = 3) uniform DirectionalCascadeData {
+    mat4 cascadeMatrices[MAX_CASCADES];
+} uboCascade;
 
 // poor mans raycasting
 uniform vec3 uniqueColor;
@@ -25,30 +62,6 @@ uniform vec3 uniqueColor;
 uniform sampler2D fragTexture;
 uniform vec3 fragColor;
 
-// lighting
-uniform float ambientLightStrength;
-uniform vec3 ambientLightColor;
-
-#define MAX_POINT_LIGHTS 64
-#define MAX_SPOT_LIGHTS 16
-#define MAX_CASCADES 4
-
-uniform bool directionalLightExists;
-uniform struct DirectionalLight {
-    vec3 direction;
-	vec3 color;
-	float strength;
-    bool castShadows;
-    int cascadeCount;
-    float cascadeSplits[MAX_CASCADES];
-} directionalLight;
-layout(std140, binding = 2) uniform DirectionalCascadeData {
-    mat4 cascadeMatrices[MAX_CASCADES];
-} uboCascade;
-uniform sampler2DArray directionalShadowMap;
-
-
-uniform int pointLightCount;
 uniform struct PointLight {
     vec3 position;
 	vec3 color;
@@ -56,8 +69,6 @@ uniform struct PointLight {
     float radius;
 } pointLights[MAX_POINT_LIGHTS];;
 
-
-uniform int spotLightCount;
 uniform struct SpotLight {
     vec3 position;
     vec3 direction;
@@ -106,7 +117,7 @@ void main()
     // =================================================
     float shadow = 0.0;
 
-    if (directionalLight.castShadows)
+    if (directionalLightExists == 1 && directionalLight.castShadows == 1)
     {
         // ---------------------------------------------
         // 2. Choose cascade based on view-space depth

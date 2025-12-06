@@ -47,7 +47,7 @@ void DirectionalLight::Initialize()
 	glGenBuffers(1, &cascadeMatricesUBO);
 	glBindBuffer(GL_UNIFORM_BUFFER, cascadeMatricesUBO);
 	glBufferData(GL_UNIFORM_BUFFER,  sizeof(glm::mat4x4) * LightingManager::GetInstance().maxCascades, nullptr, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 2, cascadeMatricesUBO);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 3, cascadeMatricesUBO);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	cascadeMatrices.resize(cascadeCount);

@@ -31,7 +31,8 @@ public:
 	float deltaTime = 0.0f;
 	double lastFrameTime = 0.0;
 
-	int usedTextureCount = 1;
+	int usedTextureCount = 10; // start at 10 every frame, we reserve the first 10 for things like shadow maps and
+	// obv the current rendering texture is always 0
 	
 	void Update();
 	

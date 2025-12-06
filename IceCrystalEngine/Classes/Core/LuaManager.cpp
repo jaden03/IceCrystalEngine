@@ -535,9 +535,6 @@ void LuaManager::RegisterBindings() {
         sol::base_classes, sol::bases<Component>(),
         "color", &DirectionalLight::color,
         "strength", &DirectionalLight::strength,
-        "frustumSize", &DirectionalLight::frustumSize,
-        "frustumNearPlane", &DirectionalLight::frustumNearPlane,
-        "frustumFarPlane", &DirectionalLight::frustumFarPlane,
         "castShadows", &DirectionalLight::castShadows
     );
     RegisterComponent<DirectionalLight>("DirectionalLight", lua);

@@ -15,8 +15,8 @@ layout(std140, binding = 0) uniform GlobalData
 	float time;
 	float nearPlane;
 	float farPlane;
-	float _padding0;
-	float _padding1;
+	float gd_padding0;
+	float gd_padding1;
 };
 
 uniform mat4 model;
