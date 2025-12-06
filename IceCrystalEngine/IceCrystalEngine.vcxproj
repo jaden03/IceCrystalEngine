@@ -126,7 +126,7 @@
       <PreprocessorDefinitions>GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir)/Include/lua/;$(SolutionDir)IceCrystalEngine\External\Jolt</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)IceCrystalEngine/Include/lua/;$(SolutionDir)IceCrystalEngine\External\Jolt</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -403,7 +403,7 @@
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
       <PreprocessorDefinitions>GLFW_INCLUDE_NONE;_UNICODE;UNICODE;</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>;D:\Repos\IceCrystalEngine\IceCrystalEngine\/Include/lua/;D:\Repos\IceCrystalEngine\IceCrystalEngine\External\Jolt</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>;$(ProjectDir)/Include/lua/;$(ProjectDir)\External\Jolt</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
@@ -481,7 +481,7 @@
       <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
       <PreprocessorDefinitions>GLFW_INCLUDE_NONE;_UNICODE;UNICODE;</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>;D:\Repos\IceCrystalEngine\IceCrystalEngine\/Include/lua/;D:\Repos\IceCrystalEngine\IceCrystalEngine\External\Jolt</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>;$(ProjectDir)/Include/lua/;$(ProjectDir)\External\Jolt</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
