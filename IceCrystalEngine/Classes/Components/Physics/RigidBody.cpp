@@ -1,0 +1,144 @@
+﻿#include <Ice/Components/Physics/RigidBody.h>
+
+RigidBody::RigidBody(float mass) : mass(mass)
+{
+}
+
+void RigidBody::Ready()
+{
+    // Ensure component is attached to an actor
+    if (!owner) return;
+    // Ensure there is a collider on the actor
+    collider = owner->GetComponent<Collider>();
+    if (!collider) return;
+
+    // Make sure the collider actually has a shape
+    auto shape = collider->GetShape();
+    if (!shape) return;
+
+    glm::vec3 pos = transform->position;
+    
+    JPH::EMotionType motionType = mass > 0.0f ? JPH::EMotionType::Dynamic : JPH::EMotionType::Static;
+    // Create a box body in Jolt
+    JPH::BodyCreationSettings settings(
+        shape,
+        JPH::Vec3(pos.x, pos.y, pos.z),
+        JPH::Quat::sIdentity(),
+        motionType,
+        0 // object layer
+    );
+    body = PhysicsManager::GetInstance().GetSystem().GetBodyInterface().CreateBody(settings);
+
+    JPH::EActivation activation = (motionType == JPH::EMotionType::Dynamic) ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
+    PhysicsManager::GetInstance().GetSystem().GetBodyInterface().AddBody(body->GetID(), activation);
+}
+
+void RigidBody::Update()
+{
+    if (!body || !owner) return;
+
+    // Sync physics position back to actor transform
+    JPH::Vec3 pos;
+    JPH::Quat rot;
+    PhysicsManager::GetInstance().GetSystem().GetBodyInterface().GetPositionAndRotation(body->GetID(), pos, rot);
+
+    owner->transform->position = glm::vec3(pos.GetX(), pos.GetY(), pos.GetZ());
+    owner->transform->SetRotation(glm::quat(rot.GetW(), -rot.GetX(), rot.GetY(), -rot.GetZ()));
+}
+
+RigidBody::~RigidBody() {
+    if (body) {
+        PhysicsManager::GetInstance().GetSystem().GetBodyInterface().RemoveBody(body->GetID());
+        body = nullptr;
+    }
+}
+
+
+
+void RigidBody::AddForce(glm::vec3 force)
+{
+    body->AddForce(ToJolt(force));
+}
+void RigidBody::AddTorque(glm::vec3 torque)
+{
+    body->AddTorque(ToJolt(torque));
+}
+void RigidBody::AddImpulse(glm::vec3 impulse)
+{
+    body->AddImpulse(ToJolt(impulse));
+}
+void RigidBody::AddAngularImpulse(glm::vec3 impulse)
+{
+    body->AddAngularImpulse(ToJolt(impulse));
+}
+
+void RigidBody::SetLinearVelocity(glm::vec3 velocity)
+{
+    body->SetLinearVelocity(ToJolt(velocity));
+}
+glm::vec3 RigidBody::GetLinearVelocity()
+{
+    return ToGLM(body->GetLinearVelocity());
+}
+
+void RigidBody::SetAngularVelocity(glm::vec3 velocity)
+{
+    body->SetAngularVelocity(ToJolt(velocity));
+}
+glm::vec3 RigidBody::GetAngularVelocity()
+{
+    return ToGLM(body->GetAngularVelocity());
+}
+
+
+bool RigidBody::IsActive()
+{
+    return body->IsActive();
+}
+
+void RigidBody::SetKinematic(bool enabled)
+{
+    auto& iface = PhysicsManager::GetInstance().GetSystem().GetBodyInterface();
+
+    if (enabled)
+    {
+        iface.SetMotionType(body->GetID(), JPH::EMotionType::Kinematic, JPH::EActivation::DontActivate);
+
+        // Kinematic bodies should not keep any dynamic velocity
+        body->SetLinearVelocity(JPH::Vec3::sZero());
+        body->SetAngularVelocity(JPH::Vec3::sZero());
+        return;
+    }
+
+    if (mass == 0.0f)
+    {
+        iface.SetMotionType(body->GetID(), JPH::EMotionType::Static, JPH::EActivation::DontActivate);
+
+        // Just in case, clear velocity (static bodies shouldn't move)
+        body->SetLinearVelocity(JPH::Vec3::sZero());
+        body->SetAngularVelocity(JPH::Vec3::sZero());
+    }
+    else
+    {
+        JPH::MassProperties mp = body->GetShape()->GetMassProperties();
+        
+        float scale = mass / mp.mMass;
+        mp.mMass = mass;
+        mp.mInertia *= scale;
+
+        body->GetMotionProperties()->SetMassProperties(JPH::EAllowedDOFs::All, mp);
+
+        iface.SetMotionType(body->GetID(), JPH::EMotionType::Dynamic, JPH::EActivation::Activate);
+    }
+}
+bool RigidBody::IsKinematic() const
+{
+    auto& iface = PhysicsManager::GetInstance().GetSystem().GetBodyInterface();
+    return iface.GetMotionType(body->GetID()) == JPH::EMotionType::Kinematic;
+}
+
+
+
+
+
+

@@ -1,15 +1,17 @@
 ﻿#include <Ice/Core/Engine.h>
 
-#include "Ice/Core/Input.h"
-#include "Ice/Core/LuaManager.h"
-#include "Ice/Core/RendererManager.h"
-#include "Ice/Core/SceneInitializer.h"
-#include "Ice/Utils/FileUtil.h"
+#include <Ice/Core/Input.h>
+#include <Ice/Core/LuaManager.h>
+#include <Ice/Core/RendererManager.h>
+#include <Ice/Core/SceneInitializer.h>
+#include <Ice/Utils/FileUtil.h>
+#include <Ice/Core/PhysicsManager.h>
 
 
 #ifdef _DEBUG
 #include <Ice/Utils/DebugUtil.h>
 #endif
+
 
 Engine::Engine()
 {
@@ -33,12 +35,16 @@ void Engine::Init()
     // Initialize core singletons
     WindowManager::GetInstance();
     SceneManager::GetInstance();
+    
+    JPH::RegisterDefaultAllocator();
+    PhysicsManager::GetInstance();
+    
     Input::GetInstance();
     LuaManager::GetInstance();
     LightingManager::GetInstance().InitializeLighting();
     SceneInitializer::GetInstance();
     RendererManager::GetInstance();
-
+    
 #ifdef _DEBUG
     DebugUtil::GetInstance();
 #endif
@@ -80,7 +86,30 @@ void Engine::StartFrame()
 
 void Engine::Update()
 {
-    SceneManager::GetInstance().Update();
+    SceneManager& sceneManager = SceneManager::GetInstance();
+    
+    // Step physics with fixed timestep
+    FixedUpdate(sceneManager.deltaTime);
+
+    // Other engine updates
+    sceneManager.Update();
+}
+
+void Engine::FixedUpdate(float deltaTime)
+{
+    // Accumulate time
+    physicsAccumulator += deltaTime;
+    
+    const float maxAcc = fixedDeltaTime * 5.0f;   // 5 physics steps max per frame
+    if (physicsAccumulator > maxAcc)
+        physicsAccumulator = maxAcc;
+
+    // Step physics in fixed increments
+    while (physicsAccumulator >= fixedDeltaTime)
+    {
+        PhysicsManager::GetInstance().Step(fixedDeltaTime);
+        physicsAccumulator -= fixedDeltaTime;
+    }
 }
 
 void Engine::EndFrame()

@@ -50,11 +50,12 @@ public:
 	}
 	
 
-	// Add Component by Type
-	template <typename T>
-	T* AddComponent()
+	// Add Component by Type, with constructor arguments
+	template <typename T, typename... Args>
+	T* AddComponent(Args&&... args)
 	{
-		T* newComponent = new T;
+		// Forward arguments to T's constructor
+		T* newComponent = new T(std::forward<Args>(args)...);
 		newComponent->owner = this;
 		newComponent->transform = transform;
 		newComponent->Ready();
