@@ -25,6 +25,7 @@ public:
 	Shader* shader; // the shader the material uses
 
 	glm::vec3 color;
+	float smoothness;
 
 	// Store arbitrary shader properties
 	std::unordered_map<std::string, float> floatProperties;

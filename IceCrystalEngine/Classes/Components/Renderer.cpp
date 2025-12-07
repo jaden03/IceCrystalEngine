@@ -273,7 +273,11 @@ void Renderer::Update()
 
 	// use the shader and set the attributes
 	material->shader->Use();
+	// Apply custom material properties
 	material->ApplyProperties();
+	// Apply main material properties
+	material->shader->setVec3("fragColor", material->color);
+	material->shader->setFloat("smoothness", material->smoothness);
 	
 	// bind the texture
 	glActiveTexture(GL_TEXTURE0);
@@ -284,9 +288,6 @@ void Renderer::Update()
 		// position stuff
 	material->shader->setMat4("model", modelMatrix);
 	material->shader->setMat3("normalModel", normalMatrix);
-	
-		// material stuff
-	material->shader->setVec3("fragColor", material->color);
 
 	// spot lights
 	int numberOfSpotLights = lightingManager.spotLights.size();

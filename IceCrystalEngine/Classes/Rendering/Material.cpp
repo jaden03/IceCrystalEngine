@@ -46,12 +46,13 @@ void Material::InitializeMaterial()
 
 		// Get the color
 		color = glm::vec3(jsonData["Color"][0], jsonData["Color"][1], jsonData["Color"][2]);
+		smoothness = jsonData.value("Smoothness", 0.5f);
 
 		// Parse custom properties
 		for (auto& [key, value] : jsonData.items())
 		{
 			// Skip known properties
-			if (key == "Name" || key == "Texture" || key == "Shader" || key == "Color")
+			if (key == "Name" || key == "Texture" || key == "Shader" || key == "Color" || key == "Smoothness")
 				continue;
 
 			// Detect type and store accordingly

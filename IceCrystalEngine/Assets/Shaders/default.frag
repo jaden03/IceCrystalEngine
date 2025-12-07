@@ -78,6 +78,8 @@ uniform vec3 uniqueColor;
 uniform sampler2D fragTexture;
 uniform vec3 fragColor;
 
+uniform float smoothness;
+
 uniform struct SpotLight {
     vec3 position;
     vec3 direction;
@@ -104,7 +106,6 @@ void main()
 
     vec3 viewDir = normalize(viewPos - fragPos);
     
-    
     // Directional Light
     // -------------------------------------------------
     // 1. Base lighting (diffuse + specular)
@@ -116,7 +117,9 @@ void main()
     float diff = max(dot(normal, lightDir), 0.0);
 
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+    
+    float shininess = mix(1.0, 256.0, smoothness);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
     vec3 diffuse = diff * color;
     vec3 specular = spec * color;
