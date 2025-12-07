@@ -10,13 +10,13 @@ LuaExecutor::LuaExecutor(std::string path)
 void LuaExecutor::Execute()
 {
     if (filePath.size() > 0)
-    LuaManager::RunExecutor(this);
+    LuaManager::GetInstance().RunExecutor(this);
 }
 
 void LuaExecutor::Ready()
 {
     if (filePath.size() > 0 && runOnReady)
-        LuaManager::RunExecutor(this);
+        LuaManager::GetInstance().RunExecutor(this);
 }
 
 LuaExecutor::~LuaExecutor() {}

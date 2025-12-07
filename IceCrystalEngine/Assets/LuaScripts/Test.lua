@@ -1,9 +1,10 @@
-print("Test.lua loaded")
+print("Test.lua loaded for actor: ", actor.name)
 
 local sceneManager = SceneManager:GetInstance()
 local input = Input:GetInstance()
 
-wait(1000)
+wait(500)
+
 local rb = actor:GetComponent("RigidBody")
 
 local force = 3
