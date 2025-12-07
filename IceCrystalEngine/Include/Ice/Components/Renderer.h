@@ -29,6 +29,18 @@ class Renderer : public Component
 	glm::vec3 lastEulerAngles = glm::vec3(0.0f);
 	glm::vec3 lastScale = glm::vec3(1.0f);
 
+	std::string ModelPath;
+
+
+	static constexpr uint32_t CACHE_VERSION = 1;
+
+	std::string GetCachePath();
+	bool IsCacheValid();
+	bool LoadFromCache();
+	void SaveToCache();
+	bool LoadFromOBJ();
+	void CreateGLBuffers();
+
 public:
 	
 	bool castShadows = true;
@@ -41,7 +53,7 @@ public:
 	Renderer(std::string modelPath);
 	Renderer(std::string modelPath, Material* material);
 
-	~Renderer();
+	virtual ~Renderer();
 	
 	void Update() override;
 	void UpdateShadows();
