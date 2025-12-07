@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #ifndef LUA_MANAGER_H
 #define LUA_MANAGER_H
@@ -44,10 +44,12 @@ public:
 		auto& manager = LuaManager::GetInstance();
 		auto& lua = manager.lua;
 
+		// Create isolated environment for this executor instance
 		sol::environment env(lua, sol::create, lua.globals());
 		env["actor"] = executor->owner;
 		env["transform"] = executor->transform;
 
+		// Load the script
 		sol::load_result loader = lua.load_file(executor->filePath);
 
 		if (!loader.valid()) {
@@ -55,8 +57,29 @@ public:
 			fprintf(stderr, "Executor Load Error: %s\n", e.what());
 			return;
 		}
+
+		// Create a new thread for this coroutine
+		sol::thread thread = sol::thread::create(lua);
+		sol::state_view thread_state(thread.state());
 		
-		manager.StartCoroutine(env, std::move(loader));
+		// Get the loaded function and set its environment
+		sol::protected_function func = loader;
+		sol::set_environment(env, func);
+		
+		// Transfer the function to the new thread
+		sol::protected_function thread_func(thread_state, func);
+		
+		// Create coroutine from the thread's function
+		sol::coroutine co = sol::coroutine(thread_state, thread_func);
+		
+		// Create task with isolated environment and thread
+		LuaTask task;
+		task.thread = std::move(thread);
+		task.env = std::move(env);
+		task.co = std::move(co);
+		task.wakeTime = 0.0;
+
+		manager.tasks.push_back(std::move(task));
 	}
 
 
@@ -142,16 +165,25 @@ private:
 	
 	void StartCoroutine(sol::environment env, sol::load_result&& fx)
 	{
-		// Attach the environment to the loaded function
-		sol::function f = fx;
-		sol::set_environment(env, f);
-
-		// Create a coroutine from the main state, with the proper environment
-		sol::coroutine co = sol::coroutine(lua, f);
+		// Create a new thread for this coroutine
+		sol::thread thread = sol::thread::create(lua);
+		sol::state_view thread_state(thread.state());
+		
+		// Get the loaded function and set its environment
+		sol::protected_function func = fx;
+		sol::set_environment(env, func);
+		
+		// Transfer the function to the new thread
+		sol::protected_function thread_func(thread_state, func);
+		
+		// Create coroutine from the thread's function
+		sol::coroutine co = sol::coroutine(thread_state, thread_func);
 
 		LuaTask task;
+		task.thread = std::move(thread);
 		task.env = std::move(env);
 		task.co = std::move(co);
+		task.wakeTime = 0.0;
 
 		tasks.push_back(std::move(task));
 	}
