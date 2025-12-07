@@ -1,5 +1,4 @@
 #include <Ice/Core/SceneManager.h>
-#include <Ice/Components/Freecam.h>
 
 #include <iostream>
 
@@ -10,15 +9,12 @@
 #include <Ice/Utils/FileUtil.h>
 #include <Ice/Core/LuaManager.h>
 #include <Ice/Core/RendererManager.h>
-#include <Ice/Editor/WebEditorManager.h>
-#include <Ice/Editor/GizmoRenderer.h>
 
 #include <Ice/Components/Camera.h>
 #include <Ice/Components/Renderer.h>
 #include <Ice/Components/Light.h>
 
 #include <Ice/Core/Skybox.h>
-#include <Ice/Core/Component.h>
 
 using namespace std::chrono;
 
@@ -172,64 +168,45 @@ void SceneManager::Update()
 
 	// backface culling
 	glCullFace(GL_BACK);
-
-	// update LuaManager (skip if paused from web editor)
-	if (!WebEditorManager::GetInstance().IsEnginePaused())
-	{
-		LuaManager::GetInstance().Update(gameTime);
-	}
+	
+	// update LuaManager
+	LuaManager::GetInstance().Update(gameTime);
 
 	// update UBOs for renderning
 	rendererManager.UpdateUBOs();
-	
-	// Check if paused from web editor
-	bool isPaused = WebEditorManager::GetInstance().IsEnginePaused();
-	
-	// loop through actors
+
+	Actor* currentHoveredActor = nullptr;
+	glm::vec3 hoveredColor = postProcessor.hoveredActorColor;
+	// loop through actors to update components (also get the hovered actor here to save having to loop elsewhere)
 	for (int i = 0; i < actors->size(); i++)
 	{
-		// Always update transforms for rendering (even when paused)
+		// for some reason I needed to update the child positions in Update and the rotations in LateUpdate
 		actors->at(i)->transform->Update();
+
+		// Hovered actor
+		if (actors->at(i)->uniqueColor == hoveredColor)
+		{
+			// return the actor
+			currentHoveredActor = actors->at(i);
+		}
 		
-		// Update components
+		// loop through components
 		for (int j = 0; j < actors->at(i)->components->size(); j++)
 		{
-			Component* comp = actors->at(i)->components->at(j);
-			
-			// Skip disabled components
-			if (!comp->enabled) continue;
-			
-			// Always update Renderer components (they calculate model matrices for rendering)
-			// Also allow Freecam to update when paused so camera can still move
-			// Skip other components if paused
-			if (!isPaused || dynamic_cast<Renderer*>(comp) != nullptr || dynamic_cast<Freecam*>(comp) != nullptr)
-			{
-				comp->Update();
-			}
+			actors->at(i)->components->at(j)->Update();
 		}
 	}
+	hoveredActor = currentHoveredActor;
 	
 	// loop through actors again for LateUpdate and transform update
 	for (int i = 0; i < actors->size(); i++)
 	{
-		// Always update the transform for rendering
+		// update the transform
 		actors->at(i)->transform->LateUpdate();
-		
-		// Update components
+		// loop through components
 		for (int j = 0; j < actors->at(i)->components->size(); j++)
 		{
-			Component* comp = actors->at(i)->components->at(j);
-			
-			// Skip disabled components
-			if (!comp->enabled) continue;
-			
-			// Always update Renderer components (they calculate model matrices for rendering)
-			// Also allow Freecam to update when paused so camera can still move
-			// Skip other components if paused
-			if (!isPaused || dynamic_cast<Renderer*>(comp) != nullptr || dynamic_cast<Freecam*>(comp) != nullptr)
-			{
-				comp->LateUpdate();
-			}
+			actors->at(i)->components->at(j)->LateUpdate();
 		}
 	}
 
@@ -260,61 +237,12 @@ void SceneManager::Update()
 		}
 	}
 	
-#ifdef _DEBUG
-	// Render gizmos if engine is paused and an actor is selected
-	WebEditorManager& webEditor = WebEditorManager::GetInstance();
-	bool isPausedForGizmos = webEditor.IsEnginePaused();
-	Actor* selectedActor = webEditor.GetSelectedActor();
-	
-	static bool lastPauseState = false;
-	static Actor* lastSelectedActor = nullptr;
-	
-	// Log state changes
-	if (isPausedForGizmos != lastPauseState)
-	{
-		std::cout << "[SceneManager] Engine pause state changed: " << (isPausedForGizmos ? "PAUSED" : "RUNNING") << std::endl;
-		lastPauseState = isPausedForGizmos;
-	}
-	
-	if (selectedActor != lastSelectedActor)
-	{
-		if (selectedActor)
-			std::cout << "[SceneManager] Selected actor changed: " << selectedActor->name << std::endl;
-		else
-			std::cout << "[SceneManager] Selected actor cleared" << std::endl;
-		lastSelectedActor = selectedActor;
-	}
-	
-	if (isPausedForGizmos)
-	{
-		if (selectedActor && mainCamera)
-		{
-			GizmoRenderer::GetInstance().RenderGizmos(selectedActor, mainCamera);
-		}
-		else if (!selectedActor)
-		{
-			// Only log once per frame when paused but no actor selected
-			static int noActorLogCounter = 0;
-			if (noActorLogCounter++ % 60 == 0) // Log every ~60 frames
-				std::cout << "[SceneManager] Engine paused but no actor selected for gizmos" << std::endl;
-		}
-		else if (!mainCamera)
-		{
-			static int noCameraLogCounter = 0;
-			if (noCameraLogCounter++ % 60 == 0)
-				std::cout << "[SceneManager] Engine paused but no camera available for gizmos" << std::endl;
-		}
-	}
-#endif
-	
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
 	// set the polygon mode back to what it was before
 	glPolygonMode(GL_FRONT_AND_BACK, currentPolygonMode);
 
-
-	
 	// Get current time
 	double now = duration<double>(steady_clock::now().time_since_epoch()).count();
 	// First frame bootstrap
@@ -366,26 +294,6 @@ void SceneManager::RemoveActor(Actor* actor)
 		}
 	}
 }
-
-
-// Get Hovered Actor
-Actor* SceneManager::GetHoveredActor()
-{
-	glm::vec3 hoveredColor = postProcessor.hoveredActorColor;
-	
-	// loop through the actors
-	for (int i = 0; i < actors->size(); i++)
-	{
-		// if the actor is found
-		if (actors->at(i)->uniqueColor == hoveredColor)
-		{
-			// return the actor
-			return actors->at(i);
-		}
-	}
-	return nullptr;
-}
-
 
 // Get Actor by Tag
 Actor* SceneManager::GetActorByTag(std::string tag)
