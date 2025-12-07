@@ -27,6 +27,9 @@ public:
 	// also this is borderless, because fullscreen is trash
 	bool isFullscreen = false;
 
+	int GetWindowWidth() const { return windowWidth; }
+	int GetWindowHeight() const { return windowHeight; }
+
 private:
 
 	WindowManager(); // Private constructor to ensure a single instance

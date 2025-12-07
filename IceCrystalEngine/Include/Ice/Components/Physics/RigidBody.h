@@ -51,6 +51,11 @@ public:
     void SetKinematic(bool enabled);
     bool IsKinematic() const;
 
+    //----------------------------------
+    // Body Access
+    //----------------------------------
+    JPH::Body* GetBody() const { return body; }
+
 private:
     JPH::Body* body = nullptr;
 };

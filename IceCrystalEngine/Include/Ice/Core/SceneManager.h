@@ -57,6 +57,9 @@ public:
 	glm::vec2 uiPosition = glm::vec2(0, 0);
 	glm::vec2 uiSize = glm::vec2(50, 50);
 
+	// Get all actors in the scene
+	std::vector<Actor*>* GetActors() { return actors; }
+
 private:
 	
 	std::vector<Actor*>* actors;
