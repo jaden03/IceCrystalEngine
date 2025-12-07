@@ -123,7 +123,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLFW_INCLUDE_NONE;%(PreprocessorDefinitions);CPPHTTPLIB_OPENSSL_SUPPORT;CPPHTTPLIB_ZLIB_SUPPORT</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)IceCrystalEngine/Include/lua/;$(SolutionDir)IceCrystalEngine\External\Jolt</AdditionalIncludeDirectories>
@@ -506,6 +506,8 @@
     <ClCompile Include="Classes\Core\Transform.cpp" />
     <ClCompile Include="Classes\Core\UIManager.cpp" />
     <ClCompile Include="Classes\Core\WindowManager.cpp" />
+    <ClCompile Include="Classes\Editor\GizmoRenderer.cpp" />
+    <ClCompile Include="Classes\Editor\WebEditorManager.cpp" />
     <ClCompile Include="Classes\glad.c" />
     <ClCompile Include="Classes\imgui\imgui.cpp" />
     <ClCompile Include="Classes\imgui\imgui_demo.cpp" />
@@ -1205,6 +1207,7 @@
     <ClInclude Include="Include\glm\vec3.hpp" />
     <ClInclude Include="Include\glm\vec4.hpp" />
     <ClInclude Include="Include\glm\vector_relational.hpp" />
+    <ClInclude Include="Include\httplib\httplib.h" />
     <ClInclude Include="Include\Ice\Components\Camera.h" />
     <ClInclude Include="Include\Ice\Components\Light.h" />
     <ClInclude Include="Include\Ice\Components\Freecam.h" />
@@ -1228,6 +1231,8 @@
     <ClInclude Include="Include\Ice\Core\Transform.h" />
     <ClInclude Include="Include\Ice\Core\UIManager.h" />
     <ClInclude Include="Include\Ice\Core\WindowManager.h" />
+    <ClInclude Include="Include\Ice\Editor\GizmoRenderer.h" />
+    <ClInclude Include="Include\Ice\Editor\WebEditorManager.h" />
     <ClInclude Include="Include\Ice\Rendering\Material.h" />
     <ClInclude Include="Include\Ice\Rendering\MeshHolder.h" />
     <ClInclude Include="Include\Ice\Components\Renderer.h" />

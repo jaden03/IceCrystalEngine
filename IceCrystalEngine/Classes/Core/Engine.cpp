@@ -1,4 +1,4 @@
-﻿#include <Ice/Core/Engine.h>
+#include <Ice/Core/Engine.h>
 
 #include <Ice/Core/Input.h>
 #include <Ice/Core/LuaManager.h>
@@ -6,6 +6,9 @@
 #include <Ice/Core/SceneInitializer.h>
 #include <Ice/Utils/FileUtil.h>
 #include <Ice/Core/PhysicsManager.h>
+#include <Ice/Editor/WebEditorManager.h>
+#include <Ice/Core/SceneManager.h>
+#include <Ice/Editor/GizmoRenderer.h>
 
 
 #ifdef _DEBUG
@@ -20,6 +23,9 @@ Engine::Engine()
 
 Engine::~Engine()
 {
+    // Stop web editor if running
+    WebEditorManager::GetInstance().Stop();
+    
     LuaManager::GetInstance().Cleanup();
 #ifdef _DEBUG
     DebugUtil::GetInstance().Cleanup();
@@ -47,6 +53,12 @@ void Engine::Init()
     
 #ifdef _DEBUG
     DebugUtil::GetInstance();
+    GizmoRenderer::GetInstance().Initialize();
+#endif
+
+    // Initialize Web Editor (optional - can be started via console command later)
+#ifdef _DEBUG
+    WebEditorManager::GetInstance().Start(8080);
 #endif
 }
 
@@ -87,16 +99,30 @@ void Engine::StartFrame()
 void Engine::Update()
 {
     SceneManager& sceneManager = SceneManager::GetInstance();
+    WebEditorManager& webEditor = WebEditorManager::GetInstance();
     
-    // Step physics with fixed timestep
-    FixedUpdate(sceneManager.deltaTime);
+    // Skip physics and Lua updates if engine is paused from web editor
+    bool isPaused = webEditor.IsEnginePaused();
+    
+    if (!isPaused)
+    {
+        // Step physics with fixed timestep
+        FixedUpdate(sceneManager.deltaTime);
+    }
 
-    // Other engine updates
+    // Update web editor (process queued messages)
+    webEditor.Update();
+
+    // Other engine updates (rendering still happens even when paused)
     sceneManager.Update();
 }
 
 void Engine::FixedUpdate(float deltaTime)
 {
+    // Don't update physics if paused
+    if (WebEditorManager::GetInstance().IsEnginePaused())
+        return;
+    
     // Accumulate time
     physicsAccumulator += deltaTime;
     
