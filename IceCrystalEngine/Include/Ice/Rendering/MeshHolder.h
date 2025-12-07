@@ -6,31 +6,23 @@
 #include <glad/glad.h>
 #include <vector>
 
-class MeshHolder
-{
-	
-public:
-	
-	unsigned int vertexArrayObject;
+struct Vertex {
+	GLfloat x, y, z;       // position
+	GLfloat u, v;          // texture coordinates
+	GLfloat nx, ny, nz;    // normal
+};
 
-	unsigned int vertexBufferObject;
-	unsigned int uvBufferObject;
-	unsigned int normalBufferObject;
-	unsigned int elementBufferObject;
-
-	std::vector<GLfloat> vertices;
-	std::vector<GLfloat> uvs;
-	std::vector<GLfloat> normals;
+struct MeshHolder {
+	std::vector<Vertex> vertices;  // Interleaved vertex data
 	std::vector<unsigned int> indices;
-
-	MeshHolder(std::vector<GLfloat> vertices, std::vector<GLfloat> uvs, std::vector<GLfloat> normals, std::vector<unsigned int> indices)
-	{
-		this->vertices = vertices;
-		this->uvs = uvs;
-		this->normals = normals;
-		this->indices = indices;
-	}
-	
+    
+	GLuint vertexArrayObject;
+	GLuint vertexBufferObject;
+	GLuint elementBufferObject;
+    
+	MeshHolder() = default;
+	MeshHolder(std::vector<Vertex>&& v, std::vector<unsigned int>&& i)
+		: vertices(std::move(v)), indices(std::move(i)) {}
 };
 
 #endif
