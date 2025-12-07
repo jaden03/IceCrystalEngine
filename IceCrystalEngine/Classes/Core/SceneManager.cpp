@@ -168,18 +168,27 @@ void SceneManager::Update()
 
 	// backface culling
 	glCullFace(GL_BACK);
-
+	
 	// update LuaManager
 	LuaManager::GetInstance().Update(gameTime);
 
 	// update UBOs for renderning
 	rendererManager.UpdateUBOs();
-	
-	// loop through actors
+
+	Actor* currentHoveredActor = nullptr;
+	glm::vec3 hoveredColor = postProcessor.hoveredActorColor;
+	// loop through actors to update components (also get the hovered actor here to save having to loop elsewhere)
 	for (int i = 0; i < actors->size(); i++)
 	{
 		// for some reason I needed to update the child positions in Update and the rotations in LateUpdate
 		actors->at(i)->transform->Update();
+
+		// Hovered actor
+		if (actors->at(i)->uniqueColor == hoveredColor)
+		{
+			// return the actor
+			currentHoveredActor = actors->at(i);
+		}
 		
 		// loop through components
 		for (int j = 0; j < actors->at(i)->components->size(); j++)
@@ -187,6 +196,8 @@ void SceneManager::Update()
 			actors->at(i)->components->at(j)->Update();
 		}
 	}
+	hoveredActor = currentHoveredActor;
+	
 	// loop through actors again for LateUpdate and transform update
 	for (int i = 0; i < actors->size(); i++)
 	{
@@ -232,8 +243,6 @@ void SceneManager::Update()
 	// set the polygon mode back to what it was before
 	glPolygonMode(GL_FRONT_AND_BACK, currentPolygonMode);
 
-
-	
 	// Get current time
 	double now = duration<double>(steady_clock::now().time_since_epoch()).count();
 	// First frame bootstrap
@@ -285,26 +294,6 @@ void SceneManager::RemoveActor(Actor* actor)
 		}
 	}
 }
-
-
-// Get Hovered Actor
-Actor* SceneManager::GetHoveredActor()
-{
-	glm::vec3 hoveredColor = postProcessor.hoveredActorColor;
-	
-	// loop through the actors
-	for (int i = 0; i < actors->size(); i++)
-	{
-		// if the actor is found
-		if (actors->at(i)->uniqueColor == hoveredColor)
-		{
-			// return the actor
-			return actors->at(i);
-		}
-	}
-	return nullptr;
-}
-
 
 // Get Actor by Tag
 Actor* SceneManager::GetActorByTag(std::string tag)

@@ -24,7 +24,7 @@ public:
 
 	struct LuaTask
 	{
-		sol::thread thread; // KEEP THREAD ALIVE!
+		sol::thread thread;
 		sol::environment env;
 		sol::coroutine co;
 		double wakeTime;
