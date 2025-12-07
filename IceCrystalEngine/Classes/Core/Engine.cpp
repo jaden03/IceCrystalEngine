@@ -9,6 +9,8 @@
 #include <Ice/Editor/WebEditorManager.h>
 #include <Ice/Core/SceneManager.h>
 
+#include "Ice/Core/IGame.h"
+
 
 #ifdef _DEBUG
 #include <Ice/Utils/DebugUtil.h>
@@ -47,23 +49,21 @@ void Engine::Init()
     Input::GetInstance();
     LuaManager::GetInstance();
     LightingManager::GetInstance().InitializeLighting();
-    SceneInitializer::GetInstance();
     RendererManager::GetInstance();
     
 #ifdef _DEBUG
     DebugUtil::GetInstance();
-#endif
-
-    // Initialize Web Editor (optional - can be started via console command later)
-#ifdef _DEBUG
     WebEditorManager::GetInstance().Start(8080);
 #endif
 }
 
+// Standalone mode (no game)
 void Engine::Run()
 {
+    // Initialize the SceneInitializer so it initializes the scene
+    SceneInitializer::GetInstance();
+    
     WindowManager& windowManager = WindowManager::GetInstance();
-    SceneManager& sceneManager = SceneManager::GetInstance();
     Input& input = Input::GetInstance();
 
     while (!glfwWindowShouldClose(windowManager.window))
@@ -82,6 +82,34 @@ void Engine::Run()
         EndFrame();
     }
 }
+
+// Game mode
+void Engine::Run(IGame* gameInstance)
+{
+    if (!gameInstance)
+    {
+        // Fallback to the standalone mode
+        Run();
+        return;
+    }
+
+    isEditor = true;
+    game = gameInstance;
+
+    game->OnInit();
+
+    WindowManager& windowManager = WindowManager::GetInstance();
+
+    while (!glfwWindowShouldClose(windowManager.window))
+    {
+        StartFrame();
+        Update();
+        EndFrame();
+    }
+
+    game->OnShutdown();
+}
+
 
 void Engine::StartFrame()
 {
@@ -106,6 +134,12 @@ void Engine::Update()
     {
         // Step physics with fixed timestep
         FixedUpdate(sceneManager.deltaTime);
+
+        // Call game update if there is a game
+        if (game && !isEditor)
+        {
+            game->OnUpdate(sceneManager.deltaTime);
+        }
     }
 
     // Update web editor (process queued messages)
@@ -132,6 +166,13 @@ void Engine::FixedUpdate(float deltaTime)
     while (physicsAccumulator >= fixedDeltaTime)
     {
         PhysicsManager::GetInstance().Step(fixedDeltaTime);
+
+        // Call game fixedupdate if in game mode
+        if (game && !isEditor)
+        {
+            game->OnFixedUpdate(fixedDeltaTime);
+        }
+        
         physicsAccumulator -= fixedDeltaTime;
     }
 }
