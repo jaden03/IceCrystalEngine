@@ -101,6 +101,8 @@ void SceneInitializer::InitializeScene()
 			crate->AddComponent(crateRenderer);
 			crate->AddComponent<BoxCollider>(crate->transform->scale);
 			crate->AddComponent<RigidBody>(1.0f);
+			LuaExecutor* newExecutor = new LuaExecutor(FileUtil::AssetDir + "LuaScripts/Test.lua");
+			crate->AddComponent(newExecutor);
 		}
 	}
 
