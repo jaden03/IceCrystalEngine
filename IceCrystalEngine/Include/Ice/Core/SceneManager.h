@@ -41,7 +41,7 @@ public:
 	void AddActor(Actor* actor);
 	void RemoveActor(Actor* actor);
 
-	Actor* GetHoveredActor();
+	Actor* GetHoveredActor() {return hoveredActor;}
 
 	// Returns the first actor with the given tag
 	Actor* GetActorByTag(std::string tag);
@@ -61,9 +61,10 @@ public:
 	std::vector<Actor*>* GetActors() { return actors; }
 
 private:
-	
 	std::vector<Actor*>* actors;
 	std::vector<glm::vec3> usedActorColors;
+
+	Actor* hoveredActor;
 	
 	SceneManager(); // Private constructor to ensure a single instance
 	~SceneManager();

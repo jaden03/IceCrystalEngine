@@ -34,7 +34,6 @@ public:
 
 	// this is for the poor mans raycasting
 	glm::vec3 hoveredActorColor;
-	
 
 private:
 
