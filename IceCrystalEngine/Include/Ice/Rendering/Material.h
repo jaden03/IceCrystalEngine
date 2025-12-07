@@ -9,6 +9,7 @@
 
 #include <Ice/Rendering/Shader.h>
 #include <Ice/Rendering/Texture.h>
+#include <unordered_map>
 
 class Material // this is the class definition
 {
@@ -24,6 +25,15 @@ public:
 	Shader* shader; // the shader the material uses
 
 	glm::vec3 color;
+
+	// Store arbitrary shader properties
+	std::unordered_map<std::string, float> floatProperties;
+	std::unordered_map<std::string, int> intProperties;
+	std::unordered_map<std::string, glm::vec2> vec2Properties;
+	std::unordered_map<std::string, glm::vec3> vec3Properties;
+	std::unordered_map<std::string, glm::vec4> vec4Properties;
+
+	void ApplyProperties();
 
 	Material(); // constructs a default material
 	Material(std::string path); // constructs a material using a .mat file

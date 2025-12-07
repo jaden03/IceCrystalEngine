@@ -273,6 +273,7 @@ void Renderer::Update()
 
 	// use the shader and set the attributes
 	material->shader->Use();
+	material->ApplyProperties();
 	
 	// bind the texture
 	glActiveTexture(GL_TEXTURE0);
