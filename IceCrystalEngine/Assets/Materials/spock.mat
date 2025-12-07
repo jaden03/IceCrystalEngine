@@ -1,6 +1,0 @@
-{
-  "Name": "Spock 49 Material",
-  "Texture": "{ASSET_DIR}Textures/Spock49.png",
-  "Shader": "{ASSET_DIR}Shaders/default",
-  "Color": [ 1.0, 1.0, 1.0 ]
-}

@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>IceCrystal Engine - Web Editor</title>
+        <link rel="stylesheet" href="/editor/style.css" />
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1>🧊 IceCrystal Engine - Web Editor</h1>
+                <div class="header-controls">
+                    <div class="status">
+                        <span id="status-indicator" class="status-dot"></span>
+                        <span id="status-text">Connecting...</span>
+                    </div>
+                    <button
+                        id="pause-engine-btn"
+                        class="btn btn-primary"
+                        onclick="toggleEnginePause()"
+                        title="Pause/Resume Engine"
+                    >
+                        <span id="pause-icon">⏸️</span>
+                        <span id="pause-text">Pause</span>
+                    </button>
+                    <button id="settings-btn" class="icon-btn" title="Settings">
+                        ⚙️
+                    </button>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Scene Hierarchy Panel -->
+                <aside class="sidebar panel-left">
+                    <div class="panel-header">
+                        <h2>Scene Hierarchy</h2>
+                        <button
+                            id="add-actor-btn"
+                            class="icon-btn"
+                            title="Add Actor"
+                        >
+                            ➕
+                        </button>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Actors:</span>
+                            <span id="actor-count" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Components:</span>
+                            <span id="component-count" class="stat-value"
+                                >0</span
+                            >
+                        </div>
+                    </div>
+
+                    <div class="toolbar">
+                        <button id="refresh-btn" class="btn btn-primary">
+                            🔄 Refresh
+                        </button>
+                        <button id="expand-all-btn" class="btn btn-secondary">
+                            📂 Expand All
+                        </button>
+                    </div>
+
+                    <div class="search-box">
+                        <input
+                            type="text"
+                            id="search-input"
+                            placeholder="🔍 Search actors..."
+                        />
+                    </div>
+
+                    <ul id="actor-list" class="actor-list"></ul>
+                </aside>
+
+                <!-- Inspector Panel -->
+                <main class="inspector">
+                    <div class="panel-header">
+                        <h2>Inspector</h2>
+                    </div>
+
+                    <div id="inspector-content" class="inspector-empty">
+                        <div class="empty-state">
+                            <div class="empty-icon">📋</div>
+                            <p>Select an actor to inspect</p>
+                        </div>
+                    </div>
+                </main>
+
+                <!-- Properties Panel -->
+                <aside class="sidebar panel-right">
+                    <div class="panel-header">
+                        <h2>Scene Info</h2>
+                    </div>
+
+                    <div class="info-section">
+                        <h3>Performance</h3>
+                        <div class="info-item">
+                            <span>FPS:</span>
+                            <span id="fps-display">--</span>
+                        </div>
+                        <div class="info-item">
+                            <span>Frame Time:</span>
+                            <span id="frame-time-display">-- ms</span>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h3>Quick Actions</h3>
+                        <button class="btn btn-full" onclick="clearSelection()">
+                            Clear Selection
+                        </button>
+                        <button class="btn btn-full" onclick="focusSelected()">
+                            Focus Selected
+                        </button>
+                        <button class="btn btn-full" onclick="exportScene()">
+                            Export Scene JSON
+                        </button>
+                    </div>
+
+                    <div class="info-section">
+                        <h3>Console</h3>
+                        <div id="console-output" class="console-output"></div>
+                        <button class="btn btn-full" onclick="clearConsole()">
+                            Clear Console
+                        </button>
+                    </div>
+                </aside>
+            </div>
+
+            <footer>
+                <div class="footer-item">
+                    <span id="connection-info"
+                        >Connected to localhost:8080</span
+                    >
+                </div>
+                <div class="footer-item">
+                    <span id="last-update">Last update: Never</span>
+                </div>
+                <div class="footer-item">
+                    <button
+                        id="auto-refresh-toggle"
+                        class="footer-btn"
+                        onclick="toggleAutoRefresh()"
+                    >
+                        Auto-Refresh: <span id="auto-refresh-status">ON</span>
+                    </button>
+                </div>
+            </footer>
+        </div>
+
+        <!-- Modal for settings -->
+        <div id="settings-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Settings</h2>
+                    <button class="close-btn" onclick="closeSettings()">
+                        &times;
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="setting-item">
+                        <label for="refresh-interval"
+                            >Auto-Refresh Interval (ms):</label
+                        >
+                        <input
+                            type="number"
+                            id="refresh-interval"
+                            value="2000"
+                            min="500"
+                            max="10000"
+                            step="100"
+                        />
+                    </div>
+                    <div class="setting-item">
+                        <label for="api-port">API Port:</label>
+                        <input
+                            type="number"
+                            id="api-port"
+                            value="8080"
+                            min="1024"
+                            max="65535"
+                        />
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input
+                                type="checkbox"
+                                id="show-debug-info"
+                                checked
+                            />
+                            Show Debug Information
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="saveSettings()">
+                        Save
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeSettings()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script src="/editor/app.js"></script>
+    </body>
+</html>

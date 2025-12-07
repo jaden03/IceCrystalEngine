@@ -40,10 +40,10 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -349,7 +349,6 @@
     <ClCompile Include="Classes\Core\Transform.cpp" />
     <ClCompile Include="Classes\Core\UIManager.cpp" />
     <ClCompile Include="Classes\Core\WindowManager.cpp" />
-    <ClCompile Include="Classes\Editor\GizmoRenderer.cpp" />
     <ClCompile Include="Classes\Editor\WebEditorManager.cpp" />
     <ClCompile Include="Classes\glad.c" />
     <ClCompile Include="Classes\imgui\imgui.cpp" />
@@ -1064,6 +1063,7 @@
     <ClInclude Include="Include\Ice\Core\Actor.h" />
     <ClInclude Include="Include\Ice\Core\Component.h" />
     <ClInclude Include="Include\Ice\Core\Engine.h" />
+    <ClInclude Include="Include\Ice\Core\IGame.h" />
     <ClInclude Include="Include\Ice\Core\Input.h" />
     <ClInclude Include="Include\Ice\Core\LightingManager.h" />
     <ClInclude Include="Include\Ice\Core\LuaManager.h" />
@@ -1223,23 +1223,6 @@
     <Library Include="Libraries\GLFW\glfw3.lib" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Materials\object.mat" />
-    <None Include="Assets\Materials\cubeTest.mat" />
-    <None Include="Assets\Materials\default.mat" />
-    <None Include="Assets\Materials\spock.mat" />
-    <None Include="Assets\Materials\unlit.mat" />
-    <None Include="Assets\Shaders\blur.frag" />
-    <None Include="Assets\Shaders\blur.vert" />
-    <None Include="Assets\Shaders\default.frag" />
-    <None Include="Assets\Shaders\default.vert" />
-    <None Include="Assets\Shaders\hdr.frag" />
-    <None Include="Assets\Shaders\hdr.vert" />
-    <None Include="Assets\Shaders\shadows.frag" />
-    <None Include="Assets\Shaders\shadows.vert" />
-    <None Include="Assets\Shaders\skybox.frag" />
-    <None Include="Assets\Shaders\skybox.vert" />
-    <None Include="Assets\Shaders\unlit.frag" />
-    <None Include="Assets\Shaders\unlit.vert" />
     <None Include="Include\glm\detail\func_common.inl" />
     <None Include="Include\glm\detail\func_common_simd.inl" />
     <None Include="Include\glm\detail\func_exponential.inl" />
@@ -1372,44 +1355,6 @@
     <None Include="Include\glm\gtx\vector_angle.inl" />
     <None Include="Include\glm\gtx\vector_query.inl" />
     <None Include="Include\glm\gtx\wrap.inl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Assets\Textures\Blank.png" />
-    <Image Include="Assets\Textures\cubeTest.png" />
-    <Image Include="Assets\Textures\ObjectGrid.png" />
-    <Image Include="Assets\Textures\skybox\back.png" />
-    <Image Include="Assets\Textures\skybox\bottom.png" />
-    <Image Include="Assets\Textures\skybox\front.png" />
-    <Image Include="Assets\Textures\skybox\left.png" />
-    <Image Include="Assets\Textures\skybox\right.png" />
-    <Image Include="Assets\Textures\skybox\top.png" />
-    <Image Include="Assets\Textures\Spock49.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Models\cube.obj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Models\finch.obj">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Models\spock49.obj">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Models\cone.obj">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Models\icosphere.obj">
-      <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="Assets\Fonts\Varela.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="External\Jolt\Jolt\Jolt.natvis" />
