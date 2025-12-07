@@ -8,7 +8,6 @@
 #include <Ice/Core/PhysicsManager.h>
 #include <Ice/Editor/WebEditorManager.h>
 #include <Ice/Core/SceneManager.h>
-#include <Ice/Editor/GizmoRenderer.h>
 
 
 #ifdef _DEBUG
@@ -53,7 +52,6 @@ void Engine::Init()
     
 #ifdef _DEBUG
     DebugUtil::GetInstance();
-    GizmoRenderer::GetInstance().Initialize();
 #endif
 
     // Initialize Web Editor (optional - can be started via console command later)
