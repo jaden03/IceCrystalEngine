@@ -145,6 +145,9 @@ void WebEditorManager::SetupRoutes()
         {
             res.set_content(GetDefaultEditorHTML(), "text/html");
         }
+        res.set_header("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.set_header("Pragma", "no-cache");
+        res.set_header("Expires", "0");
     });
 
     server->Get("/editor/style.css", [this](const httplib::Request&, httplib::Response& res) {
@@ -159,6 +162,9 @@ void WebEditorManager::SetupRoutes()
         {
             res.set_content(GetDefaultEditorCSS(), "text/css");
         }
+        res.set_header("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.set_header("Pragma", "no-cache");
+        res.set_header("Expires", "0");
     });
 
     server->Get("/editor/app.js", [this](const httplib::Request&, httplib::Response& res) {
@@ -173,6 +179,9 @@ void WebEditorManager::SetupRoutes()
         {
             res.set_content(GetDefaultEditorJS(), "application/javascript");
         }
+        res.set_header("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.set_header("Pragma", "no-cache");
+        res.set_header("Expires", "0");
     });
 
     // API Routes
@@ -233,11 +242,10 @@ void WebEditorManager::SetupRoutes()
         res.set_content(status.dump(), "application/json");
     });
 
-    server->Post("/api/editor/select", [this](const httplib::Request& req, httplib::Response& res) {
+    server->Get( R"(/api/editor/select/(\d+))", [this](const httplib::Request& req, httplib::Response& res) {
+        int actorId = std::stoi(req.matches[1]);
         try {
-            std::cout << "Running Editor Select." << std::endl;
-            json data = json::parse(req.body);
-            int actorId = data["actorId"];
+            std::cout << "Running Editor Select " << std::endl;
             SetSelectedActor(actorId);
             res.set_content(json({{"success", true}}).dump(), "application/json");
         } catch (const std::exception& e) {
@@ -1158,6 +1166,7 @@ std::string GetDefaultEditorHTML()
                     <div>Components: <span id="component-count">0</span></div>
                 </div>
                 <button id="refresh-btn" class="btn">🔄 Refresh</button>
+                <button id="test-select-btn" class="btn" style="background:#dc2626;">🧪 Test Select</button>
                 <ul id="actor-list" class="actor-list"></ul>
             </aside>
 
@@ -1415,6 +1424,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('refresh-btn').addEventListener('click', loadScene);
     document.getElementById('pause-btn').addEventListener('click', pauseEngine);
     document.getElementById('resume-btn').addEventListener('click', resumeEngine);
+    document.getElementById('test-select-btn').addEventListener('click', testSelectEndpoint);
     startAutoRefresh();
     updateEngineStatus();
 });
@@ -1470,6 +1480,7 @@ async function updateStats(actorCount) {
 }
 
 function renderActorList(actors) {
+    console.log('Rendering actor list, count:', actors.length);
     const list = document.getElementById('actor-list');
     list.innerHTML = '';
     
@@ -1481,31 +1492,77 @@ function renderActorList(actors) {
         }
         
         item.textContent = `${actor.name} [${actor.tag}]`;
-        item.onclick = () => selectActor(actor.id);
+        item.onclick = (e) => {
+            console.log('Actor clicked:', actor.name, 'ID:', actor.id);
+            selectActor(actor.id, e);
+        };
         
         list.appendChild(item);
     });
+    console.log('Actor list rendered');
 }
 
-async function selectActor(actorId) {
+async function selectActor(actorId, event) {
+    console.log('=== selectActor called ===');
+    console.log('Actor ID:', actorId);
+    console.log('Event:', event);
+    
     selectedActorId = actorId;
+    
+    // Update UI immediately
+    document.querySelectorAll('.actor-item').forEach(item => {
+        item.classList.remove('selected');
+    });
+    if (event && event.target) {
+        event.target.classList.add('selected');
+        console.log('UI updated for selection');
+    }
+    
+    // Load actor details
+    console.log('Loading actor details...');
     loadActorDetails(actorId);
     
     // Notify engine of selected actor for gizmo rendering
+    console.log('Notifying engine of selection...');
     try {
-        await fetch(`${API_BASE}/editor/select`, {
+        const url = `${API_BASE}/editor/select`;
+        console.log('Fetch URL:', url);
+        console.log('Fetch body:', JSON.stringify({ actorId: actorId }));
+        
+        const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ actorId: actorId })
         });
+        
+        console.log('Response status:', response.status);
+        const result = await response.json();
+        console.log('Selection response:', result);
     } catch (error) {
-        console.error('Failed to notify engine of selection:', error);
+        console.error('!!! Failed to notify engine of selection !!!');
+        console.error('Error details:', error);
     }
-    
-    document.querySelectorAll('.actor-item').forEach(item => {
-        item.classList.remove('selected');
-    });
-    event.target.classList.add('selected');
+    console.log('=== selectActor complete ===');
+}
+
+async function testSelectEndpoint() {
+    console.log('=== TESTING SELECT ENDPOINT ===');
+    const testActorId = 12345; // dummy ID
+    try {
+        const url = `${API_BASE}/editor/select`;
+        console.log('Test fetch URL:', url);
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ actorId: testActorId })
+        });
+        console.log('Test response status:', response.status);
+        const result = await response.json();
+        console.log('Test response data:', result);
+    } catch (error) {
+        console.error('Test FAILED:', error);
+    }
+    console.log('=== TEST COMPLETE ===');
 }
 
 async function pauseEngine() {

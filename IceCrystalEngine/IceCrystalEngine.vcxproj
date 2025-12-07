@@ -349,6 +349,7 @@
     <ClCompile Include="Classes\Core\Transform.cpp" />
     <ClCompile Include="Classes\Core\UIManager.cpp" />
     <ClCompile Include="Classes\Core\WindowManager.cpp" />
+    <ClCompile Include="Classes\Editor\GizmoRenderer.cpp" />
     <ClCompile Include="Classes\Editor\WebEditorManager.cpp" />
     <ClCompile Include="Classes\glad.c" />
     <ClCompile Include="Classes\imgui\imgui.cpp" />

@@ -357,6 +357,14 @@ async function loadActorDetails(actorId, skipComponentReload = false) {
       return;
     }
 
+    const actorSelectionResponse = await fetch(
+      `${API_BASE}/editor/select/${actorId}`,
+    );
+
+    if (!actorSelectionResponse) {
+      console.error("Failed to load actor details(Selecting Actor)");
+    }
+
     const actor = await response.json();
     renderInspector(actor);
 
