@@ -18,7 +18,7 @@ while true do
             end
         end
     end
-    
+
     if input.GetKey(Key.A) then
         if sceneManager:GetHoveredActor() ~= nil then
             if sceneManager:GetHoveredActor() == actor then
@@ -26,7 +26,7 @@ while true do
             end
         end
     end
-    
+
     if input.GetKey(Key.D) then
         if sceneManager:GetHoveredActor() ~= nil then
             if sceneManager:GetHoveredActor() == actor then
@@ -34,7 +34,7 @@ while true do
             end
         end
     end
-    
+
     if input.GetKey(Key.S) then
         if sceneManager:GetHoveredActor() ~= nil then
             if sceneManager:GetHoveredActor() == actor then
@@ -42,15 +42,15 @@ while true do
             end
         end
     end
-    
+
     if input.GetKey(Key.E) then
         if sceneManager:GetHoveredActor() ~= nil then
             if sceneManager:GetHoveredActor() == actor then
-            addedVel = addedVel + (vec3(0, 1, 0) * force)
+            addedVel = addedVel + (vec3(0, 5, 0) * force)
             end
         end
     end
-    
+
     if input.GetKey(Key.Q) then
         if sceneManager:GetHoveredActor() ~= nil then
             if sceneManager:GetHoveredActor() == actor then
@@ -58,7 +58,7 @@ while true do
             end
         end
     end
-    
+
     if (addedVel ~= vec3(0,0,0)) then
         rb:SetLinearVelocity(addedVel)
     end
