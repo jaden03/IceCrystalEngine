@@ -74,7 +74,6 @@ void SceneInitializer::InitializeScene()
 	testCrate->transform->Translate(-5, 5, 1.0f);
 	testCrate->AddComponent<BoxCollider>(testCrate->transform->scale);
 	testCrate->AddComponent<RigidBody>(1.0f);
-	// Create unique executor for test crate
 	LuaExecutor* executor = new LuaExecutor(FileUtil::AssetDir + "LuaScripts/Test.lua");
 	testCrate->AddComponent(executor);
 	
@@ -90,7 +89,7 @@ void SceneInitializer::InitializeScene()
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
 			// Create a new crate actor for each grid position
-			Actor* crate = new Actor("Crate_" + std::to_string(i) + "_" + std::to_string(j)); 
+			Actor* crate = new Actor();
         
 			// Position the crate based on its row and column, adjusting by the offset
 			crate->transform->Translate(j * spacing - offsetX, -5, i * spacing - offsetZ);  // Centering the grid
@@ -102,9 +101,8 @@ void SceneInitializer::InitializeScene()
 			crate->AddComponent(crateRenderer);
 			crate->AddComponent<BoxCollider>(crate->transform->scale);
 			crate->AddComponent<RigidBody>(1.0f);
-			// Each crate needs its own isolated LuaExecutor instance
-			LuaExecutor* crateExecutor = new LuaExecutor(FileUtil::AssetDir + "LuaScripts/Test.lua");
-			crate->AddComponent(crateExecutor);
+			LuaExecutor* newExecutor = new LuaExecutor(FileUtil::AssetDir + "LuaScripts/Test.lua");
+			crate->AddComponent(newExecutor);
 		}
 	}
 

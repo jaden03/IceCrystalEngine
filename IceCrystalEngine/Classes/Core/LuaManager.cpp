@@ -21,12 +21,12 @@ LuaManager::LuaManager()
     lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::package, sol::lib::table); // Load standard libraries
 
     // Register wait function
-    lua_register(lua, "wait", LuaWait);
-    
-    // Replace the global print function with LuaPrint
-    lua_pushcfunction(lua, LuaManager::LuaPrint);
-    lua_setglobal(lua, "print");
+    lua["wait"] = &LuaManager::LuaWait;
 
+    // Replace the global print function
+    lua["print"] = &LuaManager::LuaPrint;
+
+    // Add type_name helper
     lua["type_name"] = [](sol::object obj) -> std::string {
         if (!obj.is<sol::table>()) return obj.get_type() == sol::type::nil ? "nil" : "primitive";
         sol::table mt = obj.as<sol::table>().get<sol::table>(sol::metatable_key);
@@ -53,7 +53,7 @@ void LuaManager::Update(double now)
 
         // Resume the coroutine
         sol::protected_function_result result = task.co();
-
+        
         if (result.status() == sol::call_status::yielded)
         {
             // Coroutine yielded → check if it yielded a number (from wait())
