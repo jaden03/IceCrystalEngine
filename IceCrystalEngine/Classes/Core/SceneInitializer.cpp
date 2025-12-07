@@ -9,6 +9,7 @@
 
 #include "Ice/Components/RawImage.h"
 #include "Ice/Components/Physics/BoxCollider.h"
+#include "Ice/Components/Physics/MeshCollider.h"
 #include "Ice/Components/Physics/RigidBody.h"
 #include "Ice/Core/LuaManager.h"
 
@@ -71,7 +72,7 @@ void SceneInitializer::InitializeScene()
 	Actor* testCrate = new Actor("Test Crate", "testCrate");
 	Renderer* testCrateRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj", crateMaterial);
 	testCrate->AddComponent(testCrateRenderer);
-	testCrate->transform->Translate(-5, 5, 1.0f);
+	testCrate->transform->Translate(0, 5, 0);
 	testCrate->AddComponent<BoxCollider>(testCrate->transform->scale);
 	testCrate->AddComponent<RigidBody>(1.0f);
 	LuaExecutor* executor = new LuaExecutor(FileUtil::AssetDir + "LuaScripts/Test.lua");
@@ -145,20 +146,22 @@ void SceneInitializer::InitializeScene()
 	
 	Actor* pointLight4 = new Actor("White Light", "PointLight4");
 	PointLight* pointLightComponent4 = pointLight4->AddComponent<PointLight>();
-	pointLight4->transform->Translate(0, -1, 0);
+	pointLight4->transform->Translate(0, 6, 0);
 	Renderer* pointLightRenderer4 = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterial);
 	pointLight4->AddComponent(pointLightRenderer4);
 	pointLight4->transform->scale = glm::vec3(0.025f, 0.025f, 0.025f);
 	pointLightRenderer4->castShadows = false;
+	pointLight4->transform->SetParent(testCrate->transform);
 
 	
 
 	// Floor
+	Material* moonMaterial = new Material(FileUtil::AssetDir + "Materials/MoonSurface.mat");
 	Actor* floorActor = new Actor("Floor", "Floor");
-	Renderer* floorRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj");
+	Renderer* floorRenderer = new Renderer(FileUtil::AssetDir + "Models/MoonSurface.obj", moonMaterial);
 	floorActor->AddComponent(floorRenderer);
-	floorActor->transform->scale = glm::vec3(15, 1, 15);
+	floorActor->transform->scale = glm::vec3(2, 2, 2);
 	floorActor->transform->Translate(0, -7, 0);
-	floorActor->AddComponent<BoxCollider>(floorActor->transform->scale);
+	floorActor->AddComponent<MeshCollider>(floorRenderer->meshHolders[0].vertices, floorRenderer->meshHolders[0].indices, floorActor->transform->scale);
 	RigidBody* rb = floorActor->AddComponent<RigidBody>(0.0f);
 }
