@@ -32,7 +32,7 @@ class Renderer : public Component
 	std::string ModelPath;
 
 
-	static constexpr uint32_t CACHE_VERSION = 1;
+	static constexpr uint32_t CACHE_VERSION = 2;
 
 	std::string GetCachePath();
 	bool IsCacheValid();

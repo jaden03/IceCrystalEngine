@@ -49,76 +49,59 @@ bool Renderer::IsCacheValid()
 	return cacheTime >= modelTime;
 }
 
+
 bool Renderer::LoadFromCache() {
 	std::string cachePath = GetCachePath();
-    std::ifstream file(cachePath, std::ios::binary);
-    if (!file.is_open()) {
-        std::cout << "Failed to open cache file: " << cachePath << std::endl;
-        return false;
-    }
+	std::ifstream file(cachePath, std::ios::binary);
+	if (!file.is_open()) {
+		return false;
+	}
     
-    // Read and verify version
-    uint32_t version;
-    file.read(reinterpret_cast<char*>(&version), sizeof(version));
-    if (version != CACHE_VERSION) {
-        std::cout << "Cache version mismatch. Rebuilding cache." << std::endl;
-        return false;
-    }
+	// Read and verify version
+	uint32_t version;
+	file.read(reinterpret_cast<char*>(&version), sizeof(version));
+	if (version != CACHE_VERSION) {
+		return false;
+	}
     
-    // Read number of meshes
-    size_t numMeshes;
-    file.read(reinterpret_cast<char*>(&numMeshes), sizeof(numMeshes));
+	// Read number of meshes
+	size_t numMeshes;
+	file.read(reinterpret_cast<char*>(&numMeshes), sizeof(numMeshes));
     
-    meshHolders.clear();
-    meshHolders.reserve(numMeshes);
+	meshHolders.clear();
+	meshHolders.reserve(numMeshes);
     
-    // Read each mesh
-    for (size_t i = 0; i < numMeshes; i++) {
-        // Read vertices
-        size_t vertexCount;
-        file.read(reinterpret_cast<char*>(&vertexCount), sizeof(vertexCount));
-        std::vector<GLfloat> vertices(vertexCount);
-        file.read(reinterpret_cast<char*>(vertices.data()), vertexCount * sizeof(GLfloat));
+	// Read each mesh
+	for (size_t i = 0; i < numMeshes; i++) {
+		// Read vertex count
+		size_t vertexCount;
+		file.read(reinterpret_cast<char*>(&vertexCount), sizeof(vertexCount));
+		std::vector<Vertex> vertices(vertexCount);
+		file.read(reinterpret_cast<char*>(vertices.data()), vertexCount * sizeof(Vertex));
         
-        // Read UVs
-        size_t uvCount;
-        file.read(reinterpret_cast<char*>(&uvCount), sizeof(uvCount));
-        std::vector<GLfloat> uvs(uvCount);
-        file.read(reinterpret_cast<char*>(uvs.data()), uvCount * sizeof(GLfloat));
+		// Read indices
+		size_t indexCount;
+		file.read(reinterpret_cast<char*>(&indexCount), sizeof(indexCount));
+		std::vector<unsigned int> indices(indexCount);
+		file.read(reinterpret_cast<char*>(indices.data()), indexCount * sizeof(unsigned int));
         
-        // Read normals
-        size_t normalCount;
-        file.read(reinterpret_cast<char*>(&normalCount), sizeof(normalCount));
-        std::vector<GLfloat> normals(normalCount);
-        file.read(reinterpret_cast<char*>(normals.data()), normalCount * sizeof(GLfloat));
-        
-        // Read indices
-        size_t indexCount;
-        file.read(reinterpret_cast<char*>(&indexCount), sizeof(indexCount));
-        std::vector<unsigned int> indices(indexCount);
-        file.read(reinterpret_cast<char*>(indices.data()), indexCount * sizeof(unsigned int));
-        
-        // Create mesh holder
-        meshHolders.emplace_back(vertices, uvs, normals, indices);
-    }
+		// Create mesh holder with move semantics
+		meshHolders.emplace_back(std::move(vertices), std::move(indices));
+	}
     
-    file.close();
+	if (file.fail() && !file.eof()) {
+		meshHolders.clear();
+		return false;
+	}
     
-    if (file.fail() && !file.eof()) {
-        std::cout << "Error reading cache file. Cache may be corrupted." << std::endl;
-        meshHolders.clear();
-        return false;
-    }
-    
-    std::cout << "Loaded " << numMeshes << " meshes from cache: " << cachePath << std::endl;
-    return true;
+	std::cout << "Loaded " << numMeshes << " meshes from cache" << std::endl;
+	return true;
 }
 
 void Renderer::SaveToCache() {
 	std::string cachePath = GetCachePath();
 	std::ofstream file(cachePath, std::ios::binary);
 	if (!file.is_open()) {
-		std::cout << "Failed to create cache file: " << cachePath << std::endl;
 		return;
 	}
     
@@ -131,29 +114,18 @@ void Renderer::SaveToCache() {
     
 	// Write each mesh
 	for (const auto& mesh : meshHolders) {
-		// Write vertices
+		// Write vertex count and data
 		size_t vertexCount = mesh.vertices.size();
 		file.write(reinterpret_cast<const char*>(&vertexCount), sizeof(vertexCount));
-		file.write(reinterpret_cast<const char*>(mesh.vertices.data()), vertexCount * sizeof(GLfloat));
+		file.write(reinterpret_cast<const char*>(mesh.vertices.data()), vertexCount * sizeof(Vertex));
         
-		// Write UVs
-		size_t uvCount = mesh.uvs.size();
-		file.write(reinterpret_cast<const char*>(&uvCount), sizeof(uvCount));
-		file.write(reinterpret_cast<const char*>(mesh.uvs.data()), uvCount * sizeof(GLfloat));
-        
-		// Write normals
-		size_t normalCount = mesh.normals.size();
-		file.write(reinterpret_cast<const char*>(&normalCount), sizeof(normalCount));
-		file.write(reinterpret_cast<const char*>(mesh.normals.data()), normalCount * sizeof(GLfloat));
-        
-		// Write indices
+		// Write index count and data
 		size_t indexCount = mesh.indices.size();
 		file.write(reinterpret_cast<const char*>(&indexCount), sizeof(indexCount));
 		file.write(reinterpret_cast<const char*>(mesh.indices.data()), indexCount * sizeof(unsigned int));
 	}
     
-	file.close();
-	std::cout << "Saved " << numMeshes << " meshes to cache: " << cachePath << std::endl;
+	std::cout << "Saved cache with " << numMeshes << " meshes" << std::endl;
 }
 
 bool Renderer::LoadFromOBJ() {
@@ -165,85 +137,64 @@ bool Renderer::LoadFromOBJ() {
 		return false;
 	}
     
-	std::vector<objl::Mesh> meshes = loader.LoadedMeshes;
+	std::vector<objl::Mesh>& meshes = loader.LoadedMeshes;
 	meshHolders.clear();
 	meshHolders.reserve(meshes.size());
     
 	// Loop through the meshes
 	for (const auto& mesh : meshes) {
-		// Get the vertices, uvs, and normals
-		std::vector<GLfloat> vertices;
-		std::vector<GLfloat> uvs;
-		std::vector<GLfloat> normals;
+		std::vector<Vertex> vertices;
+		vertices.reserve(mesh.Vertices.size());
         
-		vertices.reserve(mesh.Vertices.size() * 3);
-		uvs.reserve(mesh.Vertices.size() * 2);
-		normals.reserve(mesh.Vertices.size() * 3);
-        
-		for (const auto& vertex : mesh.Vertices) {
-			vertices.push_back(vertex.Position.X);
-			vertices.push_back(vertex.Position.Y);
-			vertices.push_back(vertex.Position.Z);
-            
-			uvs.push_back(vertex.TextureCoordinate.X);
-			uvs.push_back(vertex.TextureCoordinate.Y);
-            
-			normals.push_back(vertex.Normal.X);
-			normals.push_back(vertex.Normal.Y);
-			normals.push_back(vertex.Normal.Z);
+		// Interleave vertex data during loading
+		for (const auto& v : mesh.Vertices) {
+			vertices.push_back({
+				v.Position.X, v.Position.Y, v.Position.Z,
+				v.TextureCoordinate.X, v.TextureCoordinate.Y,
+				v.Normal.X, v.Normal.Y, v.Normal.Z
+			});
 		}
         
-		// Get the indices
+		// Copy indices
 		std::vector<unsigned int> indices(mesh.Indices.begin(), mesh.Indices.end());
         
-		// Create a new mesh holder
-		meshHolders.emplace_back(vertices, uvs, normals, indices);
+		// Move data into mesh holder
+		meshHolders.emplace_back(std::move(vertices), std::move(indices));
 	}
     
-	std::cout << "Loaded " << meshes.size() << " meshes from OBJ: " << ModelPath << std::endl;
+	std::cout << "Loaded " << meshes.size() << " meshes from OBJ" << std::endl;
 	return true;
 }
 
-
 void Renderer::CreateGLBuffers() {
-    for (auto& mesh : meshHolders) {
-        glGenVertexArrays(1, &mesh.vertexArrayObject);
-        glBindVertexArray(mesh.vertexArrayObject);
+	for (auto& mesh : meshHolders) {
+		glGenVertexArrays(1, &mesh.vertexArrayObject);
+		glBindVertexArray(mesh.vertexArrayObject);
         
-        // Create the vertex buffer object and copy the vertices into it
-        glGenBuffers(1, &mesh.vertexBufferObject);
-        glBindBuffer(GL_ARRAY_BUFFER, mesh.vertexBufferObject);
-        glBufferData(GL_ARRAY_BUFFER, mesh.vertices.size() * sizeof(float), 
-                     mesh.vertices.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
+		// Create single interleaved VBO
+		glGenBuffers(1, &mesh.vertexBufferObject);
+		glBindBuffer(GL_ARRAY_BUFFER, mesh.vertexBufferObject);
+		glBufferData(GL_ARRAY_BUFFER, mesh.vertices.size() * sizeof(Vertex), mesh.vertices.data(), GL_STATIC_DRAW);
         
-        // Create the UV buffer object and copy the UVs into it
-        glGenBuffers(1, &mesh.uvBufferObject);
-        glBindBuffer(GL_ARRAY_BUFFER, mesh.uvBufferObject);
-        glBufferData(GL_ARRAY_BUFFER, mesh.uvs.size() * sizeof(float), 
-                     mesh.uvs.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
+		// Position attribute (location 0)
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
+		glEnableVertexAttribArray(0);
         
-        // Create the normal buffer object and copy the normals into it
-        glGenBuffers(1, &mesh.normalBufferObject);
-        glBindBuffer(GL_ARRAY_BUFFER, mesh.normalBufferObject);
-        glBufferData(GL_ARRAY_BUFFER, mesh.normals.size() * sizeof(float), 
-                     mesh.normals.data(), GL_STATIC_DRAW);
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(2);
+		// UV attribute (location 1)
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, u));
+		glEnableVertexAttribArray(1);
         
-        // Create the element buffer object and copy the indices into it
-        glGenBuffers(1, &mesh.elementBufferObject);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.elementBufferObject);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.indices.size() * sizeof(unsigned int), 
-                     mesh.indices.data(), GL_STATIC_DRAW);
+		// Normal attribute (location 2)
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, nx));
+		glEnableVertexAttribArray(2);
         
-        // Unbind the vertex array object to prevent accidental change
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-    }
+		// Create element buffer
+		glGenBuffers(1, &mesh.elementBufferObject);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.elementBufferObject);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.indices.size() * sizeof(unsigned int), mesh.indices.data(), GL_STATIC_DRAW);
+        
+		glBindVertexArray(0);
+	}
 }
 
 
@@ -255,7 +206,6 @@ Renderer::~Renderer()
 	{
 		glDeleteVertexArrays(1, &meshHolder.vertexArrayObject);
 		glDeleteBuffers(1, &meshHolder.vertexBufferObject);
-		glDeleteBuffers(1, &meshHolder.uvBufferObject);
 		glDeleteBuffers(1, &meshHolder.elementBufferObject);
 	}
 }
