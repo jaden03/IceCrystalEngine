@@ -175,7 +175,7 @@
     <ClInclude Include="Core\Game.h" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Models\MoonSurface.obj" />
+    <Folder Include="Assets\Models\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

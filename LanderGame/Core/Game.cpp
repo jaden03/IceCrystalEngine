@@ -22,6 +22,7 @@ void CreateSun()
     // Sun
     Actor* sun = new Actor("Sun", "sun");
     DirectionalLight* sunLight = sun->AddComponent<DirectionalLight>();
+    sunLight->cascadeSplits = std::vector<float> { 15.0f, 30.0f, 50.0f, 75.0f };
     sunLight->strength = .2f;
     
     // Angle the sun with a parent Actor
@@ -37,9 +38,9 @@ void CreateSun()
 void CreateMoon()
 {
     // Moon Surface
-    Material* moonMaterial = new Material(FileUtil::AssetDir + "Materials/MoonSurface.mat");
+    Material* moonMaterial = new Material(FileUtil::AssetDir + "Materials/moon.mat");
     Actor* moon = new Actor("Moon", "Moon");
-    Renderer* moonRenderer = new Renderer(FileUtil::AssetDir + "Models/MoonSurface.obj", moonMaterial);
+    Renderer* moonRenderer = new Renderer(FileUtil::AssetDir + "Models/moon.obj", moonMaterial);
     moon->AddComponent(moonRenderer);
     moon->transform->scale = glm::vec3(4, 4, 4);
     moon->transform->Translate(0, -15, 0);
@@ -47,17 +48,20 @@ void CreateMoon()
     RigidBody* rb = moon->AddComponent<RigidBody>(0.0f);
 }
 
-void CreateLander()
+void Game::CreateLander()
 {
     // Lander
     Material* landerMaterial = new Material(FileUtil::AssetDir + "Materials/lander.mat");
-    Actor* lander = new Actor("Lander", "Lander");
+    lander = new Actor("Lander", "Lander");
     Renderer* landerRenderer = new Renderer(FileUtil::AssetDir + "Models/lander.obj", landerMaterial);
+    lander->transform->SetPosition(0, 100, 0);
     lander->AddComponent(landerRenderer);
     lander->AddComponent<BoxCollider>(glm::vec3(1.25, 2.5, 1.25));
-    lander->AddComponent<RigidBody>(1.0f);
+    landerRB = lander->AddComponent<RigidBody>(1.0f);
     lander->AddComponent<LuaExecutor>(FileUtil::AssetDir + "LuaScripts/LanderController.lua");
-
+    landerRB->GetBody()->GetMotionProperties()->SetAngularDamping(0.0f);
+    landerRB->GetBody()->GetMotionProperties()->SetLinearDamping(0.0f);
+    
     // Engine Light
     Actor* engineLight = new Actor("Engine Light", "engineLight");
     PointLight* enginePointLight = engineLight->AddComponent<PointLight>();
@@ -71,7 +75,8 @@ void CreateCamera()
 {
     // Camera
     Actor* cameraActor = new Actor("Main Camera");
-    cameraActor->AddComponent<Camera>();
+    Camera* cam = cameraActor->AddComponent<Camera>();
+    cam->farClippingPlane = 200.0f;
     cameraActor->AddComponent<LuaExecutor>(FileUtil::AssetDir + "LuaScripts/CameraRotation.lua");
 }
 
@@ -80,9 +85,11 @@ void CreateCamera()
 void Game::OnInit()
 {
     std::cout << "Initializing Game..." << std::endl;
-    // Set gravity to that of the Moon
-    PhysicsManager::GetInstance().GetSystem().SetGravity(JPH::Vec3(0.0f, -1.62f, 0.0f));
 
+    // Set the gravity to zero, we will apply forces towards the center of world
+    // PhysicsManager::GetInstance().GetSystem().SetGravity(JPH::Vec3(0.0f, -1.62f, 0.0f));
+    PhysicsManager::GetInstance().GetSystem().SetGravity(JPH::Vec3(0.0f, 0.0f, 0.0f));
+    
     // Create the horizontal and vertical input axis'
     Input::CreateAxis("horizontal", GLFW_KEY_D, GLFW_KEY_A);
     Input::CreateAxis("vertical", GLFW_KEY_W, GLFW_KEY_S);
@@ -112,7 +119,8 @@ void Game::OnUpdate(float deltaTime)
 
 void Game::OnFixedUpdate(float fixedDeltaTime)
 {
-    
+    // Apply gravity towards 0, 0, 0
+    landerRB->AddForce(-lander->transform->position * 1.62f * 100.0f);
 }
 
 

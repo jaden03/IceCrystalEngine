@@ -5,6 +5,7 @@
         "wait",
         "actor",
         "Input",
-        "SceneManager"
+        "SceneManager",
+        "quat"
     ]
 }
