@@ -80,6 +80,7 @@ private:
     PhysicsManager();
     PhysicsManager(PhysicsManager const&) = delete;
     void operator=(PhysicsManager const&) = delete;
+    ~PhysicsManager();
 
     // Jolt essentials
     JPH::TempAllocatorImpl tempAllocator{ 64 * 1024 * 1024 }; // 64 MB

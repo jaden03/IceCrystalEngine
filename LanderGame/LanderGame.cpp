@@ -5,7 +5,7 @@
 
 int main(int argc, char* argv[])
 {
-    Engine engine;
+    Engine &engine = Engine::GetInstance();
     Game game;
     engine.Run(&game);
     return 0;

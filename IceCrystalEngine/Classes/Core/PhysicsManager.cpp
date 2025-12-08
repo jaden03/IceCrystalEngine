@@ -16,6 +16,12 @@ PhysicsManager::PhysicsManager()
     );
 }
 
+PhysicsManager::~PhysicsManager()
+{
+    delete JPH::Factory::sInstance;
+}
+
+
 void PhysicsManager::Step(float fixedDeltaTime)
 {
     physicsSystem.Update(

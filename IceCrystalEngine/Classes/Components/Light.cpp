@@ -11,15 +11,13 @@
 
 DirectionalLight::DirectionalLight() : Component() 
 {
-	Initialize();
+	
 }
 
 DirectionalLight::DirectionalLight(glm::vec3 color, float strength) : Component()
 {
 	this->color = color;
 	this->strength = strength;
-
-	Initialize();
 }
 
 DirectionalLight::~DirectionalLight()
@@ -27,32 +25,9 @@ DirectionalLight::~DirectionalLight()
 	LightingManager::GetInstance().RemoveDirectionalLight(this);
 }
 
-void DirectionalLight::Initialize()
+void DirectionalLight::Ready()
 {
-	glGenTextures(1, &depthMapArray);
-	glBindTexture(GL_TEXTURE_2D_ARRAY, depthMapArray);
-	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT32F, shadowMapResolution, shadowMapResolution, cascadeCount, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glTexParameterfv(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BORDER_COLOR, borderColor);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, LightingManager::GetInstance().shadowMapFBO);
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthMapArray, 0);
-    glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
-	
-	glGenBuffers(1, &cascadeMatricesUBO);
-	glBindBuffer(GL_UNIFORM_BUFFER, cascadeMatricesUBO);
-	glBufferData(GL_UNIFORM_BUFFER,  sizeof(glm::mat4x4) * LightingManager::GetInstance().maxCascades, nullptr, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 3, cascadeMatricesUBO);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-	cascadeMatrices.resize(cascadeCount);
-
-	LightingManager::GetInstance().AddDirectionalLight(this);
+	LightingManager::GetInstance().SetDirectionalLight(this);
 }
 
 

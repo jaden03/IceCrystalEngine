@@ -211,7 +211,6 @@
     <ClCompile Include="Classes\Rendering\Texture.cpp" />
     <ClCompile Include="Classes\Utils\DebugUtil.cpp" />
     <ClCompile Include="Classes\Utils\FileUtil.cpp" />
-    <ClCompile Include="Classes\Main.cpp" />
     <ClCompile Include="External\Jolt\Jolt\AABBTree\AABBTreeBuilder.cpp" />
     <ClCompile Include="External\Jolt\Jolt\Core\Color.cpp" />
     <ClCompile Include="External\Jolt\Jolt\Core\Factory.cpp" />

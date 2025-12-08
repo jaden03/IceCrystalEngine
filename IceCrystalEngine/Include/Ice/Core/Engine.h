@@ -5,8 +5,11 @@ class IGame;
 class Engine
 {
 public:
-    Engine();
-    ~Engine();
+    static Engine& GetInstance()
+    {
+        static Engine instance;
+        return instance;
+    }
 
     // Run Stantalone (this will run the SceneInitializer)
     void Run();
@@ -14,6 +17,11 @@ public:
     void Run(IGame* game);
 
 private:
+    Engine() {Init();}
+    ~Engine();
+    Engine(const Engine&) = delete;
+    Engine& operator=(const Engine&) = delete;
+    
     void Init();
     void StartFrame();
     void Update();

@@ -79,6 +79,7 @@ void CreateCamera()
 
 void Game::OnInit()
 {
+    std::cout << "Initializing Game..." << std::endl;
     // Set gravity to that of the Moon
     PhysicsManager::GetInstance().GetSystem().SetGravity(JPH::Vec3(0.0f, -1.62f, 0.0f));
 
@@ -101,7 +102,7 @@ void Game::OnInit()
 
 void Game::OnUpdate(float deltaTime)
 {
-    if (Input::GetKeyDown(GLFW_KEY_GRAVE_ACCENT))
+    if (Input::GetKeyDown(GLFW_KEY_TAB))
     {
         // Lock and hide cursor
         Input::lockCursor = !Input::lockCursor;

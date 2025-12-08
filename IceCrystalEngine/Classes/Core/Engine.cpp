@@ -16,12 +16,6 @@
 #include <Ice/Editor/WebEditorManager.h>
 #endif
 
-
-Engine::Engine()
-{
-    Init();
-}
-
 Engine::~Engine()
 {
     LuaManager::GetInstance().Cleanup();
@@ -96,11 +90,19 @@ void Engine::Run(IGame* gameInstance)
 
     game->OnInit();
 
+    Input& input = Input::GetInstance();
     WindowManager& windowManager = WindowManager::GetInstance();
 
     while (!glfwWindowShouldClose(windowManager.window))
     {
         StartFrame();
+
+#ifdef _DEBUG
+        DebugUtil& debugUtil = DebugUtil::GetInstance();
+        if (input.GetKeyDown(GLFW_KEY_GRAVE_ACCENT))
+            debugUtil.showConsole = !debugUtil.showConsole;
+#endif
+        
         Update();
         EndFrame();
     }
