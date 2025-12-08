@@ -162,6 +162,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core\CameraController.cpp" />
     <ClCompile Include="Core\Game.cpp" />
     <ClCompile Include="LanderGame.cpp" />
   </ItemGroup>
@@ -172,6 +173,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\CameraController.h" />
     <ClInclude Include="Core\Game.h" />
   </ItemGroup>
   <ItemGroup>

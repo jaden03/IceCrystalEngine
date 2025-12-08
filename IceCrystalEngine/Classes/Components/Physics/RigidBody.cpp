@@ -48,7 +48,19 @@ void RigidBody::Update()
 
 RigidBody::~RigidBody() {
     if (body) {
-        PhysicsManager::GetInstance().GetSystem().GetBodyInterface().RemoveBody(body->GetID());
+        // Check if PhysicsManager still exists and is valid
+        PhysicsManager& physicsManager = PhysicsManager::GetInstance();
+        
+        // Only remove body if physics system is still running
+        // During shutdown, Jolt cleans up all bodies automatically
+        if (physicsManager.IsInitialized()) {
+            JPH::BodyInterface& bodyInterface = physicsManager.GetSystem().GetBodyInterface();
+            JPH::BodyID bodyID = body->GetID();
+            
+            bodyInterface.RemoveBody(bodyID);
+            bodyInterface.DestroyBody(bodyID);
+        }
+        
         body = nullptr;
     }
 }

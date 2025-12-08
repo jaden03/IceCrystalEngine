@@ -17,6 +17,8 @@
 
 #include "Ice/Components/LuaExecutor.h"
 
+#include "CameraController.h"
+
 void CreateSun()
 {
     // Sun
@@ -77,7 +79,8 @@ void CreateCamera()
     Actor* cameraActor = new Actor("Main Camera");
     Camera* cam = cameraActor->AddComponent<Camera>();
     cam->farClippingPlane = 200.0f;
-    cameraActor->AddComponent<LuaExecutor>(FileUtil::AssetDir + "LuaScripts/CameraRotation.lua");
+    // cameraActor->AddComponent<LuaExecutor>(FileUtil::AssetDir + "LuaScripts/CameraRotation.lua");
+    cameraActor->AddComponent<CameraController>();
 }
 
 

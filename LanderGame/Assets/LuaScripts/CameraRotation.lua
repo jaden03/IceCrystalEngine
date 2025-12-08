@@ -21,10 +21,10 @@ local maxDistance = 50
 local moonCenter = vec3(0, 0, 0)
 
 -- Camera rotation state (independent of lander)
-local targetYaw = 0
-local targetPitch = 20
-local currentYaw = 0
-local currentPitch = 20
+local targetYaw = 180
+local targetPitch = -20
+local currentYaw = 180
+local currentPitch = -20
 
 local lastMousePos = input.GetMousePosition()
 

@@ -14,10 +14,13 @@ PhysicsManager::PhysicsManager()
         layerFilter,
         pairFilter
     );
+
+    initialized = true;
 }
 
 PhysicsManager::~PhysicsManager()
 {
+    initialized = false;
     delete JPH::Factory::sInstance;
 }
 

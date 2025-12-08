@@ -76,7 +76,11 @@ public:
     // Minimal getter for the PhysicsSystem
     JPH::PhysicsSystem& GetSystem() { return physicsSystem; }
 
+    bool IsInitialized() const { return initialized; }
+
 private:
+    bool initialized = false;
+    
     PhysicsManager();
     PhysicsManager(PhysicsManager const&) = delete;
     void operator=(PhysicsManager const&) = delete;
