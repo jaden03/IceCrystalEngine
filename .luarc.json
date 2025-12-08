@@ -1,0 +1,10 @@
+{
+    "diagnostics.globals": [
+        "transform",
+        "Key",
+        "wait",
+        "actor",
+        "Input",
+        "SceneManager"
+    ]
+}

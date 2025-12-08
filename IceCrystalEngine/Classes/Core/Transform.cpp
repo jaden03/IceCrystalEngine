@@ -286,35 +286,24 @@ void Transform::SetLocalScale(float x, float y, float z)
 }
 
 
-
-
-
-
-
-
-
-
-
-
 void Transform::LookAt(float x, float y, float z)
 {
 	glm::vec3 target = glm::vec3(x, y, z);
-	glm::vec3 direction = glm::normalize(target - position);
-
-	rotation = glm::quatLookAt(direction, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 direction = glm::normalize(position - target);  // Inverted like your working code
+    
+	glm::mat4 viewMatrix = glm::lookAt(position, position - direction, glm::vec3(0, 1, 0));
+	rotation = glm::quat_cast(viewMatrix);
 	eulerAngles = glm::degrees(glm::eulerAngles(rotation));
 }
 
 void Transform::LookAt(glm::vec3 target)
 {
-	glm::vec3 direction = glm::normalize(target - position);
-
-	rotation = glm::quatLookAt(direction, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 direction = glm::normalize(position - target);  // Inverted like your working code
+    
+	glm::mat4 viewMatrix = glm::lookAt(position, position - direction, glm::vec3(0, 1, 0));
+	rotation = glm::quat_cast(viewMatrix);
 	eulerAngles = glm::degrees(glm::eulerAngles(rotation));
 }
-
-
-
 
 
 

@@ -123,10 +123,14 @@ void Engine::StartFrame()
 void Engine::Update()
 {
     SceneManager& sceneManager = SceneManager::GetInstance();
+#ifdef _DEBUG
     WebEditorManager& webEditor = WebEditorManager::GetInstance();
     
     // Skip physics and Lua updates if engine is paused from web editor
     bool isPaused = webEditor.IsEnginePaused();
+#else
+    bool isPaused = false;
+#endif
     
     if (!isPaused)
     {
@@ -140,18 +144,22 @@ void Engine::Update()
         }
     }
 
+#ifdef _DEBUG
     // Update web editor (process queued messages)
     webEditor.Update();
-
+#endif
+    
     // Other engine updates (rendering still happens even when paused)
     sceneManager.Update();
 }
 
 void Engine::FixedUpdate(float deltaTime)
 {
+#ifdef _DEBUG
     // Don't update physics if paused
     if (WebEditorManager::GetInstance().IsEnginePaused())
         return;
+#endif
     
     // Accumulate time
     physicsAccumulator += deltaTime;

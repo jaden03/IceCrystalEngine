@@ -39,7 +39,7 @@ struct RendererCascadeSplitData
 struct RendererDirectionalLightData
 {
     glm::vec3 direction;
-    int _padding0;
+    int enabled;
     
     glm::vec3 color;
     int _padding1;
@@ -58,7 +58,7 @@ struct RendererDirectionalLightData
 struct RendererIndividualPointLightData
 {
     glm::vec3 position;
-    float _padding0;
+    int enabled;
 
     glm::vec3 color;
     float strength;

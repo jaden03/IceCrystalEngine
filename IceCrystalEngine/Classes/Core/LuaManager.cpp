@@ -377,7 +377,7 @@ void LuaManager::RegisterBindings() {
 #pragma endregion 
 
 #pragma region GLM
-    // Operating on GLM vecs
+    // Operating on GLM vec3
     lua.new_usertype<glm::vec3>("vec3",
         sol::call_constructor, sol::factories(
             []() { return glm::vec3(0.0f); },
@@ -385,7 +385,7 @@ void LuaManager::RegisterBindings() {
             [](float s) { return glm::vec3(s); }
         ),
 
-        // Allow `.x .y .z` fields
+        // Component access
         "x", &glm::vec3::x,
         "y", &glm::vec3::y,
         "z", &glm::vec3::z,
@@ -394,87 +394,197 @@ void LuaManager::RegisterBindings() {
         sol::meta_function::addition, [](const glm::vec3& a, const glm::vec3& b) {
             return a + b;
         },
-
         sol::meta_function::subtraction, [](const glm::vec3& a, const glm::vec3& b) {
             return a - b;
         },
-
         sol::meta_function::multiplication, sol::overload(
             [](const glm::vec3& a, const glm::vec3& b) { return a * b; },
             [](const glm::vec3& a, float f) { return a * f; },
             [](float f, const glm::vec3& a) { return f * a; }
         ),
-
         sol::meta_function::division, sol::overload(
             [](const glm::vec3& a, float f) { return a / f; },
             [](float f, const glm::vec3& a) {
                 return glm::vec3(f / a.x, f / a.y, f / a.z);
             }
         ),
-
         sol::meta_function::unary_minus, [](const glm::vec3& v) {
-            return -v; // or glm::vec3(-v.x, -v.y, -v.z)
+            return -v;
+        },
+        sol::meta_function::equal_to, [](const glm::vec3& a, const glm::vec3& b) {
+            return a == b;
         },
 
+        // Vector operations
+        "length", [](const glm::vec3& v) {
+            return glm::length(v);
+        },
+        "lengthSquared", [](const glm::vec3& v) {
+            return glm::dot(v, v);
+        },
+        "normalized", [](const glm::vec3& v) {
+            return glm::normalize(v);
+        },
+        "dot", [](const glm::vec3& a, const glm::vec3& b) {
+            return glm::dot(a, b);
+        },
+        "cross", [](const glm::vec3& a, const glm::vec3& b) {
+            return glm::cross(a, b);
+        },
+        "distance", [](const glm::vec3& a, const glm::vec3& b) {
+            return glm::distance(a, b);
+        },
+        "distanceSquared", [](const glm::vec3& a, const glm::vec3& b) {
+            glm::vec3 diff = a - b;
+            return glm::dot(diff, diff);
+        },
+        "lerp", [](const glm::vec3& a, const glm::vec3& b, float t) {
+            return glm::mix(a, b, t);
+        },
+        "reflect", [](const glm::vec3& v, const glm::vec3& normal) {
+            return glm::reflect(v, normal);
+        },
+        "refract", [](const glm::vec3& v, const glm::vec3& normal, float eta) {
+            return glm::refract(v, normal, eta);
+        },
+
+        // Clamping and min/max
+        "clamp", [](const glm::vec3& v, float min, float max) {
+            return glm::clamp(v, min, max);
+        },
+        "min", [](const glm::vec3& a, const glm::vec3& b) {
+            return glm::min(a, b);
+        },
+        "max", [](const glm::vec3& a, const glm::vec3& b) {
+            return glm::max(a, b);
+        },
+
+        // Static constants
+        "zero", sol::var(glm::vec3(0.0f)),
+        "one", sol::var(glm::vec3(1.0f)),
+        "up", sol::var(glm::vec3(0.0f, 1.0f, 0.0f)),
+        "down", sol::var(glm::vec3(0.0f, -1.0f, 0.0f)),
+        "left", sol::var(glm::vec3(-1.0f, 0.0f, 0.0f)),
+        "right", sol::var(glm::vec3(1.0f, 0.0f, 0.0f)),
+        "forward", sol::var(glm::vec3(0.0f, 0.0f, 1.0f)),
+        "back", sol::var(glm::vec3(0.0f, 0.0f, -1.0f)),
+
         // String
-        sol::meta_function::to_string, [](const glm::vec3& v)
-        {
-            char buf[64];
-            snprintf(buf, sizeof(buf), "vec3(%.3f, %.3f, %.3f)", v.x, v.y, v.z);
-            return std::string(buf);
+        sol::meta_function::to_string, [](const glm::vec3& v) {
+            return std::format("vec3({:.3f}, {:.3f}, {:.3f})", v.x, v.y, v.z);
         }
     );
 
     lua.new_usertype<glm::vec2>("vec2",
-        // Constructors
         sol::call_constructor, sol::factories(
-            []() -> glm::vec2 { return glm::vec2(0.0f); },
-            [](float x, float y) -> glm::vec2 { return glm::vec2(x, y); },
-            [](float s) -> glm::vec2 { return glm::vec2(s); }
+            []() { return glm::vec2(0.0f); },
+            [](float x, float y) { return glm::vec2(x, y); },
+            [](float s) { return glm::vec2(s); }
         ),
 
-        // Component access (read/write)
+        // Component access
         "x", &glm::vec2::x,
         "y", &glm::vec2::y,
 
-        // ---------------- Operators ----------------
-
-        sol::meta_function::addition, [](const glm::vec2& a, const glm::vec2& b) { return a + b; },
-
-        sol::meta_function::subtraction, [](const glm::vec2& a, const glm::vec2& b) { return a - b; },
-
+        // Operators
+        sol::meta_function::addition, [](const glm::vec2& a, const glm::vec2& b) {
+            return a + b;
+        },
+        sol::meta_function::subtraction, [](const glm::vec2& a, const glm::vec2& b) {
+            return a - b;
+        },
         sol::meta_function::multiplication, sol::overload(
-            [](const glm::vec2& a, const glm::vec2& b) { return a * b; },           // component-wise
-            [](const glm::vec2& a, float s)         { return a * s; },
-            [](float s,         const glm::vec2& a) { return s * a; }
+            [](const glm::vec2& a, const glm::vec2& b) { return a * b; },
+            [](const glm::vec2& a, float s) { return a * s; },
+            [](float s, const glm::vec2& a) { return s * a; }
         ),
-
         sol::meta_function::division, sol::overload(
-            [](const glm::vec2& a, float s)         { return a / s; },
-            [](float s,         const glm::vec2& a) { return glm::vec2(s / a.x, s / a.y); } // scalar / vec2
+            [](const glm::vec2& a, float s) { return a / s; },
+            [](float s, const glm::vec2& a) { return glm::vec2(s / a.x, s / a.y); }
         ),
+        sol::meta_function::unary_minus, [](const glm::vec2& a) {
+            return -a;
+        },
+        sol::meta_function::equal_to, [](const glm::vec2& a, const glm::vec2& b) {
+            return a == b;
+        },
 
-        sol::meta_function::unary_minus, [](const glm::vec2& a) { return -a; },
+        // Vector operations
+        "length", [](const glm::vec2& v) {
+            return glm::length(v);
+        },
+        "lengthSquared", [](const glm::vec2& v) {
+            return glm::dot(v, v);
+        },
+        "normalized", [](const glm::vec2& v) {
+            return glm::normalize(v);
+        },
+        "dot", [](const glm::vec2& a, const glm::vec2& b) {
+            return glm::dot(a, b);
+        },
+        "distance", [](const glm::vec2& a, const glm::vec2& b) {
+            return glm::distance(a, b);
+        },
+        "distanceSquared", [](const glm::vec2& a, const glm::vec2& b) {
+            glm::vec2 diff = a - b;
+            return glm::dot(diff, diff);
+        },
+        "lerp", [](const glm::vec2& a, const glm::vec2& b, float t) {
+            return glm::mix(a, b, t);
+        },
+        "reflect", [](const glm::vec2& v, const glm::vec2& normal) {
+            return glm::reflect(v, normal);
+        },
+        "refract", [](const glm::vec2& v, const glm::vec2& normal, float eta) {
+            return glm::refract(v, normal, eta);
+        },
 
-        // Length / equality (highly useful)
-        sol::meta_function::length, [](const glm::vec2& v) { return glm::length(v); },
-        sol::meta_function::equal_to, [](const glm::vec2& a, const glm::vec2& b) { return a == b; },
+        // Rotation (2D specific)
+        "rotate", [](const glm::vec2& v, float angleDegrees) {
+            float rad = glm::radians(angleDegrees);
+            float c = std::cos(rad);
+            float s = std::sin(rad);
+            return glm::vec2(v.x * c - v.y * s, v.x * s + v.y * c);
+        },
+        "angle", [](const glm::vec2& v) {
+            return glm::degrees(std::atan2(v.y, v.x));
+        },
+        "perpendicular", [](const glm::vec2& v) {
+            return glm::vec2(-v.y, v.x);
+        },
 
-        // tostring
-        sol::meta_function::to_string, [](const glm::vec2& v) -> std::string {
-            char buf[64];
-            snprintf(buf, sizeof(buf), "vec2(%.3f, %.3f)", v.x, v.y);
-            return std::string(buf);
+        // Clamping and min/max
+        "clamp", [](const glm::vec2& v, float min, float max) {
+            return glm::clamp(v, min, max);
+        },
+        "min", [](const glm::vec2& a, const glm::vec2& b) {
+            return glm::min(a, b);
+        },
+        "max", [](const glm::vec2& a, const glm::vec2& b) {
+            return glm::max(a, b);
+        },
+
+        // Static constants
+        "zero", sol::var(glm::vec2(0.0f)),
+        "one", sol::var(glm::vec2(1.0f)),
+        "up", sol::var(glm::vec2(0.0f, 1.0f)),
+        "down", sol::var(glm::vec2(0.0f, -1.0f)),
+        "left", sol::var(glm::vec2(-1.0f, 0.0f)),
+        "right", sol::var(glm::vec2(1.0f, 0.0f)),
+
+        // String
+        sol::meta_function::to_string, [](const glm::vec2& v) {
+            return std::format("vec2({:.3f}, {:.3f})", v.x, v.y);
         }
     );
 
     // GLM quats
     lua.new_usertype<glm::quat>("quat",
-        sol::call_constructor, sol::factories(
+            sol::call_constructor, sol::factories(
             []() { return glm::quat(1, 0, 0, 0); },                     // identity
             [](float w, float x, float y, float z) { return glm::quat(w, x, y, z); },
             [](float angle, const glm::vec3& axis) {
-                return glm::angleAxis(angle, axis);
+                return glm::angleAxis(glm::radians(angle), axis);
             }
         ),
 
@@ -484,17 +594,79 @@ void LuaManager::RegisterBindings() {
         "y", &glm::quat::y,
         "z", &glm::quat::z,
 
+        // Static constructor from Euler angles (degrees)
+        "Euler", sol::overload(
+            [](float pitch, float yaw, float roll) {
+                return glm::quat(glm::radians(glm::vec3(pitch, yaw, roll)));
+            },
+            [](const glm::vec3& eulerAngles) {
+                return glm::quat(glm::radians(eulerAngles));
+            }
+        ),
+
+        "LookRotation", sol::overload(
+            [](const glm::vec3& forward) {
+                glm::vec3 f = glm::normalize(forward);
+                // Use lookAt like your working code
+                glm::vec3 fakePos = glm::vec3(0, 0, 0);
+                glm::mat4 viewMatrix = glm::lookAt(fakePos, fakePos - f, glm::vec3(0, 1, 0));
+                return glm::quat_cast(viewMatrix);
+            },
+            [](const glm::vec3& forward, const glm::vec3& up) {
+                glm::vec3 f = glm::normalize(forward);
+                glm::vec3 u = glm::normalize(up);
+                glm::vec3 fakePos = glm::vec3(0, 0, 0);
+                glm::mat4 viewMatrix = glm::lookAt(fakePos, fakePos - f, u);
+                return glm::quat_cast(viewMatrix);
+            }
+        ),
+        
+        // Convert to Euler angles (degrees)
+        "to_euler", [](const glm::quat& q) {
+            return glm::degrees(glm::eulerAngles(q));
+        },
+
         // Normalize
         "normalized", [](const glm::quat& q) {
             return glm::normalize(q);
         },
 
-        // Get angle + axis
+        // Get angle (in degrees) + axis
         "get_angle", [](const glm::quat& q) {
-            return glm::angle(q);
+            return glm::degrees(glm::angle(q));
         },
         "get_axis", [](const glm::quat& q) {
             return glm::axis(q);
+        },
+
+        // Spherical linear interpolation
+        "slerp", [](const glm::quat& a, const glm::quat& b, float t) {
+            return glm::slerp(a, b, t);
+        },
+
+        // Linear interpolation (faster but less accurate)
+        "lerp", [](const glm::quat& a, const glm::quat& b, float t) {
+            return glm::lerp(a, b, t);
+        },
+
+        // Dot product
+        "dot", [](const glm::quat& a, const glm::quat& b) {
+            return glm::dot(a, b);
+        },
+
+        // Inverse
+        "inverse", [](const glm::quat& q) {
+            return glm::inverse(q);
+        },
+
+        // Conjugate
+        "conjugate", [](const glm::quat& q) {
+            return glm::conjugate(q);
+        },
+
+        // Rotate a vector
+        "rotate_vector", [](const glm::quat& q, const glm::vec3& v) {
+            return q * v;
         },
 
         // Multiply two quaternions
@@ -502,16 +674,15 @@ void LuaManager::RegisterBindings() {
             [](const glm::quat& a, const glm::quat& b) {
                 return a * b;
             },
-
             // quat * vec3 → vec3
             [](const glm::quat& q, const glm::vec3& v) {
                 return q * v;
             }
         ),
 
-        // To string (optional)
+        // To string
         sol::meta_function::to_string, [](const glm::quat& q) {
-            return std::format("quat({}, {}, {}, {})", q.w, q.x, q.y, q.z);
+            return std::format("Quaternion({}, {}, {}, {})", q.w, q.x, q.y, q.z);
         }
     );
 #pragma endregion
@@ -541,7 +712,8 @@ void LuaManager::RegisterBindings() {
         sol::base_classes, sol::bases<Component>(),
         "color", &DirectionalLight::color,
         "strength", &DirectionalLight::strength,
-        "castShadows", &DirectionalLight::castShadows
+        "castShadows", &DirectionalLight::castShadows,
+        "enabled", &DirectionalLight::enabled
     );
     RegisterComponent<DirectionalLight>("DirectionalLight", lua);
 
@@ -551,7 +723,8 @@ void LuaManager::RegisterBindings() {
         sol::base_classes, sol::bases<Component>(),
         "color", &PointLight::color,
         "strength", &PointLight::strength,
-        "radius", &PointLight::radius
+        "radius", &PointLight::radius,
+        "enabled", &PointLight::enabled
     );
     RegisterComponent<PointLight>("PointLight", lua);
 
@@ -563,7 +736,8 @@ void LuaManager::RegisterBindings() {
         "strength", &SpotLight::strength,
         "distance", &SpotLight::distance,
         "angle", &SpotLight::angle,
-        "castShadows", &SpotLight::castShadows
+        "castShadows", &SpotLight::castShadows,
+        "enabled", &SpotLight::enabled
     );
     RegisterComponent<SpotLight>("SpotLight", lua);
 
@@ -601,7 +775,7 @@ void LuaManager::RegisterBindings() {
             Actor(const std::string&, const std::string&),
             Actor(const std::string&),
             Actor()
-        >(),
+    >(),
 
         // Member variables
         "name", &Actor::name,

@@ -79,6 +79,7 @@ void RendererManager::UpdateUBOs()
     if (directionalLight != nullptr)
     {
         DirectionalLightData.direction = directionalLight->transform->forward;
+        DirectionalLightData.enabled = (int)directionalLight->enabled;
         DirectionalLightData.color = directionalLight->color;
         DirectionalLightData.strength = directionalLight->strength;
         DirectionalLightData.castShadows = (int)directionalLight->castShadows;
@@ -105,6 +106,7 @@ void RendererManager::UpdateUBOs()
         {
             PointLight* point = lightingManager.pointLights[i];
             PointLightData.pointLights[i].position = point->transform->position;
+            PointLightData.pointLights[i].enabled = (int)point->enabled;
             PointLightData.pointLights[i].color = point->color;
             PointLightData.pointLights[i].strength = point->strength;
             PointLightData.pointLights[i].radius = point->radius;

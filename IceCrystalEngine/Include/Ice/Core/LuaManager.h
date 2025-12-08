@@ -50,7 +50,7 @@ public:
 		
 		sol::function f = thread_lua.load_file(executor->filePath);
 
-		sol::environment env(thread_lua, sol::create, thread_lua.globals());
+		sol::environment env(thread_lua, sol::create, lua.globals());
 		env["actor"] = executor->owner;
 		env["transform"] = executor->transform;
 		

@@ -19,7 +19,14 @@ void WindowManager::InitializeWindow()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	
+    
+    // Store windowed mode dimensions
+    if (!isFullscreen)
+    {
+        windowedWidth = windowWidth;
+        windowedHeight = windowHeight;
+    }
+    
     // This essentially puts it into borderless-windowed
     if (isFullscreen)
     {
@@ -45,10 +52,10 @@ void WindowManager::InitializeWindow()
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
-		exit(-1);
+       exit(-1);
     }
 
-	window = win;
+    window = win;
     glfwSetFramebufferSizeCallback(win, framebuffer_size_callback);
 
     glEnable(GL_DEPTH_TEST);
@@ -63,11 +70,57 @@ void WindowManager::InitializeWindow()
     stbi_image_free(images[0].pixels);
 }
 
+void WindowManager::ToggleFullscreen()
+{
+    isFullscreen = !isFullscreen;
+    
+    if (isFullscreen)
+    {
+        // Save current windowed dimensions and position
+        glfwGetWindowPos(window, &windowedX, &windowedY);
+        glfwGetWindowSize(window, &windowedWidth, &windowedHeight);
+        
+        // Get monitor dimensions
+        const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        
+        // glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
+        glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+        
+        // Just maximize the window
+        glfwMaximizeWindow(window);
+        
+        windowWidth = mode->width;
+        windowHeight = mode->height;
+    }
+    else
+    {
+        glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
+        
+        // Restore the window
+        glfwRestoreWindow(window);
+        
+        // Restore original position and size
+        glfwSetWindowPos(window, windowedX, windowedY);
+        glfwSetWindowSize(window, windowedWidth, windowedHeight);
+        
+        windowWidth = windowedWidth;
+        windowHeight = windowedHeight;
+    }
+}
+
+void WindowManager::SetFullscreen(bool fullscreen)
+{
+    if (isFullscreen != fullscreen)
+    {
+        ToggleFullscreen();
+    }
+}
+
 
 // glfw: whenever the window size changed
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	WindowManager& windowManager = WindowManager::GetInstance();
+    WindowManager& windowManager = WindowManager::GetInstance();
 
     windowManager.windowWidth = width;
     windowManager.windowHeight = height;
