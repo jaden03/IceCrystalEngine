@@ -6,7 +6,6 @@
 #include <Ice/Core/SceneInitializer.h>
 #include <Ice/Utils/FileUtil.h>
 #include <Ice/Core/PhysicsManager.h>
-#include <Ice/Editor/WebEditorManager.h>
 #include <Ice/Core/SceneManager.h>
 
 #include "Ice/Core/IGame.h"
@@ -14,6 +13,7 @@
 
 #ifdef _DEBUG
 #include <Ice/Utils/DebugUtil.h>
+#include <Ice/Editor/WebEditorManager.h>
 #endif
 
 
@@ -24,12 +24,10 @@ Engine::Engine()
 
 Engine::~Engine()
 {
-    // Stop web editor if running
-    WebEditorManager::GetInstance().Stop();
-    
     LuaManager::GetInstance().Cleanup();
 #ifdef _DEBUG
     DebugUtil::GetInstance().Cleanup();
+    WebEditorManager::GetInstance().Stop();
 #endif
     glfwTerminate();
 }
@@ -93,7 +91,7 @@ void Engine::Run(IGame* gameInstance)
         return;
     }
 
-    isEditor = true;
+    isEditor = false;
     game = gameInstance;
 
     game->OnInit();

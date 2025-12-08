@@ -11,6 +11,7 @@
 #include "Ice/Components/Physics/BoxCollider.h"
 #include "Ice/Components/Physics/MeshCollider.h"
 #include "Ice/Components/Physics/RigidBody.h"
+#include "Ice/Core/Engine.h"
 #include "Ice/Core/LuaManager.h"
 
 SceneInitializer::SceneInitializer()

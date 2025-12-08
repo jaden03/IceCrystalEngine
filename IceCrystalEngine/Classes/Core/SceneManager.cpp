@@ -58,8 +58,8 @@ void SceneManager::Update()
 		{
 			// create a fallback camera
 			Actor* cameraActor = new Actor("Main Camera", "MainCamera");
-			cameraActor->AddComponent<Camera>();
-
+			mainCamera = cameraActor->AddComponent<Camera>();
+		
 			// TODO : add proper logging
 			std::cout << "No Camera Component found in Scene, A fallback Actor with a Camera Component has been created. You can access the Actor by the tag \"MainCamera\"." << std::endl;
 		}

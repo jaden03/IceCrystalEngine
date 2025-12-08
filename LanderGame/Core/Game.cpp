@@ -13,7 +13,7 @@ void Game::OnUpdate(float deltaTime)
     
 }
 
-void Game::OnFixedUpdate(float fixedDelaTime)
+void Game::OnFixedUpdate(float fixedDeltaTime)
 {
     
 }
@@ -23,5 +23,3 @@ void Game::OnShutdown()
 {
     std:: cout << "Bye!" << std::endl;
 }
-
-

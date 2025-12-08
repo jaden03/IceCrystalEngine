@@ -7,7 +7,7 @@ class Game : public IGame
 public:
     void OnInit() override;
     void OnUpdate(float deltaTime) override;
-    void OnFixedUpdate(float fixedDelaTime) override;
+    void OnFixedUpdate(float fixedDeltaTime) override;
     void OnShutdown() override;
 private:
     
