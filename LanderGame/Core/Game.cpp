@@ -38,7 +38,7 @@ void CreateSun()
     sunTilt->transform->Rotate(glm::vec3(0.0f, 45.0f, 0.0f));
     //// set the rotation quat to be at an angle and angled down
     sunTilt->transform->Translate(0, 125, 0);
-    sun->transform->RotateLocal(-50, 0, 0);
+    sun->transform->RotateLocal(50, 0, 0);
     sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
 }
 
@@ -69,19 +69,19 @@ void Game::CreateLander()
     landerRB->GetBody()->SetFriction(10.0f);
     
     // // Set up trigger callbacks
-    // landerRB->OnTriggerEntered = [](RigidBody* other) {
-    //     if (other->owner->tag == "refuelTrigger")
-    //     {
-    //         Game::inRefuelZone = true;
-    //     }
-    // };
-    //
-    // landerRB->OnTriggerExited = [](RigidBody* other) {
-    //     if (other->owner->tag == "refuelTrigger")
-    //     {
-    //         Game::inRefuelZone = false;
-    //     }
-    // };
+    landerRB->OnTriggerEntered = [](RigidBody* other) {
+        if (other->owner->tag == "refuelTrigger")
+        {
+            std::cout << "Entered Fuel Zone" << std::endl;
+        }
+    };
+    
+    landerRB->OnTriggerExited = [](RigidBody* other) {
+        if (other->owner->tag == "refuelTrigger")
+        {
+            std::cout << "Exited Fuel Zone" << std::endl;
+        }
+    };
     
     // Engine Light
     Actor* engineLight = new Actor("Engine Light", "engineLight");
@@ -124,9 +124,9 @@ void Game::CreatePad(glm::vec3 position, glm::quat rotation)
     padRefuelTrigger->transform->SetRotation(rotation);
     padRefuelTrigger->transform->SetScale(4.0f, 0.2f, 4.0f);
     padRefuelTrigger->transform->SetParent(pad->transform);
-    // padRefuelTrigger->transform->SetLocalPosition(0, 2.5f, 0); // cant do this because the actual position would be calculated and set on the next frame
+    // cant only set local position because the actual position would be calculated and set on the next frame
     // but the physics need the position to already be set when initializing the rigidbody, so we have to calculate out the actual world pos and set it
-    padRefuelTrigger->transform->position = pad->transform->position + (padRefuelTrigger->transform->up * 0.4f);
+    padRefuelTrigger->transform->position = pad->transform->position + (pad->transform->Up() * 0.4f); // use the Up() function because up would just be world up (hasnt had the first update yet)
     padRefuelTrigger->transform->localPosition = glm::vec3(0.0f, 0.4f, 0.0f);
     padRefuelTrigger->AddComponent<BoxCollider>(padRefuelTrigger->transform->scale);
     padRefuelTrigger->AddComponent<RigidBody>(0.0f, true);
@@ -193,7 +193,6 @@ void Game::OnInit()
     WindowManager::GetInstance().SetFullscreen(true);
 }
 
-static double lastPrint = 0.0;
 void Game::OnUpdate(float deltaTime)
 {
     if (Input::GetKeyDown(GLFW_KEY_TAB))
@@ -201,13 +200,6 @@ void Game::OnUpdate(float deltaTime)
         // Lock and hide cursor
         Input::lockCursor = !Input::lockCursor;
         Input::hideCursor = !Input::hideCursor;
-    }
-
-    double now = glfwGetTime();
-    if (now - lastPrint >= 1.0)
-    {
-        std::cout << "Speed: " << glm::length(landerRB->GetLinearVelocity()) << std::endl;
-        lastPrint = now;
     }
 }
 

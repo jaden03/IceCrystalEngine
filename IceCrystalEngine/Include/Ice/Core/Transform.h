@@ -91,9 +91,6 @@ public:
 	void SetScale(glm::vec3 scale);
 	// Set Scale Directly
 	void SetScale(float x, float y, float z);
-	
-
-
 
 	// Helper Functions for Local Transformations
 
@@ -143,12 +140,11 @@ public:
 	// Set Local Scale Directly
 	void SetLocalScale(float x, float y, float z);
 
-private:
-
 	glm::vec3 Forward();
 	glm::vec3 Right();
 	glm::vec3 Up();
 
+private:
 };
 
 
