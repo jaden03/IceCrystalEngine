@@ -1,8 +1,0 @@
-{
-    "Name": "Lander Material",
-    "Texture": "{ASSET_DIR}Textures/lander/diffuse.png",
-    "SmoothnessMap": "{ASSET_DIR}Textures/lander/smoothness.png",
-    "Shader": "{ASSET_DIR}Shaders/default",
-    "Color": [ 0.5, 0.5, 0.5 ],
-    "Smoothness": 0.5
-}

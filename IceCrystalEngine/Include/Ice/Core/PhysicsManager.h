@@ -9,7 +9,10 @@
 #include <Jolt/Physics/PhysicsSystem.h>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
+#include <map>
+class RigidBody;
 
 
 
@@ -54,7 +57,77 @@ inline glm::vec3 ToGLM(const JPH::Vec3& v)
 {
     return glm::vec3(v.GetX(), v.GetY(), v.GetZ());
 }
+// glm::quat → JPH::Quat
+inline JPH::Quat ToJolt(const glm::quat& q)
+{
+    // glm is (w, x, y, z)
+    // Jolt is also (w, x, y, z)
+    return JPH::Quat(q.x, q.y, q.z, q.w);
+}
+// JPH::Quat → glm::quat
+inline glm::quat ToGLM(const JPH::Quat& q)
+{
+    // glm::quat constructor is (w, x, y, z)
+    return glm::quat(q.GetW(), q.GetX(), q.GetY(), q.GetZ());
+}
 
+struct BodyPairKey
+{
+    JPH::BodyID body1;
+    JPH::BodyID body2;
+    
+    BodyPairKey(JPH::BodyID b1, JPH::BodyID b2)
+    {
+        // Always store smaller ID first for consistent lookups
+        if (b1.GetIndexAndSequenceNumber() < b2.GetIndexAndSequenceNumber())
+        {
+            body1 = b1;
+            body2 = b2;
+        }
+        else
+        {
+            body1 = b2;
+            body2 = b1;
+        }
+    }
+    
+    bool operator<(const BodyPairKey& other) const
+    {
+        if (body1.GetIndexAndSequenceNumber() != other.body1.GetIndexAndSequenceNumber())
+            return body1.GetIndexAndSequenceNumber() < other.body1.GetIndexAndSequenceNumber();
+        return body2.GetIndexAndSequenceNumber() < other.body2.GetIndexAndSequenceNumber();
+    }
+};
+
+class PhysicsContactListener : public JPH::ContactListener
+{
+public:
+    virtual JPH::ValidateResult OnContactValidate(
+        const JPH::Body& inBody1,
+        const JPH::Body& inBody2,
+        JPH::RVec3Arg inBaseOffset,
+        const JPH::CollideShapeResult& inCollisionResult) override
+    {
+        return JPH::ValidateResult::AcceptAllContactsForThisBodyPair;
+    }
+
+    virtual void OnContactAdded(
+        const JPH::Body& inBody1,
+        const JPH::Body& inBody2,
+        const JPH::ContactManifold& inManifold,
+        JPH::ContactSettings& ioSettings) override;
+
+    virtual void OnContactPersisted(
+        const JPH::Body& inBody1,
+        const JPH::Body& inBody2,
+        const JPH::ContactManifold& inManifold,
+        JPH::ContactSettings& ioSettings) override;
+
+    virtual void OnContactRemoved(const JPH::SubShapeIDPair& inSubShapePair) override;
+
+private:
+    std::map<BodyPairKey, std::pair<RigidBody*, RigidBody*>> activeContacts;
+};
 
 
 class PhysicsManager
@@ -94,4 +167,6 @@ private:
     SimpleBroadPhaseLayer broadPhase;
     SimpleObjectVsBroadPhaseLayerFilter layerFilter;
     SimpleObjectLayerPairFilter pairFilter;
+
+    PhysicsContactListener contactListener;
 };

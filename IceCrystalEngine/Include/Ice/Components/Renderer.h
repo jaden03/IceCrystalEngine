@@ -26,7 +26,7 @@ class Renderer : public Component
 	glm::mat3 normalMatrix = glm::mat3(1.0f);
 
 	glm::vec3 lastPosition = glm::vec3(0.0f);
-	glm::vec3 lastEulerAngles = glm::vec3(0.0f);
+	glm::quat lastRotation = glm::quat();
 	glm::vec3 lastScale = glm::vec3(1.0f);
 
 	std::string ModelPath;

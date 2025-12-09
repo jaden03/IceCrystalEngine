@@ -69,7 +69,7 @@ glm::mat4 DirectionalLight::GetLightSpaceMatrix(float nearPlane, float farPlane)
 		center += glm::vec3(v);
     center /= corners.size();
     
-    auto lightView = glm::lookAt(center - transform->forward, center, glm::vec3(0.0f, 1.0f, 0.0f));
+    auto lightView = glm::lookAt(center + transform->forward, center, glm::vec3(0.0f, 1.0f, 0.0f));
 
     float minX = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();

@@ -175,12 +175,20 @@ void SceneManager::Update()
 	// update UBOs for renderning
 	rendererManager.UpdateUBOs();
 
+	// Update transforms hierarchically - only call Update on root transforms
+	for (int i = 0; i < actors->size(); i++)
+	{
+		if (actors->at(i)->transform->parent == nullptr)
+		{
+			actors->at(i)->transform->Update();
+		}
+	}
+
 	Actor* currentHoveredActor = nullptr;
 	glm::vec3 hoveredColor = postProcessor.hoveredActorColor;
 	// loop through actors to update components (also get the hovered actor here to save having to loop elsewhere)
 	for (int i = 0; i < actors->size(); i++)
 	{
-		// for some reason I needed to update the child positions in Update and the rotations in LateUpdate
 		actors->at(i)->transform->Update();
 
 		// Hovered actor
@@ -198,11 +206,8 @@ void SceneManager::Update()
 	}
 	hoveredActor = currentHoveredActor;
 	
-	// loop through actors again for LateUpdate and transform update
 	for (int i = 0; i < actors->size(); i++)
 	{
-		// update the transform
-		actors->at(i)->transform->LateUpdate();
 		// loop through components
 		for (int j = 0; j < actors->at(i)->components->size(); j++)
 		{

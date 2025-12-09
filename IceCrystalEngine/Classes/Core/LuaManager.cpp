@@ -747,6 +747,17 @@ void LuaManager::RegisterBindings() {
         sol::base_classes, sol::bases<Component>(),
         // Properties
         "mass", &RigidBody::mass,
+        "isTrigger", &RigidBody::isTrigger,
+
+        // Callback bindings
+        "OnContactStarted", &RigidBody::OnContactStarted,
+        "OnContacting", &RigidBody::OnContacting,
+        "OnContactEnded", &RigidBody::OnContactEnded,
+
+        "OnTriggerEntered", &RigidBody::OnTriggerEntered,
+        "OnTriggerStay", &RigidBody::OnTriggerStay,
+        "OnTriggerExited", &RigidBody::OnTriggerExited,
+        
         // Methods
         "AddForce", &RigidBody::AddForce,
         "AddTorque", &RigidBody::AddTorque,

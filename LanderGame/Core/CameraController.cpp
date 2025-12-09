@@ -42,9 +42,9 @@ void CameraController::Update()
 
     // Update distance
     if (Input::scrolledUp)
-        cameraDistance -= 0.5f;
+        cameraDistance--;
     else if (Input::scrolledDown)
-        cameraDistance += 0.5f;
+        cameraDistance++;
 
     // Clamp camera distance
     if (cameraDistance < minDistance)
@@ -83,14 +83,6 @@ void CameraController::Update()
     glm::vec3 targetPosition = targetPos - finalDirection * cameraDistance;
     transform->position = targetPosition;
 
-    // Make camera look at target with stable up vector (using LookRotation pattern)
-    glm::vec3 direction = glm::normalize(targetPos - transform->position);
-    glm::vec3 up = localUp;
-    
-    // Use glm::lookAt like your working Lua code
-    glm::vec3 fakePos = glm::vec3(0, 0, 0);
-    glm::mat4 viewMatrix = glm::lookAt(fakePos, fakePos - direction, up);
-    
-    transform->rotation = glm::quat_cast(viewMatrix);
-    transform->eulerAngles = glm::degrees(glm::eulerAngles(transform->rotation));
+    // Make camera look at target with custom up vector
+    transform->LookAt(targetPos, localUp);
 }

@@ -8,7 +8,7 @@
 
 std::int32_t Handle;
 
-Shader::Shader() // This will just use default.vert and default.frag
+Shader::Shader() : Handle(0) // This will just use default.vert and default.frag
 {
     InitializeShader();
 }
@@ -57,7 +57,11 @@ void Shader::Use()
 
 Shader::~Shader()
 {
-	glDeleteProgram(Handle);
+    if (Handle != 0)
+    {
+        glDeleteProgram(Handle);
+        Handle = 0;
+    }
 }
 
 void Shader::InitializeShader()

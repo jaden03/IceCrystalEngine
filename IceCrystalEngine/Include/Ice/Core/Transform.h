@@ -36,12 +36,13 @@ public:
 
 	// Update (dont use)
 	void Update();
-	void LateUpdate();
+	// void LateUpdate();
 
 	void SetParent(Transform* parent);
 
 	void LookAt(float x, float y, float z);
 	void LookAt(glm::vec3 target);
+	void LookAt(glm::vec3 target, glm::vec3 up);
 	
 	// Helper Functions
 	

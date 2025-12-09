@@ -933,6 +933,7 @@
     <ClInclude Include="Include\glad\glad.h" />
     <ClInclude Include="Include\GLFW\glfw3.h" />
     <ClInclude Include="Include\GLFW\glfw3native.h" />
+    <ClInclude Include="Include\Ice\Utils\MathUtils.h" />
     <ClInclude Include="Include\Ice\Utils\stb_image.h" />
     <ClInclude Include="Include\Ice\Utils\OBJLoader.h" />
     <ClInclude Include="Include\imgui\imconfig.h" />

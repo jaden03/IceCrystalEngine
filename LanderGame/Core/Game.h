@@ -4,6 +4,7 @@
 
 #include "Ice/Components/Physics/RigidBody.h"
 #include "Ice/Core/Actor.h"
+#include "Ice/Rendering/Material.h"
 
 class Game : public IGame
 {
@@ -15,6 +16,12 @@ public:
 private:
 
     void CreateLander();
+    void CreateWorld();
+    void CreatePad(glm::vec3 position, glm::quat rotation);
+    
     Actor* lander;
     RigidBody* landerRB;
+    
+    Material* mainMaterial;
+    Material* unlitMaterial;
 };

@@ -1,4 +1,9 @@
+#include <iostream>
+#include <ostream>
 #include <Ice/Core/Transform.h>
+
+#include "glm/gtx/euler_angles.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 SceneManager& sceneManager = SceneManager::GetInstance();
 
@@ -26,35 +31,35 @@ Transform::Transform(Actor* owner)
 // Update
 void Transform::Update()
 {
-	if (parent != nullptr)
-	{
-		position = parent->position + (localPosition.z * forward + -localPosition.x * right + localPosition.y * up);
-	}
-}
-
-void Transform::LateUpdate()
-{
-	// loop through children
-	for (int i = 0; i < children->size(); i++)
-	{
-		// update child
-		Transform* child = children->at(i);
-		//child->SetPosition(position + glm::vec3(child->localPosition.z * forward) + glm::vec3(-child->localPosition.x * right) + glm::vec3(child->localPosition.y * up));
-		child->LateUpdate();
-	}
-	
+	// Update direction vectors from current rotation
 	forward = Forward();
 	right = Right();
 	up = Up();
 
-	localRotation = glm::quat(glm::radians(localEulerAngles));
+	// If we have a parent, calculate world position/rotation from local + parent
 	if (parent != nullptr)
 	{
+		// World rotation = parent rotation * local rotation
 		rotation = parent->rotation * localRotation;
-		eulerAngles = glm::degrees(glm::eulerAngles(rotation));
+        
+		// Recalculate direction vectors after rotation update
+		forward = Forward();
+		right = Right();
+		up = Up();
+        
+		// World position = parent position + local offset rotated by parent
+		position = parent->position 
+			+ parent->Forward() * localPosition.z 
+			+ parent->Right() * localPosition.x 
+			+ parent->Up() * localPosition.y;
+	}
+
+	// Now update all children (they depend on our updated values)
+	for (int i = 0; i < children->size(); i++)
+	{
+		children->at(i)->Update();
 	}
 }
-
 
 
 void Transform::SetParent(Transform* parent)
@@ -123,17 +128,17 @@ void Transform::RotateDelta(float x, float y, float z)
 	rotation = glm::quat(glm::vec3(glm::radians(eulerAngles)));
 }
 
-void Transform::Scale(glm::vec3 scale)
+void Transform::Scale(glm::vec3 _scale)
 {
-	scale += scale;
+	scale += _scale;
 }
 void Transform::Scale(float x, float y, float z)
 {
 	scale += glm::vec3(x, y, z);
 }
-void Transform::ScaleDelta(glm::vec3 scale)
+void Transform::ScaleDelta(glm::vec3 _scale)
 {
-	scale += scale * sceneManager.deltaTime;
+	scale += _scale * sceneManager.deltaTime;
 }
 void Transform::ScaleDelta(float x, float y, float z)
 {
@@ -166,7 +171,11 @@ void Transform::SetRotation(float x, float y, float z)
 void Transform::SetRotation(glm::quat rot)
 {
 	rotation = rot;
-	eulerAngles = glm::degrees(glm::eulerAngles(rotation));
+    
+	// Extract with explicit order matching your engine's convention
+	glm::vec3 radians;
+	glm::extractEulerAngleXYZ(glm::mat4_cast(rotation), radians.x, radians.y, radians.z);
+	eulerAngles = glm::degrees(radians);
 }
 
 void Transform::SetScale(glm::vec3 scale)
@@ -286,40 +295,53 @@ void Transform::SetLocalScale(float x, float y, float z)
 }
 
 
-void Transform::LookAt(float x, float y, float z)
-{
-	glm::vec3 target = glm::vec3(x, y, z);
-	glm::vec3 direction = glm::normalize(position - target);  // Inverted like your working code
-    
-	glm::mat4 viewMatrix = glm::lookAt(position, position - direction, glm::vec3(0, 1, 0));
-	rotation = glm::quat_cast(viewMatrix);
-	eulerAngles = glm::degrees(glm::eulerAngles(rotation));
-}
-
 void Transform::LookAt(glm::vec3 target)
 {
-	glm::vec3 direction = glm::normalize(position - target);  // Inverted like your working code
-    
-	glm::mat4 viewMatrix = glm::lookAt(position, position - direction, glm::vec3(0, 1, 0));
-	rotation = glm::quat_cast(viewMatrix);
-	eulerAngles = glm::degrees(glm::eulerAngles(rotation));
+	LookAt(target, glm::vec3(0, 1, 0));
 }
 
+void Transform::LookAt(float x, float y, float z)
+{
+	LookAt(glm::vec3(x, y, z), glm::vec3(0, 1, 0));
+}
+
+void Transform::LookAt(glm::vec3 target, glm::vec3 up)
+{
+	glm::vec3 forward = glm::normalize(target - position);
+    
+	// Handle edge case: looking parallel to up vector
+	if (glm::abs(glm::dot(forward, up)) > 0.999f)
+	{
+		// Use world X as fallback, then derive up from that
+		glm::vec3 right = glm::normalize(glm::cross(up, forward));
+		if (glm::length(right) < 0.001f)
+		{
+			right = glm::vec3(1, 0, 0);
+		}
+		up = glm::normalize(glm::cross(forward, right));
+	}
+    
+	glm::vec3 right = glm::normalize(glm::cross(up, forward));
+	glm::vec3 correctedUp = glm::cross(forward, right);
+    
+	glm::mat3 rotMatrix(right, correctedUp, forward);
+	rotation = glm::quat_cast(rotMatrix);
+}
 
 
 // Direction Vectors
 glm::vec3 Transform::Forward()
 {
-	return glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f) * rotation);
+	return glm::normalize(rotation * glm::vec3(0.0f, 0.0f, 1.0f));
 }
 
 glm::vec3 Transform::Right()
 {
-	return glm::normalize(glm::vec3(-1.0f, 0.0f, 0.0f) * rotation);
+	return glm::normalize(rotation * glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
 glm::vec3 Transform::Up()
 {
-	return glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f) * rotation);
+	return glm::normalize(rotation * glm::vec3(0.0f, 1.0f, 0.0f));
 }
 // ----------------- \\

@@ -1,8 +1,6 @@
 ﻿#include <Ice/Components/Physics/RigidBody.h>
 
-RigidBody::RigidBody(float mass) : mass(mass)
-{
-}
+RigidBody::RigidBody(float mass, bool trigger) : mass(mass), isTrigger(trigger) {}
 
 void RigidBody::Ready()
 {
@@ -17,17 +15,22 @@ void RigidBody::Ready()
     if (!shape) return;
 
     glm::vec3 pos = transform->position;
-    
-    JPH::EMotionType motionType = mass > 0.0f ? JPH::EMotionType::Dynamic : JPH::EMotionType::Static;
+
+    isStatic = mass <= 0.0f;
+    JPH::EMotionType motionType = isStatic ? JPH::EMotionType::Static : JPH::EMotionType::Dynamic;
     // Create a box body in Jolt
     JPH::BodyCreationSettings settings(
         shape,
         JPH::Vec3(pos.x, pos.y, pos.z),
-        JPH::Quat::sIdentity(),
+        JPH::Quat(ToJolt(transform->rotation)),
         motionType,
         0 // object layer
     );
+    settings.mIsSensor = isTrigger;
     body = PhysicsManager::GetInstance().GetSystem().GetBodyInterface().CreateBody(settings);
+
+    // Store pointer to this RigidBody in the body's user data
+    body->SetUserData(reinterpret_cast<JPH::uint64>(this));
 
     JPH::EActivation activation = (motionType == JPH::EMotionType::Dynamic) ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
     PhysicsManager::GetInstance().GetSystem().GetBodyInterface().AddBody(body->GetID(), activation);
@@ -35,7 +38,7 @@ void RigidBody::Ready()
 
 void RigidBody::Update()
 {
-    if (!body || !owner) return;
+    if (!body || !owner || isStatic) return;
 
     // Sync physics position back to actor transform
     JPH::Vec3 pos;
@@ -43,7 +46,21 @@ void RigidBody::Update()
     PhysicsManager::GetInstance().GetSystem().GetBodyInterface().GetPositionAndRotation(body->GetID(), pos, rot);
 
     owner->transform->position = glm::vec3(pos.GetX(), pos.GetY(), pos.GetZ());
-    owner->transform->SetRotation(glm::quat(rot.GetW(), -rot.GetX(), -rot.GetY(), -rot.GetZ()));
+    owner->transform->rotation = glm::quat(rot.GetW(), rot.GetX(), rot.GetY(), rot.GetZ());
+
+    // Fire OnContacting for all active contacts
+    for (RigidBody* other : activeContacts)
+    {
+        if (OnContacting)
+            OnContacting(other);
+    }
+    
+    // Fire OnTriggerStay for all active triggers
+    for (RigidBody* other : activeTriggers)
+    {
+        if (OnTriggerStay)
+            OnTriggerStay(other);
+    }
 }
 
 RigidBody::~RigidBody() {
@@ -63,6 +80,44 @@ RigidBody::~RigidBody() {
         
         body = nullptr;
     }
+}
+
+void RigidBody::FireContactStarted(RigidBody* other)
+{
+    activeContacts.insert(other);
+    if (OnContactStarted)
+        OnContactStarted(other);
+}
+
+void RigidBody::FireContacting(RigidBody* other)
+{
+    // Already handled in Update() via activeContacts
+}
+
+void RigidBody::FireContactEnded(RigidBody* other)
+{
+    activeContacts.erase(other);
+    if (OnContactEnded)
+        OnContactEnded(other);
+}
+
+void RigidBody::FireTriggerEntered(RigidBody* other)
+{
+    activeTriggers.insert(other);
+    if (OnTriggerEntered)
+        OnTriggerEntered(other);
+}
+
+void RigidBody::FireTriggerStay(RigidBody* other)
+{
+    // Already handled in Update() via activeTriggers
+}
+
+void RigidBody::FireTriggerExited(RigidBody* other)
+{
+    activeTriggers.erase(other);
+    if (OnTriggerExited)
+        OnTriggerExited(other);
 }
 
 
@@ -154,8 +209,6 @@ bool RigidBody::IsKinematic() const
     auto& iface = PhysicsManager::GetInstance().GetSystem().GetBodyInterface();
     return iface.GetMotionType(body->GetID()) == JPH::EMotionType::Kinematic;
 }
-
-
 
 
 

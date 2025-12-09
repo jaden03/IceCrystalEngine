@@ -177,7 +177,8 @@
     <ClInclude Include="Core\Game.h" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Assets\Models\" />
+    <Content Include="Assets\Models\cone.obj" />
+    <Content Include="Assets\Models\cube.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

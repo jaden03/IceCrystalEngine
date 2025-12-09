@@ -110,7 +110,7 @@ void main()
     // -------------------------------------------------
     // 1. Base lighting (diffuse + specular)
     // -------------------------------------------------
-    vec3 lightDir = normalize(-directionalLight.direction);
+    vec3 lightDir = normalize(directionalLight.direction);
     vec3 color = directionalLight.color;
     float strength = directionalLight.strength;
 
