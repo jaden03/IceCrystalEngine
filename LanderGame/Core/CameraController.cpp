@@ -31,8 +31,11 @@ void CameraController::Update()
     lastMousePos = currentMousePos;
 
     // Update target rotation
-    targetYaw += mouseDeltaX * mouseSensitivity;
-    targetPitch -= mouseDeltaY * mouseSensitivity;
+    if (Input::GetMouseButton(GLFW_MOUSE_BUTTON_RIGHT))
+    {
+        targetYaw += mouseDeltaX * mouseSensitivity;
+        targetPitch -= mouseDeltaY * mouseSensitivity;
+    }
 
     // Clamp pitch
     if (targetPitch > maxPitch)

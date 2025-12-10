@@ -26,8 +26,16 @@ rb.OnTriggerExited = function(other)
     end
 end
 
+-- SAS
 local sasEnabled = false
 local sasToggleImage = sceneManager:GetActorByTag("sasToggleFG"):GetComponent("RawImage")
+
+-- Plume
+local enginePlume = sceneManager:GetActorByTag("enginePlume")
+
+function lerp(a, b, t)
+    return a + (b - a) * t
+end
 
 RunService.Update(function(dt)
     -- SAS Toggle
@@ -39,11 +47,12 @@ RunService.Update(function(dt)
     -- Lander Controls
     if input.GetKey(Key.Space) and fuel > 0 then
         rb:AddForce(transform.up * 5000)
-        light.enabled = true
-
+        light.strength = lerp(light.strength, 1, dt * 10)
+        enginePlume.transform.scale = vec3.lerp(enginePlume.transform.scale, vec3(1, 1, 1), dt * 10)
         fuel = fuel - .005;
     else
-        light.enabled = false
+        light.strength = lerp(light.strength, 0, dt * 10)
+        enginePlume.transform.scale = vec3.lerp(enginePlume.transform.scale, vec3(1, 0, 1), dt * 10)
     end
     
     if inRefuelZone and fuel < 100 then
@@ -78,5 +87,5 @@ RunService.Update(function(dt)
     
      if sasEnabled and vec3.length(totalTorque) < 1 then
         rb:SetAngularVelocity(rb:GetAngularVelocity() * .995)
-    end
+     end
 end)

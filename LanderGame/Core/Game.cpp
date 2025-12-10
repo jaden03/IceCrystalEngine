@@ -58,9 +58,8 @@ void Game::CreateLander()
 {
     // Lander
     lander = new Actor("Lander", "Lander");
-    Renderer* landerRenderer = new Renderer(FileUtil::AssetDir + "Models/lander.obj", mainMaterial);
+    lander->AddComponent<Renderer>(FileUtil::AssetDir + "Models/lander.obj", mainMaterial);
     lander->transform->SetPosition(0, 100, 0);
-    lander->AddComponent(landerRenderer);
     lander->AddComponent<BoxCollider>(glm::vec3(1.25, 2.45, 1.25));
     landerRB = lander->AddComponent<RigidBody>(5000.0f);
     lander->AddComponent<LuaExecutor>(FileUtil::AssetDir + "LuaScripts/LanderController.lua");
@@ -87,9 +86,16 @@ void Game::CreateLander()
     Actor* engineLight = new Actor("Engine Light", "engineLight");
     PointLight* enginePointLight = engineLight->AddComponent<PointLight>();
     enginePointLight->transform->position = lander->transform->position - glm::vec3(0, 1.5, 0);
-    enginePointLight->color = glm::vec3(242.0 / 255.0, 128.0 / 255.0, 56.0 / 255.0);
-    enginePointLight->enabled = false;
+    enginePointLight->color = glm::vec3(0, .4f, 1);
+    enginePointLight->strength = 0;
     enginePointLight->transform->SetParent(lander->transform);
+
+    // Engine Plume
+    Actor* enginePlume = new Actor("Engine Plume", "enginePlume");
+    enginePlume->AddComponent<Renderer>(FileUtil::AssetDir + "Models/landerPlume.obj", unlitMaterial);
+    enginePlume->transform->SetParent(lander->transform);
+    enginePlume->transform->SetScale(1, 0, 1);
+    enginePlume->transform->localPosition = glm::vec3(0, -1.0, 0);
 }
 
 void CreateCamera()
@@ -183,11 +189,7 @@ void Game::OnInit()
     // Create the horizontal and vertical input axis'
     Input::CreateAxis("horizontal", GLFW_KEY_D, GLFW_KEY_A);
     Input::CreateAxis("vertical", GLFW_KEY_W, GLFW_KEY_S);
-
-    // Lock and hide cursor
-    Input::lockCursor = true;
-    Input::hideCursor = true;
-
+    
     // Create the main material used for everything
     mainMaterial = new Material(FileUtil::AssetDir + "Materials/main.mat");
     unlitMaterial = new Material(FileUtil::AssetDir + "Materials/unlit.mat");
@@ -206,12 +208,7 @@ void Game::OnInit()
 
 void Game::OnUpdate(float deltaTime)
 {
-    if (Input::GetKeyDown(GLFW_KEY_TAB))
-    {
-        // Lock and hide cursor
-        Input::lockCursor = !Input::lockCursor;
-        Input::hideCursor = !Input::hideCursor;
-    }
+    
 }
 
 void Game::OnFixedUpdate(float fixedDeltaTime)

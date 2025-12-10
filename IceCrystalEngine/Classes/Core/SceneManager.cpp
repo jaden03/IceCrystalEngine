@@ -189,8 +189,6 @@ void SceneManager::Update()
 	// loop through actors to update components (also get the hovered actor here to save having to loop elsewhere)
 	for (int i = 0; i < actors->size(); i++)
 	{
-		actors->at(i)->transform->Update();
-
 		// Hovered actor
 		if (actors->at(i)->uniqueColor == hoveredColor)
 		{
