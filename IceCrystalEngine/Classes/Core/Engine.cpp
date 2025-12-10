@@ -6,15 +6,15 @@
 #include <Ice/Core/SceneInitializer.h>
 #include <Ice/Utils/FileUtil.h>
 #include <Ice/Core/PhysicsManager.h>
-#include <Ice/Editor/WebEditorManager.h>
-#include <Ice/Editor/GizmoRenderer.h>
-#include <Ice/Editor/EditorUI.h>
 #include <Ice/Core/SceneManager.h>
 
 #include "Ice/Core/IGame.h"
 
 
 #ifdef _DEBUG
+#include <Ice/Editor/WebEditorManager.h>
+#include <Ice/Editor/GizmoRenderer.h>
+#include <Ice/Editor/EditorUI.h>
 #include <Ice/Utils/DebugUtil.h>
 #endif
 
@@ -26,13 +26,11 @@ Engine::Engine()
 
 Engine::~Engine()
 {
-    // Stop web editor if running
-    WebEditorManager::GetInstance().Stop();
     
     LuaManager::GetInstance().Cleanup();
-    EditorUI::GetInstance().Cleanup();
 #ifdef _DEBUG
-    // DebugUtil::GetInstance().Cleanup(); // Disabled - see Init()
+    DebugUtil::GetInstance().Cleanup();
+    WebEditorManager::GetInstance().Stop();
 #endif
     glfwTerminate();
 }
@@ -54,17 +52,13 @@ void Engine::Init()
     LightingManager::GetInstance().InitializeLighting();
     RendererManager::GetInstance();
     
-    // Initialize gizmo renderer for web editor
+#ifdef _DEBUG
+    DebugUtil::GetInstance();
+    WebEditorManager::GetInstance().Start(8080);
     GizmoRenderer::GetInstance().Initialize();
     
     // Initialize the editor UI (this also initializes ImGui)
     EditorUI::GetInstance().Initialize();
-    
-#ifdef _DEBUG
-    // NOTE: DebugUtil is disabled because EditorUI now handles ImGui initialization
-    // If you need DebugUtil, modify it to not initialize ImGui context
-    // DebugUtil::GetInstance();
-    WebEditorManager::GetInstance().Start(8080);
 #endif
 }
 
@@ -83,10 +77,9 @@ void Engine::Run()
 
         // Update
 #ifdef _DEBUG
-        // DebugUtil disabled - EditorUI handles console now
-        // DebugUtil& debugUtil = DebugUtil::GetInstance();
-        // if (input.GetKeyDown(GLFW_KEY_GRAVE_ACCENT))
-        //     debugUtil.showConsole = !debugUtil.showConsole;
+        //DebugUtil& debugUtil = DebugUtil::GetInstance();
+        //if (input.GetKeyDown(GLFW_KEY_GRAVE_ACCENT))
+           // debugUtil.showConsole = !debugUtil.showConsole;
 #endif
 
         Update();
@@ -129,17 +122,23 @@ void Engine::StartFrame()
     SceneManager::GetInstance().deltaTime = current - lastFrameTime;
     lastFrameTime = current;
 
+#ifdef _DEBUG
     EditorUI::GetInstance().BeginFrame();
-    // Note: DebugUtil is disabled in favor of EditorUI
+    //DebugUtil::GetInstance().StartOfFrame();
+#endif
 }
 
 void Engine::Update()
 {
     SceneManager& sceneManager = SceneManager::GetInstance();
+#ifdef _DEBUG
     WebEditorManager& webEditor = WebEditorManager::GetInstance();
     
     // Skip physics and Lua updates if engine is paused from web editor
     bool isPaused = webEditor.IsEnginePaused();
+#else
+    bool isPaused = false;
+#endif
     
     if (!isPaused)
     {
@@ -153,19 +152,23 @@ void Engine::Update()
         }
     }
 
+#ifdef _DEBUG
     // Update web editor (process queued messages)
     webEditor.Update();
-
+#endif
+    
     // Other engine updates (rendering still happens even when paused)
     sceneManager.Update();
 }
 
 void Engine::FixedUpdate(float deltaTime)
 {
+#ifdef _DEBUG
     // Don't update physics if paused
     bool isEnginePaused = EditorUI::GetInstance().IsEnginePaused() || WebEditorManager::GetInstance().IsEnginePaused();
     if (isEnginePaused)
         return;
+#endif
     
     // Accumulate time
     physicsAccumulator += deltaTime;
@@ -185,6 +188,9 @@ void Engine::FixedUpdate(float deltaTime)
             game->OnFixedUpdate(fixedDeltaTime);
         }
         
+        // Fire FixedUpdate within the lua RunService
+        RunService::GetInstance().FireFixedUpdate(fixedDeltaTime);
+
         physicsAccumulator -= fixedDeltaTime;
     }
 }
@@ -194,10 +200,11 @@ void Engine::EndFrame()
     WindowManager& windowManager = WindowManager::GetInstance();
     Input& input = Input::GetInstance();
 
+#ifdef _DEBUG
     EditorUI::GetInstance().RenderEditor();
     EditorUI::GetInstance().EndFrame();
     // Note: DebugUtil is disabled in favor of EditorUI
-
+#endif
     glfwSwapBuffers(windowManager.window);
     input.ClearInput();
     glfwPollEvents();

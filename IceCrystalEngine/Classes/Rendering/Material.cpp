@@ -33,16 +33,16 @@ void Material::InitializeMaterial()
 		if (jsonData["Texture"] != "")
 		{
 			std::string texturePath = jsonData["Texture"];
-			texture = new Texture(texturePath);
+			texture = std::make_shared<Texture>(texturePath);
 		}
 		else
 		{
-			texture = new Texture();
+			texture = std::make_shared<Texture>();
 		}
 
 		// Get the shader path
 		std::string shaderPath = jsonData["Shader"];
-		shader = new Shader(shaderPath);
+		shader = std::make_shared<Shader>(shaderPath);
 
 		// Get the color
 		color = glm::vec3(jsonData["Color"][0], jsonData["Color"][1], jsonData["Color"][2]);
@@ -114,12 +114,4 @@ void Material::ApplyProperties()
 	{
 		shader->setVec4(name, value);
 	}
-}
-
-
-Material::~Material()
-{
-	// free the memory
-	delete shader;
-	delete texture;
 }

@@ -20,6 +20,8 @@ public:
 
 	~DirectionalLight();
 
+	void Ready() override;
+
 
 	glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 	float strength = 1;

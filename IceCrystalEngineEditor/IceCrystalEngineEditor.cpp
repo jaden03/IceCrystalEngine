@@ -2,7 +2,7 @@
 
 int main(int argc, char* argv[])
 {
-    Engine engine;
+    Engine &engine = Engine::GetInstance();
     engine.Run();
     return 0;
 }

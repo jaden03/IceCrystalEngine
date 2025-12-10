@@ -22,6 +22,7 @@ enum class RawImageSourceType
 class RawImage : public Component
 {
 public:
+    RawImage() : texture(nullptr), shader(nullptr) {}
     RawImage(std::string texturePath);
     RawImage(std::string texturePath, std::string shaderPath);
     RawImage(unsigned int textureHandle);

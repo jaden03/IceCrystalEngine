@@ -50,7 +50,7 @@ public:
 		
 		sol::function f = thread_lua.load_file(executor->filePath);
 
-		sol::environment env(thread_lua, sol::create, thread_lua.globals());
+		sol::environment env(thread_lua, sol::create, lua.globals());
 		env["actor"] = executor->owner;
 		env["transform"] = executor->transform;
 		
@@ -109,6 +109,30 @@ private:
 
 	LuaManager(LuaManager const&) = delete; // Delete copy constructor
 	void operator=(LuaManager const&) = delete; // Delete assignment operator
+};
+
+class RunService
+{
+public:
+	static RunService& GetInstance()
+	{
+		static RunService instance;
+		return instance;
+	}
+
+	void FireUpdate(float deltaTime);
+	void FireFixedUpdate(float fixedDeltaTime);
+	void FireLateUpdate(float deltaTime);
+
+	void ConnectUpdate(sol::function callback);
+	void ConnectFixedUpdate(sol::function callback);
+	void ConnectLateUpdate(sol::function callback);
+private:
+	RunService() = default;
+
+	std::vector<sol::function> updateCallbacks;
+	std::vector<sol::function> fixedUpdateCallbacks;
+	std::vector<sol::function> lateUpdateCallbacks;
 };
 
 #endif

@@ -11,6 +11,7 @@
 #include "Ice/Components/Physics/BoxCollider.h"
 #include "Ice/Components/Physics/MeshCollider.h"
 #include "Ice/Components/Physics/RigidBody.h"
+#include "Ice/Core/Engine.h"
 #include "Ice/Core/LuaManager.h"
 
 SceneInitializer::SceneInitializer()
@@ -50,7 +51,7 @@ void SceneInitializer::InitializeScene()
 	sunTilt->transform->Rotate(glm::vec3(0.0f, 45.0f, 0.0f));
 	//// set the rotation quat to be at an angle and angled down
 	sun->transform->TranslateLocal(0, 5, -12.5f);
-	sun->transform->RotateLocal(-50, 0, 0);
+	sun->transform->RotateLocal(50, 0, 0);
 	sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
 
 	// Actor* shadowDebugImage = new Actor("Shadow Debug Image", "shadowDebugImage");

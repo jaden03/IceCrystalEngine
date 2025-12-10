@@ -29,7 +29,7 @@ layout(std140, binding = 1) uniform LightingData
     int directionalLightExists;
     int pointLightCount;
     int spotLightCount;
-    
+
     float ambientLightStrength;
     vec3 ambientLightColor;
 
@@ -39,16 +39,16 @@ layout(std140, binding = 1) uniform LightingData
 layout(std140, binding = 2) uniform DirectionalLightData
 {
     vec3 direction;
-    float dld_padding0;
-    
+    int enabled;
+
     vec3 color;
     float dld_padding1;
-    
+
     float strength;
     int castShadows;
     int cascadeCount;
     int dld_padding2;
-    
+
     float cascadeSplits[MAX_CASCADES];
 } directionalLight;
 uniform sampler2DArray directionalShadowMap;
@@ -59,7 +59,7 @@ layout(std140, binding = 3) uniform DirectionalCascadeData {
 struct PointLight
 {
     vec3 position;
-    float pl_padding0;
+    int enabled;
 
     vec3 color;
     float strength;
@@ -96,16 +96,16 @@ uniform sampler2D spotShadowMap[MAX_SPOT_LIGHTS];
 
 void main()
 {
-	vec3 ambientLighting = ambientLightStrength * ambientLightColor;
+    vec3 ambientLighting = ambientLightStrength * ambientLightColor;
 
-	vec4 objectColor = texture(fragTexture, fragUV);
-    
-	vec3 lighting = vec3(0.0);
+    vec4 objectColor = texture(fragTexture, fragUV);
+
+    vec3 lighting = vec3(0.0);
 
     vec3 normal = normalize(fragNormal);
 
     vec3 viewDir = normalize(viewPos - fragPos);
-    
+
     // Directional Light
     // -------------------------------------------------
     // 1. Base lighting (diffuse + specular)
@@ -117,7 +117,7 @@ void main()
     float diff = max(dot(normal, lightDir), 0.0);
 
     vec3 reflectDir = reflect(-lightDir, normal);
-    
+
     float shininess = mix(1.0, 256.0, smoothness);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
@@ -129,14 +129,14 @@ void main()
     // =================================================
     float shadow = 0.0;
 
-    if (directionalLightExists == 1 && directionalLight.castShadows == 1)
+    if (directionalLightExists == 1 && directionalLight.castShadows == 1 && directionalLight.enabled == 1)
     {
         // ---------------------------------------------
         // 2. Choose cascade based on view-space depth
         // ---------------------------------------------
         vec4 fragPosViewSpace = view * vec4(fragPos, 1.0);
         float depthValue = abs(fragPosViewSpace.z);
-        
+
         int cascade = -1;
         for (int c = 0; c < directionalLight.cascadeCount; c++)
         {
@@ -154,30 +154,30 @@ void main()
         // ---------------------------------------------
         // SET COLOR AND RETURN BASED ON CASCADE INDEX
         // ---------------------------------------------
-//        if (cascade == 0)
-//        {
-//            FragColor = vec4(1, 0, 0, 1);   // red
-//            return;
-//        }
-//        else if (cascade == 1)
-//        {
-//            FragColor = vec4(0, 1, 0, 1);   // green
-//            return;
-//        }
-//        else if (cascade == 2)
-//        {
-//            FragColor = vec4(0, 0, 1, 1);   // blue
-//            return;
-//        }
-//        else if (cascade == 3)
-//        {
-//            FragColor = vec4(1, 1, 0, 1);   // yellow
-//            return;
-//        }
-//
-//        // fallback in case extra cascades exist
-//        FragColor = vec4(1, 0, 1, 1);       // magenta
-//        return;
+        //        if (cascade == 0)
+        //        {
+        //            FragColor = vec4(1, 0, 0, 1);   // red
+        //            return;
+        //        }
+        //        else if (cascade == 1)
+        //        {
+        //            FragColor = vec4(0, 1, 0, 1);   // green
+        //            return;
+        //        }
+        //        else if (cascade == 2)
+        //        {
+        //            FragColor = vec4(0, 0, 1, 1);   // blue
+        //            return;
+        //        }
+        //        else if (cascade == 3)
+        //        {
+        //            FragColor = vec4(1, 1, 0, 1);   // yellow
+        //            return;
+        //        }
+        //
+        //        // fallback in case extra cascades exist
+        //        FragColor = vec4(1, 0, 1, 1);       // magenta
+        //        return;
 
         // ---------------------------------------------
         // 3. Transform fragment into light space
@@ -185,7 +185,7 @@ void main()
         vec4 fragPosLightSpace = uboCascade.cascadeMatrices[cascade] * vec4(fragPos, 1.0);
         vec3 proj = fragPosLightSpace.xyz / fragPosLightSpace.w;
         proj = proj * 0.5 + 0.5;
-        
+
         // -----------------------------------------
         // 4. Check if inside shadow map bounds
         // -----------------------------------------
@@ -194,17 +194,17 @@ void main()
             // -------------------------------------
             // 5. Bias (reduces shadow acne)
             // -------------------------------------
-//            vec3 normal = normalize(fragNormal);
-//            float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
-//            const float biasModifier = 0.5f;
-//            if (cascade == directionalLight.cascadeCount)
-//            {
-//                bias *= 1 / (farPlane * biasModifier);
-//            }
-//            else
-//            {
-//                bias *= 1 / (directionalLight.cascadeSplits[cascade] * biasModifier);
-//            }
+            //            vec3 normal = normalize(fragNormal);
+            //            float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+            //            const float biasModifier = 0.5f;
+            //            if (cascade == directionalLight.cascadeCount)
+            //            {
+            //                bias *= 1 / (farPlane * biasModifier);
+            //            }
+            //            else
+            //            {
+            //                bias *= 1 / (directionalLight.cascadeSplits[cascade] * biasModifier);
+            //            }
 
 
             // -------------------------------------
@@ -219,7 +219,7 @@ void main()
                 for (int y = -2; y <= 2; y++)
                 {
                     float sampleDepth = texture(directionalShadowMap, vec3(proj.xy + vec2(x, y) * texelSize, cascade)).r;
-//                    shadowSum += (proj.z - bias) > sampleDepth ? 1.0 : 0.0;
+                    //                    shadowSum += (proj.z - bias) > sampleDepth ? 1.0 : 0.0;
                     shadowSum += proj.z > sampleDepth ? 1.0 : 0.0;
                 }
             }
@@ -230,12 +230,14 @@ void main()
     // Final contribution from the directional light
     // =================================================
     lighting += (diffuse + specular) * strength * (1.0 - shadow);
-    
+
 
     // Point Lights
     for (int i = 0; i < pointLightCount; i++)
     {
         PointLight light = pointLights[i];
+
+        if (light.enabled == 0) continue;
 
         vec3 lightDir = normalize(light.position - fragPos);
         vec3 color = light.color;
@@ -289,7 +291,7 @@ void main()
 
         // Shadow
         float shadow = 0.0;
-        
+
         if (light.castShadows)
         {
             vec4 fragPosLightSpace = light.lightSpaceMatrix * vec4(fragPos, 1.0);
@@ -301,7 +303,7 @@ void main()
             float bias = 0.0003;
 
             vec2 texelSize = 1.0 / textureSize(spotShadowMap[i], 0);
-            
+
             float shadowSum = 0.0;
             for (int x = -2; x <= 2; ++x)
             {
@@ -314,7 +316,7 @@ void main()
             shadow = shadowSum / 25.0;
 
             if (projCoords.z > 1.0)
-                shadow = 0.0;
+            shadow = 0.0;
         }
 
 
@@ -324,27 +326,27 @@ void main()
     // this is a hack to make sure the light will always be visible (even if it should realistically be absorbed by the object)
     vec3 endColor = fragColor;
     if (endColor.r == 0.0)
-        endColor.r = 0.1;
+    endColor.r = 0.1;
     if (endColor.g == 0.0)
-        endColor.g = 0.1;
+    endColor.g = 0.1;
     if (endColor.b == 0.0)
-        endColor.b = 0.1;
+    endColor.b = 0.1;
     if (objectColor.r == 0.0)
-        objectColor.r = 0.1;
+    objectColor.r = 0.1;
     if (objectColor.g == 0.0)
-        objectColor.g = 0.1;
+    objectColor.g = 0.1;
     if (objectColor.b == 0.0)
-        objectColor.b = 0.1;
+    objectColor.b = 0.1;
 
     vec4 result = vec4((ambientLighting + lighting), 1.0) * objectColor * vec4(endColor, 1.0);
-	FragColor = result;
+    FragColor = result;
 
     // this calculates bloom
     float brightness = length(FragColor.rgb);
     if (brightness > 3)
-        BrightColor = vec4(FragColor.rgb, 1.0);
+    BrightColor = vec4(FragColor.rgb, 1.0);
     else
-        BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
+    BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
 
     // poor mans raycasting
     // put uniqueColor into a range of 0-1

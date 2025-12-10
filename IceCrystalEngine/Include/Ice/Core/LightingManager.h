@@ -45,7 +45,7 @@ public:
 
     void InitializeLighting();
 
-    void AddDirectionalLight(DirectionalLight* light);
+    void SetDirectionalLight(DirectionalLight* light);
     void AddPointLight(PointLight* light);
     void AddSpotLight(SpotLight* light);
 

@@ -203,8 +203,6 @@ void Renderer::CreateGLBuffers() {
 
 Renderer::~Renderer()
 {
-	delete material;
-
 	for (MeshHolder meshHolder : meshHolders)
 	{
 		glDeleteVertexArrays(1, &meshHolder.vertexArrayObject);
@@ -261,29 +259,17 @@ void Renderer::Update()
 	}
 
 	// only need to recalculate the matrices if position, rotation, or scale has changed
-	if (transform->position != lastPosition || transform->eulerAngles != lastEulerAngles || transform->scale != lastScale)
+	if (transform->position != lastPosition || transform->rotation != lastRotation || transform->scale != lastScale)
 	{
 		modelMatrix = glm::mat4(1.0f);
-		
-		// translation
 		modelMatrix = glm::translate(modelMatrix, transform->position);
-
-		// Rotate around the local right axis (pitch)
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(-transform->eulerAngles.x), glm::vec3(1, 0, 0));
-		// Rotate around the local up axis (yaw)
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(-transform->eulerAngles.y), glm::vec3(0, 1, 0));
-		// Rotate around the local forward axis (roll)
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(-transform->eulerAngles.z), glm::vec3(0, 0, 1));
-
-		// scale
+		modelMatrix *= glm::mat4_cast(transform->rotation);
 		modelMatrix = glm::scale(modelMatrix, transform->scale * transform->localScale);
-
-		// calculate the normal model
+    
 		normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatrix)));
-		
-		// set the last variables
+    
 		lastPosition = transform->position;
-		lastEulerAngles = transform->eulerAngles;
+		lastRotation = transform->rotation;
 		lastScale = transform->scale;
 	}
 

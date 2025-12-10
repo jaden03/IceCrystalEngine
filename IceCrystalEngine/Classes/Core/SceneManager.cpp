@@ -69,8 +69,8 @@ void SceneManager::Update()
 		{
 			// create a fallback camera
 			Actor* cameraActor = new Actor("Main Camera", "MainCamera");
-			cameraActor->AddComponent<Camera>();
-
+			mainCamera = cameraActor->AddComponent<Camera>();
+		
 			// TODO : add proper logging
 			std::cout << "No Camera Component found in Scene, A fallback Actor with a Camera Component has been created. You can access the Actor by the tag \"MainCamera\"." << std::endl;
 		}
@@ -322,15 +322,20 @@ void SceneManager::Update()
 	// update UBOs for renderning
 	rendererManager.UpdateUBOs();
 
+	// Update transforms hierarchically - only call Update on root transforms
+	for (int i = 0; i < actors->size(); i++)
+	{
+		if (actors->at(i)->transform->parent == nullptr)
+		{
+			actors->at(i)->transform->Update();
+		}
+	}
+
 	Actor* currentHoveredActor = nullptr;
 	glm::vec3 hoveredColor = postProcessor.hoveredActorColor;
 	// loop through actors to update components (also get the hovered actor here to save having to loop elsewhere)
 	for (int i = 0; i < actors->size(); i++)
 	{
-		// Always update transforms for rendering (child position calculations)
-		// for some reason I needed to update the child positions in Update and the rotations in LateUpdate
-		actors->at(i)->transform->Update();
-
 		// Hovered actor
 		if (actors->at(i)->uniqueColor == hoveredColor)
 		{
@@ -361,13 +366,13 @@ void SceneManager::Update()
 		}
 	}
 	hoveredActor = currentHoveredActor;
-	
-	// loop through actors again for LateUpdate and transform update
+
+	// lateupdate
+	RunService::GetInstance().FireLateUpdate(deltaTime);
 	for (int i = 0; i < actors->size(); i++)
 	{
-		// Always update transform LateUpdate for rendering (calculates forward/right/up vectors and rotation)
+		// update the transform
 		actors->at(i)->transform->LateUpdate();
-		
 		// loop through components
 		for (int j = 0; j < actors->at(i)->components->size(); j++)
 		{

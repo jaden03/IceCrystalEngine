@@ -73,6 +73,8 @@ void RawImage::InitializeSharedResources()
 
 void RawImage::OverlayUpdate()
 {
+    if (!enabled) return;
+    
     float posX = transform->position.x + (transform->scale.x * .5f);
     float posY = transform->position.y + (transform->scale.y * .5f);
     glm::vec3 pos = glm::vec3(posX, posY, transform->position.z);

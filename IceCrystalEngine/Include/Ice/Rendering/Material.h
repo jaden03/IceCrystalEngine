@@ -10,6 +10,7 @@
 #include <Ice/Rendering/Shader.h>
 #include <Ice/Rendering/Texture.h>
 #include <unordered_map>
+#include <memory>
 
 class Material // this is the class definition
 {
@@ -21,8 +22,8 @@ public:
 	std::string materialPath = "{PROJECT_ROOT}Assets/Materials/default.mat";
 	std::string name = "Default Material"; // the name of the material
 
-	Texture* texture; // the texture of the material
-	Shader* shader; // the shader the material uses
+	std::shared_ptr<Texture> texture; // the texture of the material
+	std::shared_ptr<Shader> shader; // the shader the material uses
 
 	glm::vec3 color;
 	float smoothness;
