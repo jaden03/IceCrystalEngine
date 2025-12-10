@@ -5,8 +5,6 @@ VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IceCrystalEngine", "IceCrystalEngine\IceCrystalEngine.vcxproj", "{23C6F331-C50C-4CB5-9665-8093D96B2A22}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LanderGame", "LanderGame\LanderGame.vcxproj", "{AEF8D14D-D937-41A7-ACB0-FF049B014AB4}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IceCrystalEngineEditor", "IceCrystalEngineEditor\IceCrystalEngineEditor.vcxproj", "{6E4569F9-048D-4BDC-B223-9A7B230EA2C4}"
 EndProject
 Global
@@ -25,14 +23,6 @@ Global
 		{23C6F331-C50C-4CB5-9665-8093D96B2A22}.Release|x64.Build.0 = Release|x64
 		{23C6F331-C50C-4CB5-9665-8093D96B2A22}.Release|x86.ActiveCfg = Release|Win32
 		{23C6F331-C50C-4CB5-9665-8093D96B2A22}.Release|x86.Build.0 = Release|Win32
-		{AEF8D14D-D937-41A7-ACB0-FF049B014AB4}.Debug|x64.ActiveCfg = Debug|x64
-		{AEF8D14D-D937-41A7-ACB0-FF049B014AB4}.Debug|x64.Build.0 = Debug|x64
-		{AEF8D14D-D937-41A7-ACB0-FF049B014AB4}.Debug|x86.ActiveCfg = Debug|Win32
-		{AEF8D14D-D937-41A7-ACB0-FF049B014AB4}.Debug|x86.Build.0 = Debug|Win32
-		{AEF8D14D-D937-41A7-ACB0-FF049B014AB4}.Release|x64.ActiveCfg = Release|x64
-		{AEF8D14D-D937-41A7-ACB0-FF049B014AB4}.Release|x64.Build.0 = Release|x64
-		{AEF8D14D-D937-41A7-ACB0-FF049B014AB4}.Release|x86.ActiveCfg = Release|Win32
-		{AEF8D14D-D937-41A7-ACB0-FF049B014AB4}.Release|x86.Build.0 = Release|Win32
 		{6E4569F9-048D-4BDC-B223-9A7B230EA2C4}.Debug|x64.ActiveCfg = Debug|x64
 		{6E4569F9-048D-4BDC-B223-9A7B230EA2C4}.Debug|x64.Build.0 = Debug|x64
 		{6E4569F9-048D-4BDC-B223-9A7B230EA2C4}.Debug|x86.ActiveCfg = Debug|Win32

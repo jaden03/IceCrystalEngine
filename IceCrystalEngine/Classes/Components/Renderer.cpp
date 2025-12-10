@@ -43,6 +43,9 @@ bool Renderer::IsCacheValid()
 
 	if (!fs::exists(GetCachePath())) return false;
 
+	// If the cache exists but the source OBJ doesn't, the cache is still valid
+	if (!fs::exists(ModelPath)) return true;
+
 	auto cacheTime = fs::last_write_time(GetCachePath());
 	auto modelTime = fs::last_write_time(ModelPath);
 
@@ -227,8 +230,15 @@ void Renderer::InitializeRenderer()
 			// Save to cache for next time
 			SaveToCache();
 		} else {
+			std::cout << "Failed to load model: " << ModelPath << " - meshHolders is empty!" << std::endl;
 			return; // Failed to load model
 		}
+	}
+    
+	// Verify we have meshes before creating GL buffers
+	if (meshHolders.empty()) {
+		std::cout << "Warning: No meshes loaded for " << ModelPath << std::endl;
+		return;
 	}
     
 	// Create OpenGL buffers
@@ -241,6 +251,12 @@ void Renderer::Update()
 	if (material == nullptr)
 	{
 		std::cout << "Material not found" << std::endl;
+		return;
+	}
+
+	// Don't render if no meshes were loaded
+	if (meshHolders.empty())
+	{
 		return;
 	}
 
@@ -333,6 +349,12 @@ void Renderer::Update()
 
 void Renderer::UpdateShadows()
 {
+	// Don't render shadows if no meshes were loaded
+	if (meshHolders.empty())
+	{
+		return;
+	}
+
 	// position stuff
 	lightingManager.shadowShader->setMat4("model", modelMatrix);
 	lightingManager.shadowsCascadedShader->setMat4("model", modelMatrix);

@@ -49,6 +49,10 @@ void RendererManager::UpdateUBOs()
     // Global Data
     SceneManager &sceneManager = SceneManager::GetInstance();
 
+    // Check if mainCamera exists before accessing it
+    if (sceneManager.mainCamera == nullptr)
+        return;
+
     GlobalData.view = sceneManager.mainCamera->view;
     GlobalData.projection = sceneManager.mainCamera->projection;
     GlobalData.viewPos = sceneManager.mainCamera->transform->position;

@@ -66,6 +66,20 @@ public:
 
     bool IsDragging() const { return isDragging; }
 
+    // High-level mouse interaction methods
+    void HandleMouseDown(const glm::vec2& mousePos, const glm::vec2& screenSize,
+                        const glm::mat4& view, const glm::mat4& projection, Actor* actor);
+    
+    void HandleMouseMove(const glm::vec2& mousePos, const glm::vec2& screenSize,
+                        const glm::mat4& view, const glm::mat4& projection);
+    
+    void HandleMouseUp();
+
+    // Get currently hovered axis (for highlighting)
+    GizmoAxis GetHoveredAxis(const glm::vec2& mousePos, const glm::vec2& screenSize,
+                            const glm::mat4& view, const glm::mat4& projection,
+                            const glm::vec3& gizmoPosition);
+
 private:
     GizmoRenderer();
     ~GizmoRenderer();
@@ -83,9 +97,12 @@ private:
     bool enabled;
     bool isDragging;
     GizmoAxis dragAxis;
+    GizmoAxis hoveredAxis;
     Actor* dragActor;
     glm::vec3 dragStartWorldPos;
     glm::vec3 dragStartActorPos;
+    glm::vec3 dragStartActorRotation;
+    glm::vec3 dragStartActorScale;
     glm::vec2 dragStartMousePos;
 
     // Rendering functions
@@ -120,6 +137,21 @@ private:
     
     float CalculateGizmoSize(const glm::vec3& position, const glm::mat4& view, 
                              const glm::mat4& projection, const glm::vec2& screenSize);
+
+    // Ray-casting for gizmo hit detection
+    bool RayIntersectsArrow(const glm::vec3& rayOrigin, const glm::vec3& rayDir,
+                           const glm::vec3& arrowStart, const glm::vec3& arrowDir,
+                           float arrowLength, float threshold);
+    
+    bool RayIntersectsCircle(const glm::vec3& rayOrigin, const glm::vec3& rayDir,
+                            const glm::vec3& circleCenter, const glm::vec3& circleNormal,
+                            float radius, float threshold);
+
+    glm::vec3 ProjectPointOntoPlane(const glm::vec3& point, const glm::vec3& planeNormal,
+                                    const glm::vec3& planePoint);
+    
+    glm::vec3 ProjectPointOntoLine(const glm::vec3& point, const glm::vec3& lineStart,
+                                   const glm::vec3& lineDir);
 };
 
 #endif

@@ -7,6 +7,8 @@
 #include <Ice/Utils/FileUtil.h>
 #include <Ice/Core/PhysicsManager.h>
 #include <Ice/Editor/WebEditorManager.h>
+#include <Ice/Editor/GizmoRenderer.h>
+#include <Ice/Editor/EditorUI.h>
 #include <Ice/Core/SceneManager.h>
 
 #include "Ice/Core/IGame.h"
@@ -28,8 +30,9 @@ Engine::~Engine()
     WebEditorManager::GetInstance().Stop();
     
     LuaManager::GetInstance().Cleanup();
+    EditorUI::GetInstance().Cleanup();
 #ifdef _DEBUG
-    DebugUtil::GetInstance().Cleanup();
+    // DebugUtil::GetInstance().Cleanup(); // Disabled - see Init()
 #endif
     glfwTerminate();
 }
@@ -51,8 +54,16 @@ void Engine::Init()
     LightingManager::GetInstance().InitializeLighting();
     RendererManager::GetInstance();
     
+    // Initialize gizmo renderer for web editor
+    GizmoRenderer::GetInstance().Initialize();
+    
+    // Initialize the editor UI (this also initializes ImGui)
+    EditorUI::GetInstance().Initialize();
+    
 #ifdef _DEBUG
-    DebugUtil::GetInstance();
+    // NOTE: DebugUtil is disabled because EditorUI now handles ImGui initialization
+    // If you need DebugUtil, modify it to not initialize ImGui context
+    // DebugUtil::GetInstance();
     WebEditorManager::GetInstance().Start(8080);
 #endif
 }
@@ -72,9 +83,10 @@ void Engine::Run()
 
         // Update
 #ifdef _DEBUG
-        DebugUtil& debugUtil = DebugUtil::GetInstance();
-        if (input.GetKeyDown(GLFW_KEY_GRAVE_ACCENT))
-            debugUtil.showConsole = !debugUtil.showConsole;
+        // DebugUtil disabled - EditorUI handles console now
+        // DebugUtil& debugUtil = DebugUtil::GetInstance();
+        // if (input.GetKeyDown(GLFW_KEY_GRAVE_ACCENT))
+        //     debugUtil.showConsole = !debugUtil.showConsole;
 #endif
 
         Update();
@@ -117,9 +129,8 @@ void Engine::StartFrame()
     SceneManager::GetInstance().deltaTime = current - lastFrameTime;
     lastFrameTime = current;
 
-#ifdef _DEBUG
-    DebugUtil::GetInstance().StartOfFrame();
-#endif
+    EditorUI::GetInstance().BeginFrame();
+    // Note: DebugUtil is disabled in favor of EditorUI
 }
 
 void Engine::Update()
@@ -152,7 +163,8 @@ void Engine::Update()
 void Engine::FixedUpdate(float deltaTime)
 {
     // Don't update physics if paused
-    if (WebEditorManager::GetInstance().IsEnginePaused())
+    bool isEnginePaused = EditorUI::GetInstance().IsEnginePaused() || WebEditorManager::GetInstance().IsEnginePaused();
+    if (isEnginePaused)
         return;
     
     // Accumulate time
@@ -182,9 +194,9 @@ void Engine::EndFrame()
     WindowManager& windowManager = WindowManager::GetInstance();
     Input& input = Input::GetInstance();
 
-#ifdef _DEBUG
-    DebugUtil::GetInstance().EndOfFrame();
-#endif
+    EditorUI::GetInstance().RenderEditor();
+    EditorUI::GetInstance().EndFrame();
+    // Note: DebugUtil is disabled in favor of EditorUI
 
     glfwSwapBuffers(windowManager.window);
     input.ClearInput();

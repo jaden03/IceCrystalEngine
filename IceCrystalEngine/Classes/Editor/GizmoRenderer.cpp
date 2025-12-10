@@ -15,6 +15,7 @@ GizmoRenderer::GizmoRenderer()
     , enabled(false)
     , isDragging(false)
     , dragAxis(GizmoAxis::None)
+    , hoveredAxis(GizmoAxis::None)
     , dragActor(nullptr)
 {
 }
@@ -214,19 +215,26 @@ void GizmoRenderer::RenderTranslateGizmo(const glm::vec3& position, const glm::m
         glm::vec2(WindowManager::GetInstance().GetWindowWidth(), 
                   WindowManager::GetInstance().GetWindowHeight()));
 
+    // Determine color based on drag or hover state
+    auto getAxisColor = [this](GizmoAxis axis, const glm::vec3& baseColor) -> glm::vec3 {
+        if (isDragging && dragAxis == axis) return glm::vec3(1, 1, 0); // Yellow when dragging
+        if (!isDragging && hoveredAxis == axis) return glm::vec3(1, 0.8f, 0); // Orange when hovering
+        return baseColor; // Original color
+    };
+
     // X axis (Red)
     DrawArrow(position, glm::vec3(1, 0, 0), gizmoSize, 
-              dragAxis == GizmoAxis::X ? glm::vec3(1, 1, 0) : glm::vec3(1, 0, 0), 
+              getAxisColor(GizmoAxis::X, glm::vec3(1, 0, 0)), 
               view, projection);
 
     // Y axis (Green)
     DrawArrow(position, glm::vec3(0, 1, 0), gizmoSize, 
-              dragAxis == GizmoAxis::Y ? glm::vec3(1, 1, 0) : glm::vec3(0, 1, 0), 
+              getAxisColor(GizmoAxis::Y, glm::vec3(0, 1, 0)), 
               view, projection);
 
     // Z axis (Blue)
     DrawArrow(position, glm::vec3(0, 0, 1), gizmoSize, 
-              dragAxis == GizmoAxis::Z ? glm::vec3(1, 1, 0) : glm::vec3(0, 0, 1), 
+              getAxisColor(GizmoAxis::Z, glm::vec3(0, 0, 1)), 
               view, projection);
 }
 
@@ -236,19 +244,26 @@ void GizmoRenderer::RenderRotateGizmo(const glm::vec3& position, const glm::mat4
         glm::vec2(WindowManager::GetInstance().GetWindowWidth(), 
                   WindowManager::GetInstance().GetWindowHeight()));
 
+    // Determine color based on drag or hover state
+    auto getAxisColor = [this](GizmoAxis axis, const glm::vec3& baseColor) -> glm::vec3 {
+        if (isDragging && dragAxis == axis) return glm::vec3(1, 1, 0); // Yellow when dragging
+        if (!isDragging && hoveredAxis == axis) return glm::vec3(1, 0.8f, 0); // Orange when hovering
+        return baseColor; // Original color
+    };
+
     // X circle (Red)
     DrawCircle(position, glm::vec3(1, 0, 0), gizmoSize, 
-               dragAxis == GizmoAxis::X ? glm::vec3(1, 1, 0) : glm::vec3(1, 0, 0), 
+               getAxisColor(GizmoAxis::X, glm::vec3(1, 0, 0)), 
                view, projection);
 
     // Y circle (Green)
     DrawCircle(position, glm::vec3(0, 1, 0), gizmoSize, 
-               dragAxis == GizmoAxis::Y ? glm::vec3(1, 1, 0) : glm::vec3(0, 1, 0), 
+               getAxisColor(GizmoAxis::Y, glm::vec3(0, 1, 0)), 
                view, projection);
 
     // Z circle (Blue)
     DrawCircle(position, glm::vec3(0, 0, 1), gizmoSize, 
-               dragAxis == GizmoAxis::Z ? glm::vec3(1, 1, 0) : glm::vec3(0, 0, 1), 
+               getAxisColor(GizmoAxis::Z, glm::vec3(0, 0, 1)), 
                view, projection);
 }
 
@@ -258,17 +273,24 @@ void GizmoRenderer::RenderScaleGizmo(const glm::vec3& position, const glm::mat4&
         glm::vec2(WindowManager::GetInstance().GetWindowWidth(), 
                   WindowManager::GetInstance().GetWindowHeight()));
 
+    // Determine color based on drag or hover state
+    auto getAxisColor = [this](GizmoAxis axis, const glm::vec3& baseColor) -> glm::vec3 {
+        if (isDragging && dragAxis == axis) return glm::vec3(1, 1, 0); // Yellow when dragging
+        if (!isDragging && hoveredAxis == axis) return glm::vec3(1, 0.8f, 0); // Orange when hovering
+        return baseColor; // Original color
+    };
+
     // Similar to translate but with cubes at the end instead of arrows
     DrawLine(position, position + glm::vec3(gizmoSize, 0, 0), 
-             dragAxis == GizmoAxis::X ? glm::vec3(1, 1, 0) : glm::vec3(1, 0, 0), 
+             getAxisColor(GizmoAxis::X, glm::vec3(1, 0, 0)), 
              view, projection);
 
     DrawLine(position, position + glm::vec3(0, gizmoSize, 0), 
-             dragAxis == GizmoAxis::Y ? glm::vec3(1, 1, 0) : glm::vec3(0, 1, 0), 
+             getAxisColor(GizmoAxis::Y, glm::vec3(0, 1, 0)), 
              view, projection);
 
     DrawLine(position, position + glm::vec3(0, 0, gizmoSize), 
-             dragAxis == GizmoAxis::Z ? glm::vec3(1, 1, 0) : glm::vec3(0, 0, 1), 
+             getAxisColor(GizmoAxis::Z, glm::vec3(0, 0, 1)), 
              view, projection);
 }
 
@@ -442,6 +464,21 @@ void GizmoRenderer::StartDrag(GizmoAxis axis, const glm::vec2& mousePos,
     dragActor = actor;
     dragStartMousePos = mousePos;
     dragStartActorPos = actor->transform->position;
+    dragStartActorRotation = actor->transform->eulerAngles;
+    dragStartActorScale = actor->transform->scale;
+    hoveredAxis = GizmoAxis::None; // Clear hover when dragging starts
+    
+    // Calculate initial world position for dragging
+    glm::vec3 rayDir = ScreenToWorld(mousePos, screenSize, view, projection, 0.5f);
+    glm::mat4 invView = glm::inverse(view);
+    glm::vec3 cameraPos = glm::vec3(invView[3]);
+    dragStartWorldPos = cameraPos;
+    
+    std::cout << "[GizmoRenderer] Started drag on " << 
+        (dragAxis == GizmoAxis::X ? "X" : dragAxis == GizmoAxis::Y ? "Y" : "Z") << 
+        " axis in " << 
+        (currentMode == GizmoMode::Translate ? "Translate" : 
+         currentMode == GizmoMode::Rotate ? "Rotate" : "Scale") << " mode" << std::endl;
 }
 
 void GizmoRenderer::UpdateDrag(const glm::vec2& mousePos, const glm::vec2& screenSize,
@@ -451,32 +488,237 @@ void GizmoRenderer::UpdateDrag(const glm::vec2& mousePos, const glm::vec2& scree
 
     // Calculate mouse delta
     glm::vec2 mouseDelta = mousePos - dragStartMousePos;
+    
+    // Get camera position
+    glm::mat4 invView = glm::inverse(view);
+    glm::vec3 cameraPos = glm::vec3(invView[3]);
+    
+    // Get ray direction from mouse
+    glm::vec3 rayDir = ScreenToWorld(mousePos, screenSize, view, projection, 0.5f);
 
-    // Simple drag implementation - move along the selected axis based on mouse movement
-    glm::vec3 offset(0.0f);
-    float sensitivity = 0.01f;
-
-    switch (dragAxis)
+    switch (currentMode)
     {
-        case GizmoAxis::X:
-            offset.x = mouseDelta.x * sensitivity;
+        case GizmoMode::Translate:
+        {
+            // Project mouse movement onto the selected axis
+            glm::vec3 axisDir(0.0f);
+            switch (dragAxis)
+            {
+                case GizmoAxis::X: axisDir = glm::vec3(1, 0, 0); break;
+                case GizmoAxis::Y: axisDir = glm::vec3(0, 1, 0); break;
+                case GizmoAxis::Z: axisDir = glm::vec3(0, 0, 1); break;
+                default: return;
+            }
+            
+            // Create a plane perpendicular to camera view that contains the axis
+            glm::vec3 cameraForward = glm::normalize(dragStartActorPos - cameraPos);
+            glm::vec3 planeNormal = glm::normalize(glm::cross(axisDir, glm::cross(cameraForward, axisDir)));
+            
+            // Intersect ray with plane
+            float denom = glm::dot(planeNormal, rayDir);
+            if (std::abs(denom) > 0.0001f)
+            {
+                float t = glm::dot(dragStartActorPos - cameraPos, planeNormal) / denom;
+                glm::vec3 intersectionPoint = cameraPos + t * rayDir;
+                
+                // Project intersection onto axis
+                glm::vec3 projectedPoint = ProjectPointOntoLine(intersectionPoint, dragStartActorPos, axisDir);
+                glm::vec3 offset = projectedPoint - dragStartActorPos;
+                
+                dragActor->transform->SetPosition(dragStartActorPos + offset);
+            }
             break;
-        case GizmoAxis::Y:
-            offset.y = -mouseDelta.y * sensitivity;
+        }
+        
+        case GizmoMode::Rotate:
+        {
+            // Rotation based on mouse movement
+            float rotationSpeed = 0.5f;
+            float rotationAmount = (mouseDelta.x - mouseDelta.y) * rotationSpeed;
+            
+            glm::vec3 newRotation = dragStartActorRotation;
+            switch (dragAxis)
+            {
+                case GizmoAxis::X: newRotation.x += rotationAmount; break;
+                case GizmoAxis::Y: newRotation.y += rotationAmount; break;
+                case GizmoAxis::Z: newRotation.z += rotationAmount; break;
+                default: return;
+            }
+            
+            dragActor->transform->SetRotation(newRotation);
             break;
-        case GizmoAxis::Z:
-            offset.z = (mouseDelta.x + mouseDelta.y) * sensitivity * 0.5f;
+        }
+        
+        case GizmoMode::Scale:
+        {
+            // Scale based on mouse movement
+            float scaleSpeed = 0.01f;
+            float scaleAmount = (mouseDelta.x + mouseDelta.y) * scaleSpeed;
+            
+            glm::vec3 newScale = dragStartActorScale;
+            switch (dragAxis)
+            {
+                case GizmoAxis::X: newScale.x = glm::max(0.01f, dragStartActorScale.x + scaleAmount); break;
+                case GizmoAxis::Y: newScale.y = glm::max(0.01f, dragStartActorScale.y + scaleAmount); break;
+                case GizmoAxis::Z: newScale.z = glm::max(0.01f, dragStartActorScale.z + scaleAmount); break;
+                default: return;
+            }
+            
+            dragActor->transform->SetScale(newScale);
             break;
-        default:
-            break;
+        }
     }
-
-    dragActor->transform->SetPosition(dragStartActorPos + offset);
 }
 
 void GizmoRenderer::EndDrag()
 {
+    if (isDragging)
+    {
+        std::cout << "[GizmoRenderer] Ended drag operation" << std::endl;
+    }
+    
     isDragging = false;
     dragAxis = GizmoAxis::None;
     dragActor = nullptr;
+    hoveredAxis = GizmoAxis::None; // Clear hover when drag ends
+}
+
+// ============================================================================
+// High-level Mouse Interaction
+// ============================================================================
+
+void GizmoRenderer::HandleMouseDown(const glm::vec2& mousePos, const glm::vec2& screenSize,
+                                   const glm::mat4& view, const glm::mat4& projection, Actor* actor)
+{
+    if (!actor) return;
+
+    glm::vec3 gizmoPos = actor->transform->position;
+    GizmoAxis hitAxis = HitTest(mousePos, screenSize, view, projection, gizmoPos);
+
+    if (hitAxis != GizmoAxis::None)
+    {
+        StartDrag(hitAxis, mousePos, screenSize, view, projection, actor);
+    }
+}
+
+void GizmoRenderer::HandleMouseMove(const glm::vec2& mousePos, const glm::vec2& screenSize,
+                                   const glm::mat4& view, const glm::mat4& projection)
+{
+    if (isDragging)
+    {
+        UpdateDrag(mousePos, screenSize, view, projection);
+    }
+}
+
+void GizmoRenderer::HandleMouseUp()
+{
+    if (isDragging)
+    {
+        EndDrag();
+    }
+}
+
+GizmoAxis GizmoRenderer::GetHoveredAxis(const glm::vec2& mousePos, const glm::vec2& screenSize,
+                                       const glm::mat4& view, const glm::mat4& projection,
+                                       const glm::vec3& gizmoPosition)
+{
+    hoveredAxis = HitTest(mousePos, screenSize, view, projection, gizmoPosition);
+    return hoveredAxis;
+}
+
+// ============================================================================
+// Ray Casting and Intersection
+// ============================================================================
+
+glm::vec3 GizmoRenderer::ScreenToWorld(const glm::vec2& screenPos, const glm::vec2& screenSize,
+                                      const glm::mat4& view, const glm::mat4& projection,
+                                      float depth)
+{
+    // Convert screen coordinates to NDC
+    float x = (2.0f * screenPos.x) / screenSize.x - 1.0f;
+    float y = 1.0f - (2.0f * screenPos.y) / screenSize.y;
+    float z = 2.0f * depth - 1.0f;
+
+    glm::vec4 clipCoords(x, y, z, 1.0f);
+
+    // Convert to view space
+    glm::mat4 invProjection = glm::inverse(projection);
+    glm::vec4 viewCoords = invProjection * clipCoords;
+    viewCoords = glm::vec4(viewCoords.x, viewCoords.y, -1.0f, 0.0f);
+
+    // Convert to world space
+    glm::mat4 invView = glm::inverse(view);
+    glm::vec4 worldCoords = invView * viewCoords;
+
+    return glm::normalize(glm::vec3(worldCoords));
+}
+
+bool GizmoRenderer::RayIntersectsArrow(const glm::vec3& rayOrigin, const glm::vec3& rayDir,
+                                      const glm::vec3& arrowStart, const glm::vec3& arrowDir,
+                                      float arrowLength, float threshold)
+{
+    // Find closest point on arrow axis to ray
+    glm::vec3 arrowEnd = arrowStart + arrowDir * arrowLength;
+    
+    // Use parametric line equations
+    // Ray: P = rayOrigin + t * rayDir
+    // Arrow: Q = arrowStart + s * arrowDir
+    
+    glm::vec3 w0 = rayOrigin - arrowStart;
+    float a = glm::dot(rayDir, rayDir);
+    float b = glm::dot(rayDir, arrowDir);
+    float c = glm::dot(arrowDir, arrowDir);
+    float d = glm::dot(rayDir, w0);
+    float e = glm::dot(arrowDir, w0);
+    
+    float denom = a * c - b * b;
+    if (std::abs(denom) < 0.0001f) return false;
+    
+    float s = (b * d - a * e) / denom;
+    float t = (c * d - b * e) / denom;
+    
+    // Check if s is within arrow length
+    if (s < 0.0f || s > arrowLength) return false;
+    
+    // Calculate closest points
+    glm::vec3 pointOnRay = rayOrigin + t * rayDir;
+    glm::vec3 pointOnArrow = arrowStart + s * arrowDir;
+    
+    // Check distance between closest points
+    float distance = glm::length(pointOnRay - pointOnArrow);
+    return distance < threshold;
+}
+
+bool GizmoRenderer::RayIntersectsCircle(const glm::vec3& rayOrigin, const glm::vec3& rayDir,
+                                       const glm::vec3& circleCenter, const glm::vec3& circleNormal,
+                                       float radius, float threshold)
+{
+    // Intersect ray with plane containing the circle
+    float denom = glm::dot(circleNormal, rayDir);
+    if (std::abs(denom) < 0.0001f) return false;
+    
+    float t = glm::dot(circleCenter - rayOrigin, circleNormal) / denom;
+    if (t < 0.0f) return false;
+    
+    // Get intersection point on plane
+    glm::vec3 intersectionPoint = rayOrigin + t * rayDir;
+    
+    // Check if point is near the circle
+    float distFromCenter = glm::length(intersectionPoint - circleCenter);
+    return std::abs(distFromCenter - radius) < threshold;
+}
+
+glm::vec3 GizmoRenderer::ProjectPointOntoPlane(const glm::vec3& point, const glm::vec3& planeNormal,
+                                               const glm::vec3& planePoint)
+{
+    float distance = glm::dot(point - planePoint, planeNormal);
+    return point - distance * planeNormal;
+}
+
+glm::vec3 GizmoRenderer::ProjectPointOntoLine(const glm::vec3& point, const glm::vec3& lineStart,
+                                              const glm::vec3& lineDir)
+{
+    glm::vec3 v = point - lineStart;
+    float t = glm::dot(v, lineDir);
+    return lineStart + t * lineDir;
 }

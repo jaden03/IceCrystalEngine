@@ -7,7 +7,7 @@
 #include "Ice/Core/Component.h"
 
 #include "Ice/Components/Light.h"
-#include "Ice/Utils/DebugUtil.h"
+#include "Ice/Editor/EditorUI.h"
 
 #include "Ice/Core/Actor.h"
 #include "Ice/Core/Transform.h"
@@ -124,8 +124,8 @@ int LuaManager::LuaPrint(lua_State* L) {
     }
     output << "\n";
 
-    // Redirect to logging system
-    DebugUtil::GetInstance().ss << output.str();
+    // Redirect to editor console
+    EditorUI::GetInstance().AddConsoleLog(output.str(), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
     return 0; // Return no values to Lua
 }
