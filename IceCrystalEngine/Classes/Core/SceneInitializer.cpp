@@ -163,6 +163,10 @@ void SceneInitializer::InitializeScene()
 	floorActor->AddComponent(floorRenderer);
 	floorActor->transform->scale = glm::vec3(2, 2, 2);
 	floorActor->transform->Translate(0, -7, 0);
-	floorActor->AddComponent<MeshCollider>(floorRenderer->meshHolders[0].vertices, floorRenderer->meshHolders[0].indices, floorActor->transform->scale);
+	
+	// Only add mesh collider if the model loaded successfully
+	if (!floorRenderer->meshHolders.empty()) {
+		floorActor->AddComponent<MeshCollider>(floorRenderer->meshHolders[0].vertices, floorRenderer->meshHolders[0].indices, floorActor->transform->scale);
+	}
 	RigidBody* rb = floorActor->AddComponent<RigidBody>(0.0f);
 }

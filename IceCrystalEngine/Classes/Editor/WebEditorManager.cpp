@@ -1,4 +1,5 @@
 #include <Ice/Editor/WebEditorManager.h>
+#include <Ice/Editor/GizmoRenderer.h>
 #include <Ice/Core/SceneManager.h>
 #include <Ice/Core/Actor.h>
 #include <Ice/Core/Transform.h>
@@ -247,6 +248,59 @@ void WebEditorManager::SetupRoutes()
         try {
             std::cout << "Running Editor Select " << std::endl;
             SetSelectedActor(actorId);
+            res.set_content(json({{"success", true}}).dump(), "application/json");
+        } catch (const std::exception& e) {
+            res.set_content(json({{"error", e.what()}}).dump(), "application/json");
+        }
+    });
+
+    // Set gizmo mode
+    server->Get(R"(/api/editor/gizmo/mode/(\w+))", [this](const httplib::Request& req, httplib::Response& res) {
+        std::string mode = req.matches[1];
+        GizmoRenderer& gizmoRenderer = GizmoRenderer::GetInstance();
+        
+        try {
+            if (mode == "translate") {
+                gizmoRenderer.SetMode(GizmoMode::Translate);
+            } else if (mode == "rotate") {
+                gizmoRenderer.SetMode(GizmoMode::Rotate);
+            } else if (mode == "scale") {
+                gizmoRenderer.SetMode(GizmoMode::Scale);
+            } else {
+                res.set_content(json({{"error", "Invalid mode. Use: translate, rotate, or scale"}}).dump(), "application/json");
+                return;
+            }
+            res.set_content(json({{"success", true}, {"mode", mode}}).dump(), "application/json");
+        } catch (const std::exception& e) {
+            res.set_content(json({{"error", e.what()}}).dump(), "application/json");
+        }
+    });
+
+    // Toggle gizmo enabled
+    server->Get(R"(/api/editor/gizmo/enabled/(\w+))", [this](const httplib::Request& req, httplib::Response& res) {
+        std::string enabled = req.matches[1];
+        GizmoRenderer& gizmoRenderer = GizmoRenderer::GetInstance();
+        
+        try {
+            if (enabled == "true" || enabled == "1") {
+                gizmoRenderer.SetEnabled(true);
+            } else if (enabled == "false" || enabled == "0") {
+                gizmoRenderer.SetEnabled(false);
+            } else {
+                res.set_content(json({{"error", "Invalid value. Use: true or false"}}).dump(), "application/json");
+                return;
+            }
+            res.set_content(json({{"success", true}, {"enabled", gizmoRenderer.IsEnabled()}}).dump(), "application/json");
+        } catch (const std::exception& e) {
+            res.set_content(json({{"error", e.what()}}).dump(), "application/json");
+        }
+    });
+
+    // Deselect actor
+    server->Get("/api/editor/deselect", [this](const httplib::Request& req, httplib::Response& res) {
+        try {
+            selectedActor = nullptr;
+            std::cout << "[WebEditor] Deselected actor" << std::endl;
             res.set_content(json({{"success", true}}).dump(), "application/json");
         } catch (const std::exception& e) {
             res.set_content(json({{"error", e.what()}}).dump(), "application/json");

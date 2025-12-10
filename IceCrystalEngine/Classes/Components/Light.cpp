@@ -61,6 +61,10 @@ glm::mat4 DirectionalLight::GetLightSpaceMatrix(float nearPlane, float farPlane)
 {
     Camera* cam = sceneManager.mainCamera;
     
+    // Return identity matrix if camera doesn't exist yet
+    if (cam == nullptr)
+        return glm::mat4(1.0f);
+    
     auto proj = glm::perspective(glm::radians(cam->fieldOfView), (float)WindowManager::GetInstance().windowWidth / (float)WindowManager::GetInstance().windowHeight, nearPlane, farPlane);
     auto corners = getFrustumCornersWorldSpace(proj, cam->view);
 
@@ -108,6 +112,10 @@ glm::mat4 DirectionalLight::GetLightSpaceMatrix(float nearPlane, float farPlane)
 void DirectionalLight::BuildCascades()
 {
 	Camera* cam = sceneManager.mainCamera;
+	
+	// Don't build cascades if camera doesn't exist yet
+	if (cam == nullptr)
+		return;
 	
 	for (int i = 0; i < cascadeCount; i++)
 	{

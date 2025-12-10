@@ -42,6 +42,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Check engine status
   checkEngineStatus();
 
+  // Initialize gizmos as enabled
+  initializeGizmos();
+
   console.log("[WebEditor] Ready!");
 });
 
@@ -342,11 +345,23 @@ function filterActorList() {
 // Actor Selection
 // ============================================================================
 
-function selectActor(actorId) {
+async function selectActor(actorId) {
   selectedActorId = actorId;
   renderActorList(); // Update selection highlight
   loadActorDetails(actorId, false);
   addConsoleLog(`Selected actor: ${actorId}`, "info");
+
+  // Notify engine about selection for gizmo rendering
+  try {
+    const response = await fetch(`${API_BASE}/editor/select/${actorId}`);
+    if (response.ok) {
+      console.log(
+        `[WebEditor] Notified engine about actor selection: ${actorId}`,
+      );
+    }
+  } catch (error) {
+    console.error("Error notifying engine about selection:", error);
+  }
 }
 
 async function loadActorDetails(actorId, skipComponentReload = false) {
@@ -1021,7 +1036,7 @@ function updateAutoRefreshUI() {
 // Quick Actions
 // ============================================================================
 
-function clearSelection() {
+async function clearSelection() {
   if (selectedActorId === null) {
     addConsoleLog("No actor selected", "warning");
     return;
@@ -1034,13 +1049,19 @@ function clearSelection() {
   const inspector = document.getElementById("inspector-content");
   if (inspector) {
     inspector.innerHTML = `
-            <div class="inspector-empty">
-                <div class="empty-state">
-                    <div class="empty-icon">📋</div>
-                    <p>Select an actor to inspect</p>
-                </div>
+            <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <p>Select an actor to inspect</p>
             </div>
         `;
+  }
+
+  // Notify engine to deselect actor
+  try {
+    await fetch(`${API_BASE}/editor/deselect`);
+    console.log("[WebEditor] Notified engine about deselection");
+  } catch (error) {
+    console.error("Error notifying engine about deselection:", error);
   }
 
   addConsoleLog("Selection cleared", "info");
@@ -1192,4 +1213,84 @@ if (modal) {
       closeSettings();
     }
   };
+}
+
+// ============================================================================
+// Gizmo Controls
+// ============================================================================
+
+let currentGizmoMode = "translate";
+let gizmoEnabled = true;
+
+async function setGizmoMode(mode) {
+  try {
+    const response = await fetch(`${API_BASE}/editor/gizmo/mode/${mode}`);
+    if (response.ok) {
+      currentGizmoMode = mode;
+      addConsoleLog(`Gizmo mode set to: ${mode}`, "success");
+
+      // Update button active states
+      const buttons = document.querySelectorAll(".gizmo-mode-btn");
+      buttons.forEach((btn) => {
+        if (btn.dataset.mode === mode) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+    } else {
+      addConsoleLog(`Failed to set gizmo mode: ${mode}`, "error");
+    }
+  } catch (error) {
+    console.error("Error setting gizmo mode:", error);
+    addConsoleLog(`Error setting gizmo mode: ${error.message}`, "error");
+  }
+}
+
+async function toggleGizmo() {
+  gizmoEnabled = !gizmoEnabled;
+
+  try {
+    const response = await fetch(
+      `${API_BASE}/editor/gizmo/enabled/${gizmoEnabled}`,
+    );
+    if (response.ok) {
+      const icon = document.getElementById("gizmo-toggle-icon");
+      const text = document.getElementById("gizmo-toggle-text");
+
+      if (gizmoEnabled) {
+        icon.textContent = "👁️";
+        text.textContent = "Hide Gizmos";
+        addConsoleLog("Gizmos enabled", "success");
+      } else {
+        icon.textContent = "🚫";
+        text.textContent = "Show Gizmos";
+        addConsoleLog("Gizmos disabled", "info");
+      }
+    } else {
+      addConsoleLog("Failed to toggle gizmos", "error");
+    }
+  } catch (error) {
+    console.error("Error toggling gizmos:", error);
+    addConsoleLog(`Error toggling gizmos: ${error.message}`, "error");
+  }
+}
+
+async function initializeGizmos() {
+  try {
+    // Enable gizmos by default
+    const response = await fetch(`${API_BASE}/editor/gizmo/enabled/true`);
+    if (response.ok) {
+      gizmoEnabled = true;
+      const icon = document.getElementById("gizmo-toggle-icon");
+      const text = document.getElementById("gizmo-toggle-text");
+      if (icon && text) {
+        icon.textContent = "👁️";
+        text.textContent = "Hide Gizmos";
+      }
+      console.log("[WebEditor] Gizmos initialized and enabled");
+    }
+  } catch (error) {
+    console.error("Error initializing gizmos:", error);
+  }
 }

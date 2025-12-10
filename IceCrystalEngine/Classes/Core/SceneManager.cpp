@@ -9,12 +9,21 @@
 #include <Ice/Utils/FileUtil.h>
 #include <Ice/Core/LuaManager.h>
 #include <Ice/Core/RendererManager.h>
+#include <Ice/Core/Input.h>
 
 #include <Ice/Components/Camera.h>
 #include <Ice/Components/Renderer.h>
 #include <Ice/Components/Light.h>
+#include <Ice/Components/Freecam.h>
+#include <Ice/Components/Physics/RigidBody.h>
 
 #include <Ice/Core/Skybox.h>
+#include <Ice/Editor/GizmoRenderer.h>
+#include <Ice/Editor/WebEditorManager.h>
+#include <Ice/Editor/EditorUI.h>
+
+#include <imgui/imgui.h>
+#include <typeinfo>
 
 using namespace std::chrono;
 
@@ -47,6 +56,8 @@ SceneManager::~SceneManager()
 // Update
 void SceneManager::Update()
 {
+	WebEditorManager& webEditor = WebEditorManager::GetInstance();
+	EditorUI& editorUI = EditorUI::GetInstance();
 	usedTextureCount = 10;
 	
 	// get the mainCamera
@@ -169,8 +180,144 @@ void SceneManager::Update()
 	// backface culling
 	glCullFace(GL_BACK);
 	
-	// update LuaManager
-	LuaManager::GetInstance().Update(gameTime);
+	Input& input = Input::GetInstance();
+
+	// Sync EditorUI pause state with WebEditor (if web editor is running, it takes precedence)
+	bool isEnginePaused = editorUI.IsEnginePaused() || (webEditor.IsRunning() && webEditor.IsEnginePaused());
+
+	// Only update Lua/scripts when engine is not paused (allows editing in pause mode)
+	if (!isEnginePaused)
+	{
+		LuaManager::GetInstance().Update(gameTime);
+	}
+
+	// Handle gizmo keyboard shortcuts when engine is paused
+	if (isEnginePaused && !input.GetKeyDown(GLFW_MOUSE_BUTTON_2))
+	{
+		GizmoRenderer& gizmoRenderer = GizmoRenderer::GetInstance();
+		
+		// Q = Deselect/Select mode
+		if (input.GetKeyDown(GLFW_KEY_Q))
+		{
+			if (editorUI.HasSelectedActor())
+			{
+				// Clear selection
+				editorUI.SetSelectedActor(nullptr);
+				webEditor.SetSelectedActor(0);
+				std::cout << "[Editor] Cleared selection" << std::endl;
+			}
+		}
+		
+		// W = Translate mode
+		if (input.GetKeyDown(GLFW_KEY_W))
+		{
+			gizmoRenderer.SetMode(GizmoMode::Translate);
+			std::cout << "[Editor] Gizmo mode: Translate" << std::endl;
+		}
+		
+		// E = Rotate mode
+		if (input.GetKeyDown(GLFW_KEY_E))
+		{
+			gizmoRenderer.SetMode(GizmoMode::Rotate);
+			std::cout << "[Editor] Gizmo mode: Rotate" << std::endl;
+		}
+		
+		// R = Scale mode
+		if (input.GetKeyDown(GLFW_KEY_R))
+		{
+			gizmoRenderer.SetMode(GizmoMode::Scale);
+			std::cout << "[Editor] Gizmo mode: Scale" << std::endl;
+		}
+		
+		// G = Toggle gizmo visibility
+		if (input.GetKeyDown(GLFW_KEY_G))
+		{
+			gizmoRenderer.SetEnabled(!gizmoRenderer.IsEnabled());
+			std::cout << "[Editor] Gizmos " << (gizmoRenderer.IsEnabled() ? "enabled" : "disabled") << std::endl;
+		}
+	}
+
+	// Handle gizmo input and actor selection when engine is paused
+	if (isEnginePaused && mainCamera != nullptr)
+	{
+		// Check if ImGui wants to capture mouse input (user is interacting with UI)
+		ImGuiIO& io = ImGui::GetIO();
+		bool imguiWantsMouse = io.WantCaptureMouse;
+		
+		glm::vec2 mousePos = input.GetMousePosition();
+		glm::vec2 screenSize(windowManager.windowWidth, windowManager.windowHeight);
+		
+		// Use EditorUI's selected actor (priority), fallback to WebEditor's
+		Actor* selectedActor = editorUI.GetSelectedActor();
+		if (!selectedActor && webEditor.IsRunning())
+		{
+			selectedActor = webEditor.GetSelectedActor();
+		}
+		
+		// If we have a selected actor, handle gizmo interaction (only if ImGui doesn't want the mouse)
+		if (selectedActor != nullptr && !imguiWantsMouse)
+		{
+			GizmoRenderer& gizmoRenderer = GizmoRenderer::GetInstance();
+			if (gizmoRenderer.IsEnabled())
+			{
+				
+				// Continuously update hovered axis for highlighting (even when not dragging)
+				if (!gizmoRenderer.IsDragging())
+				{
+					glm::vec3 gizmoPos = selectedActor->transform->position;
+					gizmoRenderer.GetHoveredAxis(mousePos, screenSize, mainCamera->view, mainCamera->projection, gizmoPos);
+				}
+				
+				// Handle mouse input for gizmo interaction
+				if (input.GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
+				{
+					gizmoRenderer.HandleMouseDown(mousePos, screenSize, mainCamera->view, mainCamera->projection, selectedActor);
+				}
+				
+				if (input.GetMouseButton(GLFW_MOUSE_BUTTON_LEFT))
+				{
+					gizmoRenderer.HandleMouseMove(mousePos, screenSize, mainCamera->view, mainCamera->projection);
+				}
+				
+				if (input.GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
+				{
+					gizmoRenderer.HandleMouseUp();
+				}
+			}
+		}
+		
+		// If left click and not dragging gizmo, try to select an actor by clicking on it (only if ImGui doesn't want the mouse)
+		if (input.GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT) && !imguiWantsMouse)
+		{
+			GizmoRenderer& gizmoRenderer = GizmoRenderer::GetInstance();
+			
+			// Only allow actor selection if not currently dragging a gizmo
+			if (!gizmoRenderer.IsDragging())
+			{
+				// Check if we clicked on a gizmo first
+				bool clickedOnGizmo = false;
+				if (selectedActor != nullptr && gizmoRenderer.IsEnabled())
+				{
+					glm::vec3 gizmoPos = selectedActor->transform->position;
+					GizmoAxis hitAxis = gizmoRenderer.GetHoveredAxis(mousePos, screenSize, mainCamera->view, mainCamera->projection, gizmoPos);
+					clickedOnGizmo = (hitAxis != GizmoAxis::None);
+				}
+				
+				// If we didn't click on a gizmo, check for actor selection
+				if (!clickedOnGizmo && hoveredActor != nullptr)
+				{
+					// Select the hovered actor in both editors
+					editorUI.SetSelectedActor(hoveredActor);
+					if (webEditor.IsRunning())
+					{
+						int actorId = static_cast<int>(reinterpret_cast<intptr_t>(hoveredActor));
+						webEditor.SetSelectedActor(actorId);
+					}
+					std::cout << "[Editor] Selected actor: " << hoveredActor->name << std::endl;
+				}
+			}
+		}
+	}
 
 	// update UBOs for renderning
 	rendererManager.UpdateUBOs();
@@ -199,7 +346,23 @@ void SceneManager::Update()
 		// loop through components
 		for (int j = 0; j < actors->at(i)->components->size(); j++)
 		{
-			actors->at(i)->components->at(j)->Update();
+			Component* component = actors->at(i)->components->at(j);
+			
+			// Always update rendering components (Camera, Renderer, DirectionalLight, PointLight, SpotLight)
+			// and editor components (Freecam for camera control, RigidBody for transform sync)
+			// Only update gameplay components when not paused
+			bool isRenderingComponent = (dynamic_cast<Camera*>(component) != nullptr ||
+			                              dynamic_cast<Renderer*>(component) != nullptr ||
+			                              dynamic_cast<DirectionalLight*>(component) != nullptr ||
+			                              dynamic_cast<PointLight*>(component) != nullptr ||
+			                              dynamic_cast<SpotLight*>(component) != nullptr ||
+			                              dynamic_cast<Freecam*>(component) != nullptr ||
+			                              dynamic_cast<RigidBody*>(component) != nullptr);
+			
+			if (isRenderingComponent || !isEnginePaused)
+			{
+				component->Update();
+			}
 		}
 	}
 	hoveredActor = currentHoveredActor;
@@ -208,10 +371,28 @@ void SceneManager::Update()
 	RunService::GetInstance().FireLateUpdate(deltaTime);
 	for (int i = 0; i < actors->size(); i++)
 	{
+		// update the transform
+		actors->at(i)->transform->LateUpdate();
 		// loop through components
 		for (int j = 0; j < actors->at(i)->components->size(); j++)
 		{
-			actors->at(i)->components->at(j)->LateUpdate();
+			Component* component = actors->at(i)->components->at(j);
+			
+			// Always update rendering components (Camera, Renderer, DirectionalLight, PointLight, SpotLight)
+			// and editor components (Freecam for camera control, RigidBody for transform sync)
+			// Only update gameplay components when not paused
+			bool isRenderingComponent = (dynamic_cast<Camera*>(component) != nullptr ||
+			                              dynamic_cast<Renderer*>(component) != nullptr ||
+			                              dynamic_cast<DirectionalLight*>(component) != nullptr ||
+			                              dynamic_cast<PointLight*>(component) != nullptr ||
+			                              dynamic_cast<SpotLight*>(component) != nullptr ||
+			                              dynamic_cast<Freecam*>(component) != nullptr ||
+			                              dynamic_cast<RigidBody*>(component) != nullptr);
+			
+			if (isRenderingComponent || !isEnginePaused)
+			{
+				component->LateUpdate();
+			}
 		}
 	}
 
@@ -244,6 +425,27 @@ void SceneManager::Update()
 	
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+
+	// Render gizmos for selected actor only when engine is paused (edit mode)
+	//WebEditorManager& webEditor = WebEditorManager::GetInstance();
+	if (isEnginePaused && mainCamera != nullptr)
+	{
+		GizmoRenderer& gizmoRenderer = GizmoRenderer::GetInstance();
+		if (gizmoRenderer.IsEnabled())
+		{
+			// Use EditorUI's selected actor (priority), fallback to WebEditor's
+			Actor* selectedActor = editorUI.GetSelectedActor();
+			if (!selectedActor && webEditor.IsRunning())
+			{
+				selectedActor = webEditor.GetSelectedActor();
+			}
+			
+			if (selectedActor != nullptr)
+			{
+				gizmoRenderer.RenderGizmos(selectedActor, mainCamera);
+			}
+		}
+	}
 
 	// set the polygon mode back to what it was before
 	glPolygonMode(GL_FRONT_AND_BACK, currentPolygonMode);
@@ -353,5 +555,5 @@ T* SceneManager::GetComponentOfType()
 // Get Actor Count
 int SceneManager::GetActorCount()
 {
-	return actors->size();
+	return static_cast<int>(actors->size());
 }

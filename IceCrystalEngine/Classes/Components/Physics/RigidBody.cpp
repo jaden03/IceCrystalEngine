@@ -1,4 +1,6 @@
-﻿#include <Ice/Components/Physics/RigidBody.h>
+#include <Ice/Components/Physics/RigidBody.h>
+#include <Ice/Editor/WebEditorManager.h>
+#include <Ice/Editor/EditorUI.h>
 
 RigidBody::RigidBody(float mass, bool trigger) : mass(mass), isTrigger(trigger) {}
 
@@ -46,7 +48,43 @@ void RigidBody::Update()
 {
     if (!body || !owner || isStatic) return;
 
-    // Sync physics position back to actor transform
+    // Don't sync physics to transform when engine is paused (allows manual editing)
+    bool isEnginePaused = EditorUI::GetInstance().IsEnginePaused() || WebEditorManager::GetInstance().IsEnginePaused();
+    if (isEnginePaused)
+    {
+        // Sync transform changes TO the physics body instead (allows manual editing)
+        JPH::Vec3 currentPos;
+        JPH::Quat currentRot;
+        PhysicsManager::GetInstance().GetSystem().GetBodyInterface().GetPositionAndRotation(body->GetID(), currentPos, currentRot);
+        
+        glm::vec3 transformPos = owner->transform->position;
+        glm::quat transformRot = owner->transform->rotation;
+        
+        JPH::Vec3 newPos(transformPos.x, transformPos.y, transformPos.z);
+        JPH::Quat newRot(transformRot.x, transformRot.y, transformRot.z, transformRot.w);
+        
+        // Check if position or rotation changed externally (from editor/gizmo)
+        bool posChanged = glm::distance(glm::vec3(currentPos.GetX(), currentPos.GetY(), currentPos.GetZ()), transformPos) > 0.001f;
+        bool rotChanged = glm::abs(currentRot.GetX() - transformRot.x) > 0.001f ||
+                          glm::abs(currentRot.GetY() - transformRot.y) > 0.001f ||
+                          glm::abs(currentRot.GetZ() - transformRot.z) > 0.001f ||
+                          glm::abs(currentRot.GetW() - transformRot.w) > 0.001f;
+        
+        if (posChanged || rotChanged)
+        {
+            // Update physics body with new transform
+            PhysicsManager::GetInstance().GetSystem().GetBodyInterface().SetPositionAndRotation(
+                body->GetID(), newPos, newRot, JPH::EActivation::DontActivate);
+            
+            // Clear velocities to prevent object from continuing previous motion when unpaused
+            body->SetLinearVelocity(JPH::Vec3::sZero());
+            body->SetAngularVelocity(JPH::Vec3::sZero());
+        }
+        
+        return;
+    }
+
+    // Sync physics position back to actor transform (normal runtime behavior)
     JPH::Vec3 pos;
     JPH::Quat rot;
     PhysicsManager::GetInstance().GetSystem().GetBodyInterface().GetPositionAndRotation(body->GetID(), pos, rot);

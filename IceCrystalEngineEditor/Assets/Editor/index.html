@@ -110,6 +110,75 @@
                     </div>
 
                     <div class="info-section">
+                        <h3>Gizmo Controls</h3>
+                        <div class="gizmo-mode-buttons">
+                            <button
+                                class="btn btn-full gizmo-mode-btn active"
+                                data-mode="translate"
+                                onclick="setGizmoMode('translate')"
+                            >
+                                ↔️ Translate
+                            </button>
+                            <button
+                                class="btn btn-full gizmo-mode-btn"
+                                data-mode="rotate"
+                                onclick="setGizmoMode('rotate')"
+                            >
+                                🔄 Rotate
+                            </button>
+                            <button
+                                class="btn btn-full gizmo-mode-btn"
+                                data-mode="scale"
+                                onclick="setGizmoMode('scale')"
+                            >
+                                📏 Scale
+                            </button>
+                        </div>
+                        <button
+                            class="btn btn-full"
+                            id="toggle-gizmo-btn"
+                            onclick="toggleGizmo()"
+                        >
+                            <span id="gizmo-toggle-icon">👁️</span>
+                            <span id="gizmo-toggle-text">Show Gizmos</span>
+                        </button>
+                    </div>
+
+                    <div class="info-section">
+                        <h3>Keyboard Shortcuts</h3>
+                        <div class="shortcuts-list">
+                            <div class="shortcut-item">
+                                <span class="shortcut-key">Q</span>
+                                <span class="shortcut-desc"
+                                    >Clear Selection</span
+                                >
+                            </div>
+                            <div class="shortcut-item">
+                                <span class="shortcut-key">W</span>
+                                <span class="shortcut-desc"
+                                    >Translate Mode</span
+                                >
+                            </div>
+                            <div class="shortcut-item">
+                                <span class="shortcut-key">E</span>
+                                <span class="shortcut-desc">Rotate Mode</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <span class="shortcut-key">R</span>
+                                <span class="shortcut-desc">Scale Mode</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <span class="shortcut-key">G</span>
+                                <span class="shortcut-desc">Toggle Gizmos</span>
+                            </div>
+                            <div class="shortcut-item">
+                                <span class="shortcut-key">Click</span>
+                                <span class="shortcut-desc">Select Actor</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
                         <h3>Quick Actions</h3>
                         <button class="btn btn-full" onclick="clearSelection()">
                             Clear Selection

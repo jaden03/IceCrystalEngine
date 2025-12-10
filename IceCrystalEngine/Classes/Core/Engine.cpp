@@ -12,12 +12,21 @@
 
 
 #ifdef _DEBUG
-#include <Ice/Utils/DebugUtil.h>
 #include <Ice/Editor/WebEditorManager.h>
+#include <Ice/Editor/GizmoRenderer.h>
+#include <Ice/Editor/EditorUI.h>
+#include <Ice/Utils/DebugUtil.h>
 #endif
+
+
+Engine::Engine()
+{
+    Init();
+}
 
 Engine::~Engine()
 {
+    
     LuaManager::GetInstance().Cleanup();
 #ifdef _DEBUG
     DebugUtil::GetInstance().Cleanup();
@@ -46,6 +55,10 @@ void Engine::Init()
 #ifdef _DEBUG
     DebugUtil::GetInstance();
     WebEditorManager::GetInstance().Start(8080);
+    GizmoRenderer::GetInstance().Initialize();
+    
+    // Initialize the editor UI (this also initializes ImGui)
+    EditorUI::GetInstance().Initialize();
 #endif
 }
 
@@ -64,9 +77,9 @@ void Engine::Run()
 
         // Update
 #ifdef _DEBUG
-        DebugUtil& debugUtil = DebugUtil::GetInstance();
-        if (input.GetKeyDown(GLFW_KEY_GRAVE_ACCENT))
-            debugUtil.showConsole = !debugUtil.showConsole;
+        //DebugUtil& debugUtil = DebugUtil::GetInstance();
+        //if (input.GetKeyDown(GLFW_KEY_GRAVE_ACCENT))
+           // debugUtil.showConsole = !debugUtil.showConsole;
 #endif
 
         Update();
@@ -85,24 +98,16 @@ void Engine::Run(IGame* gameInstance)
         return;
     }
 
-    isEditor = false;
+    isEditor = true;
     game = gameInstance;
 
     game->OnInit();
 
-    Input& input = Input::GetInstance();
     WindowManager& windowManager = WindowManager::GetInstance();
 
     while (!glfwWindowShouldClose(windowManager.window))
     {
         StartFrame();
-
-#ifdef _DEBUG
-        DebugUtil& debugUtil = DebugUtil::GetInstance();
-        if (input.GetKeyDown(GLFW_KEY_GRAVE_ACCENT))
-            debugUtil.showConsole = !debugUtil.showConsole;
-#endif
-        
         Update();
         EndFrame();
     }
@@ -118,7 +123,8 @@ void Engine::StartFrame()
     lastFrameTime = current;
 
 #ifdef _DEBUG
-    DebugUtil::GetInstance().StartOfFrame();
+    EditorUI::GetInstance().BeginFrame();
+    //DebugUtil::GetInstance().StartOfFrame();
 #endif
 }
 
@@ -138,9 +144,6 @@ void Engine::Update()
     {
         // Step physics with fixed timestep
         FixedUpdate(sceneManager.deltaTime);
-
-        // Fire Update within the lua RunService
-        RunService::GetInstance().FireUpdate(sceneManager.deltaTime);
 
         // Call game update if there is a game
         if (game && !isEditor)
@@ -162,7 +165,8 @@ void Engine::FixedUpdate(float deltaTime)
 {
 #ifdef _DEBUG
     // Don't update physics if paused
-    if (WebEditorManager::GetInstance().IsEnginePaused())
+    bool isEnginePaused = EditorUI::GetInstance().IsEnginePaused() || WebEditorManager::GetInstance().IsEnginePaused();
+    if (isEnginePaused)
         return;
 #endif
     
@@ -197,9 +201,10 @@ void Engine::EndFrame()
     Input& input = Input::GetInstance();
 
 #ifdef _DEBUG
-    DebugUtil::GetInstance().EndOfFrame();
+    EditorUI::GetInstance().RenderEditor();
+    EditorUI::GetInstance().EndFrame();
+    // Note: DebugUtil is disabled in favor of EditorUI
 #endif
-
     glfwSwapBuffers(windowManager.window);
     input.ClearInput();
     glfwPollEvents();

@@ -1035,3 +1035,107 @@ footer {
 .component-toggle:hover .toggle-slider:not(input:disabled + .toggle-slider) {
     border-color: var(--accent-blue);
 }
+
+/* ============================================================================
+   Gizmo Controls
+   ============================================================================ */
+
+.gizmo-mode-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.gizmo-mode-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+}
+
+.gizmo-mode-btn:hover {
+    background: var(--hover-bg);
+    border-color: var(--accent-blue);
+    color: var(--text-primary);
+}
+
+.gizmo-mode-btn.active {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: white;
+    font-weight: 600;
+}
+
+.gizmo-mode-btn.active:hover {
+    background: #4d9bff;
+    border-color: #4d9bff;
+}
+
+#toggle-gizmo-btn {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#toggle-gizmo-btn #gizmo-toggle-icon {
+    font-size: 1.2em;
+}
+
+/* ============================================================================
+   Keyboard Shortcuts Display
+   ============================================================================ */
+
+.shortcuts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    background: var(--card-bg);
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.shortcut-key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 24px;
+    padding: 0 8px;
+    background: var(--bg-dark);
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    font-family: "Courier New", monospace;
+    font-weight: 600;
+    font-size: 0.85em;
+    color: var(--accent-blue);
+    text-transform: uppercase;
+}
+
+.shortcut-desc {
+    color: var(--text-secondary);
+    flex: 1;
+}
+
+.shortcut-item:hover {
+    background: var(--hover-bg);
+}
+
+.shortcut-item:hover .shortcut-key {
+    border-color: var(--accent-blue);
+    color: #4d9bff;
+}
