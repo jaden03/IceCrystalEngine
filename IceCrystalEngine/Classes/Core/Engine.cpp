@@ -139,6 +139,9 @@ void Engine::Update()
         // Step physics with fixed timestep
         FixedUpdate(sceneManager.deltaTime);
 
+        // Fire Update within the lua RunService
+        RunService::GetInstance().FireUpdate(sceneManager.deltaTime);
+
         // Call game update if there is a game
         if (game && !isEditor)
         {
@@ -174,6 +177,9 @@ void Engine::FixedUpdate(float deltaTime)
     while (physicsAccumulator >= fixedDeltaTime)
     {
         PhysicsManager::GetInstance().Step(fixedDeltaTime);
+
+        // Fire FixedUpdate within the lua RunService
+        RunService::GetInstance().FireFixedUpdate(fixedDeltaTime);
 
         // Call game fixedupdate if in game mode
         if (game && !isEditor)

@@ -111,4 +111,28 @@ private:
 	void operator=(LuaManager const&) = delete; // Delete assignment operator
 };
 
+class RunService
+{
+public:
+	static RunService& GetInstance()
+	{
+		static RunService instance;
+		return instance;
+	}
+
+	void FireUpdate(float deltaTime);
+	void FireFixedUpdate(float fixedDeltaTime);
+	void FireLateUpdate(float deltaTime);
+
+	void ConnectUpdate(sol::function callback);
+	void ConnectFixedUpdate(sol::function callback);
+	void ConnectLateUpdate(sol::function callback);
+private:
+	RunService() = default;
+
+	std::vector<sol::function> updateCallbacks;
+	std::vector<sol::function> fixedUpdateCallbacks;
+	std::vector<sol::function> lateUpdateCallbacks;
+};
+
 #endif

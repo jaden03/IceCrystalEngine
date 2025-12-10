@@ -205,7 +205,9 @@ void SceneManager::Update()
 		}
 	}
 	hoveredActor = currentHoveredActor;
-	
+
+	// lateupdate
+	RunService::GetInstance().FireLateUpdate(deltaTime);
 	for (int i = 0; i < actors->size(); i++)
 	{
 		// loop through components

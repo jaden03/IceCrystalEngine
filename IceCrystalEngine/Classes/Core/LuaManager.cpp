@@ -14,6 +14,7 @@
 #include "Ice/core/SceneManager.h"
 #include <Ice/Core/Input.h>
 
+#include "Ice/Components/RawImage.h"
 #include "Ice/Components/Physics/RigidBody.h"
 
 LuaManager::LuaManager()
@@ -264,6 +265,14 @@ void LuaManager::RegisterBindings() {
         "GetActorsByTag", &SceneManager::GetActorsByTag
     );
 #pragma endregion
+
+#pragma region RunService
+    lua["RunService"] = lua.create_table_with(
+        "Update", [this](sol::function f) {RunService::GetInstance().ConnectUpdate(f);},
+        "FixedUpdate", [this](sol::function f) {RunService::GetInstance().ConnectFixedUpdate(f);},
+        "LateUpdate", [this](sol::function f) {RunService::GetInstance().ConnectLateUpdate(f);}
+    );
+#pragma endregion 
 
 #pragma region Transform
     // Register Transform
@@ -693,7 +702,8 @@ void LuaManager::RegisterBindings() {
     lua.new_usertype<Component>("Component",
         sol::no_constructor,
         "owner", sol::readonly_property(&Component::owner),
-        "transform", sol::readonly_property(&Component::transform)
+        "transform", sol::readonly_property(&Component::transform),
+        "enabled", &Component::enabled
     );
 
     // Camera
@@ -712,8 +722,7 @@ void LuaManager::RegisterBindings() {
         sol::base_classes, sol::bases<Component>(),
         "color", &DirectionalLight::color,
         "strength", &DirectionalLight::strength,
-        "castShadows", &DirectionalLight::castShadows,
-        "enabled", &DirectionalLight::enabled
+        "castShadows", &DirectionalLight::castShadows
     );
     RegisterComponent<DirectionalLight>("DirectionalLight", lua);
 
@@ -723,8 +732,7 @@ void LuaManager::RegisterBindings() {
         sol::base_classes, sol::bases<Component>(),
         "color", &PointLight::color,
         "strength", &PointLight::strength,
-        "radius", &PointLight::radius,
-        "enabled", &PointLight::enabled
+        "radius", &PointLight::radius
     );
     RegisterComponent<PointLight>("PointLight", lua);
 
@@ -736,10 +744,16 @@ void LuaManager::RegisterBindings() {
         "strength", &SpotLight::strength,
         "distance", &SpotLight::distance,
         "angle", &SpotLight::angle,
-        "castShadows", &SpotLight::castShadows,
-        "enabled", &SpotLight::enabled
+        "castShadows", &SpotLight::castShadows
     );
     RegisterComponent<SpotLight>("SpotLight", lua);
+
+    // RawImage
+    lua.new_usertype<RawImage>("RawImage",
+        sol::no_constructor,
+        sol::base_classes, sol::bases<Component>()
+    );
+    RegisterComponent<RawImage>("RawImage", lua);
 
     // RigidBody
     lua.new_usertype<RigidBody>("RigidBody",
@@ -835,3 +849,46 @@ void LuaManager::RegisterBindings() {
 
     RegisterInputBindings();
 }
+
+
+
+// RunService
+void RunService::FireUpdate(float deltaTime)
+{
+    for (auto& callback : updateCallbacks)
+    {
+        callback(deltaTime);
+    }
+}
+
+void RunService::FireFixedUpdate(float fixedDeltaTime)
+{
+    for (auto& callback : fixedUpdateCallbacks)
+    {
+        callback(fixedDeltaTime);
+    }
+}
+
+void RunService::FireLateUpdate(float deltaTime)
+{
+    for (auto& callback : lateUpdateCallbacks)
+    {
+        callback(deltaTime);
+    }
+}
+
+void RunService::ConnectUpdate(sol::function callback)
+{
+    updateCallbacks.push_back(callback);
+}
+
+void RunService::ConnectFixedUpdate(sol::function callback)
+{
+    fixedUpdateCallbacks.push_back(callback);
+}
+
+void RunService::ConnectLateUpdate(sol::function callback)
+{
+    lateUpdateCallbacks.push_back(callback);
+}
+

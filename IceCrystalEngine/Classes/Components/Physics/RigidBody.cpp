@@ -156,6 +156,7 @@ glm::vec3 RigidBody::GetLinearVelocity()
 void RigidBody::SetAngularVelocity(glm::vec3 velocity)
 {
     PhysicsManager::GetInstance().GetSystem().GetBodyInterface().ActivateBody(body->GetID());
+    
     body->SetAngularVelocity(ToJolt(velocity));
 }
 glm::vec3 RigidBody::GetAngularVelocity()

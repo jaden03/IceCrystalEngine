@@ -7,8 +7,7 @@ local rb = actor:GetComponent("RigidBody");
 local light = sceneManager:GetActorByTag("engineLight"):GetComponent("PointLight")
 
 -- Attitude control settings
-local torqueStrength = 5000  -- Adjust for responsiveness
-local maxAngularVelocity = 5 -- Limit rotation speed
+local torqueStrength = 3500  -- Adjust for responsiveness
 
 -- Fuel
 local fuel = 100;
@@ -27,15 +26,22 @@ rb.OnTriggerExited = function(other)
     end
 end
 
-while true do
-    wait(1)
+local sasEnabled = false
+local sasToggleImage = sceneManager:GetActorByTag("sasToggleFG"):GetComponent("RawImage")
+
+RunService.Update(function(dt)
+    -- SAS Toggle
+    if input.GetKeyDown(Key.T) then
+        sasEnabled = not sasEnabled
+        sasToggleImage.enabled = sasEnabled
+    end
 
     -- Lander Controls
     if input.GetKey(Key.Space) and fuel > 0 then
-        rb:AddForce(transform.up * 10000)
+        rb:AddForce(transform.up * 5000)
         light.enabled = true
 
-        fuel = fuel - .01;
+        fuel = fuel - .005;
     else
         light.enabled = false
     end
@@ -69,4 +75,8 @@ while true do
     -- Apply combined torque
     local totalTorque = pitchTorque + rollTorque + yawTorque
     rb:AddTorque(totalTorque)
-end
+    
+     if sasEnabled and vec3.length(totalTorque) < 1 then
+        rb:SetAngularVelocity(rb:GetAngularVelocity() * .995)
+    end
+end)
