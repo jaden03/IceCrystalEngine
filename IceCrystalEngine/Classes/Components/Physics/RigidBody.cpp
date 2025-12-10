@@ -27,6 +27,12 @@ void RigidBody::Ready()
         0 // object layer
     );
     settings.mIsSensor = isTrigger;
+
+    if (!isStatic) {
+        settings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
+        settings.mMassPropertiesOverride.mMass = mass;
+    }
+    
     body = PhysicsManager::GetInstance().GetSystem().GetBodyInterface().CreateBody(settings);
 
     // Store pointer to this RigidBody in the body's user data

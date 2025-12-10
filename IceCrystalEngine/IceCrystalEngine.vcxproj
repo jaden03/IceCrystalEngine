@@ -178,6 +178,7 @@
     <ClCompile Include="Classes\Components\Camera.cpp" />
     <ClCompile Include="Classes\Components\Light.cpp" />
     <ClCompile Include="Classes\Components\Freecam.cpp" />
+    <ClCompile Include="Classes\Components\LineRenderer.cpp" />
     <ClCompile Include="Classes\Components\LuaExecutor.cpp"/>
     <ClCompile Include="Classes\Components\Physics\RigidBody.cpp"/>
     <ClCompile Include="Classes\Components\RawImage.cpp" />
@@ -898,6 +899,7 @@
     <ClInclude Include="Include\Ice\Components\Camera.h" />
     <ClInclude Include="Include\Ice\Components\Light.h" />
     <ClInclude Include="Include\Ice\Components\Freecam.h" />
+    <ClInclude Include="Include\Ice\Components\LineRenderer.h" />
     <ClInclude Include="Include\Ice\Components\LuaExecutor.h" />
     <ClInclude Include="Include\Ice\Components\Physics\BoxCollider.h" />
     <ClInclude Include="Include\Ice\Components\Physics\Collider.h" />

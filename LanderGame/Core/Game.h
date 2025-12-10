@@ -3,6 +3,7 @@
 #include <Ice/Core/IGame.h>
 
 #include "Ice/Components/Physics/RigidBody.h"
+#include "Ice/Components/LineRenderer.h"
 #include "Ice/Core/Actor.h"
 #include "Ice/Rendering/Material.h"
 
@@ -21,6 +22,7 @@ private:
     
     Actor* lander;
     RigidBody* landerRB;
+    LineRenderer* landerLineRenderer;
     
     Material* mainMaterial;
     Material* unlitMaterial;

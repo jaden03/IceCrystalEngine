@@ -19,7 +19,7 @@ public:
         );
     }
     
-static glm::quat BlenderToEngineQuat(const glm::quat& b)
+    static glm::quat BlenderToEngineQuat(const glm::quat& b)
     {
         return glm::quat(
             b.w,
@@ -27,5 +27,10 @@ static glm::quat BlenderToEngineQuat(const glm::quat& b)
             b.z,
             -b.y
         );
+    }
+
+    static glm::vec3 Lerp(glm::vec3 x, glm::vec3 y, float t)
+    {
+        return x * (1.f - t) + y * t;
     }
 };

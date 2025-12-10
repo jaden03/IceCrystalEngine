@@ -6,6 +6,7 @@
 #include "Ice/Components/Light.h"
 #include "Ice/Core/SceneManager.h"
 #include "Ice/Core/LightingManager.h"
+#include "Ice/Utils/FileUtil.h"
 
 RendererManager::RendererManager()
 {
@@ -42,6 +43,9 @@ void RendererManager::Initialize()
     glBindBufferBase(GL_UNIFORM_BUFFER, 4, PointLightUBO);
     
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    // Setup the line renderer shader
+    lineRendererShader = new Shader(FileUtil::AssetDir + "Shaders/line");
 }
 
 void RendererManager::UpdateUBOs()

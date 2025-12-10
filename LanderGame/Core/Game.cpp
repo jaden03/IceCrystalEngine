@@ -21,6 +21,7 @@
 
 #include <Ice/Utils/MathUtils.h>
 
+#include "Ice/Components/LineRenderer.h"
 #include "Ice/Components/RawImage.h"
 
 void CreateSun()
@@ -66,6 +67,15 @@ void Game::CreateLander()
     landerRB->GetBody()->GetMotionProperties()->SetAngularDamping(0.0f);
     landerRB->GetBody()->GetMotionProperties()->SetLinearDamping(0.0f);
     landerRB->GetBody()->SetFriction(10.0f);
+
+    landerLineRenderer = lander->AddComponent<LineRenderer>(
+        // Points
+        std::vector<glm::vec3> {},
+        // color
+        glm::vec3(1, 0, 0),
+        glm::vec3(0, 1, 0)
+    );
+    landerLineRenderer->width = 5.0f;
     
     // // Set up trigger callbacks
     landerRB->OnTriggerEntered = [](RigidBody* other) {
@@ -206,6 +216,39 @@ void Game::OnInit()
     WindowManager::GetInstance().SetFullscreen(true);
 }
 
+
+
+void PredictTrajectory(glm::vec3 startPos, glm::vec3 startVel, glm::vec3 moonCenter, float gravityStrength, std::vector<glm::vec3>& outPoints, float dt = 0.02f, int maxSteps = 10000) {
+    glm::vec3 pos = startPos;
+    glm::vec3 vel = startVel;
+    
+    outPoints.clear();
+    outPoints.reserve(maxSteps);
+    
+    glm::vec3 startDir = glm::normalize(startPos - moonCenter);
+    bool passedOpposite = false;
+    
+    for (int i = 0; i < maxSteps; i++) {
+        outPoints.push_back(pos);
+        
+        // Check if we've completed an orbit
+        if (i > 10) {
+            glm::vec3 currentDir = glm::normalize(pos - moonCenter);
+            float dotStart = glm::dot(currentDir, startDir);
+            
+            if (dotStart < -0.5f) passedOpposite = true;
+            if (passedOpposite && dotStart > 0.95f) break;
+        }
+        
+        glm::vec3 dir = glm::normalize(moonCenter - pos);
+        glm::vec3 acceleration = dir * gravityStrength;
+        
+        vel += acceleration * dt;
+        pos += vel * dt;
+    }
+}
+
+
 void Game::OnUpdate(float deltaTime)
 {
     
@@ -213,11 +256,20 @@ void Game::OnUpdate(float deltaTime)
 
 void Game::OnFixedUpdate(float fixedDeltaTime)
 {
-    // Apply gravity towards 0, 0, 0
-    // landerRB->AddForce(-lander->transform->position * 1.62f * 100.0f);
-    landerRB->AddForce(-lander->transform->position * 1.62f * 100.0f);
-}
+    const float gravity = 1.62f;
+    
+    landerRB->AddForce(glm::normalize(-lander->transform->position) * gravity * landerRB->mass);
 
+    // Predict trajectory and set the line renderer points
+    PredictTrajectory(
+        lander->transform->position,
+        landerRB->GetLinearVelocity(),
+        glm::vec3(0, 0, 0),
+        gravity,
+        landerLineRenderer->points,
+        fixedDeltaTime
+    );
+}
 
 void Game::OnShutdown()
 {

@@ -3,6 +3,8 @@
 #include "Ice/Components/Camera.h"
 #include <glm/glm.hpp>
 
+#include "Ice/Rendering/Shader.h"
+
 // Global Data
 struct RendererGlobalData
 {
@@ -79,6 +81,8 @@ public:
         static RendererManager instance; // Static local variable ensures a single instance
         return instance;
     }
+
+    Shader* lineRendererShader;
 
     unsigned int GlobalDataUBO; // 0
     unsigned int LightingDataUBO; // 1

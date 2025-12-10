@@ -7,7 +7,8 @@ local rb = actor:GetComponent("RigidBody");
 local light = sceneManager:GetActorByTag("engineLight"):GetComponent("PointLight")
 
 -- Attitude control settings
-local torqueStrength = 3500  -- Adjust for responsiveness
+local torqueStrength = 1000
+local engineStrength = 1500
 
 -- Fuel
 local fuel = 100;
@@ -46,7 +47,7 @@ RunService.Update(function(dt)
 
     -- Lander Controls
     if input.GetKey(Key.Space) and fuel > 0 then
-        rb:AddForce(transform.up * 5000)
+        rb:AddForce(transform.up * engineStrength)
         light.strength = lerp(light.strength, 1, dt * 10)
         enginePlume.transform.scale = vec3.lerp(enginePlume.transform.scale, vec3(1, 1, 1), dt * 10)
         fuel = fuel - .005;

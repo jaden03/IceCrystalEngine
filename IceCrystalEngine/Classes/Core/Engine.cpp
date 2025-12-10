@@ -178,15 +178,15 @@ void Engine::FixedUpdate(float deltaTime)
     {
         PhysicsManager::GetInstance().Step(fixedDeltaTime);
 
-        // Fire FixedUpdate within the lua RunService
-        RunService::GetInstance().FireFixedUpdate(fixedDeltaTime);
-
         // Call game fixedupdate if in game mode
         if (game && !isEditor)
         {
             game->OnFixedUpdate(fixedDeltaTime);
         }
         
+        // Fire FixedUpdate within the lua RunService
+        RunService::GetInstance().FireFixedUpdate(fixedDeltaTime);
+
         physicsAccumulator -= fixedDeltaTime;
     }
 }
