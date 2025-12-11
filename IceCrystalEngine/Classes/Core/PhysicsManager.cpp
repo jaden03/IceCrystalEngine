@@ -141,3 +141,12 @@ void PhysicsManager::Step(float fixedDeltaTime)
     );
 }
 
+
+void PhysicsManager::SetGravity(const glm::vec3 gravity)
+{
+    physicsSystem.SetGravity(ToJolt(gravity));
+    
+    // Force a verification in release too
+    volatile auto g = physicsSystem.GetGravity();
+    (void)g;
+}

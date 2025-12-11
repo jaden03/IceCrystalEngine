@@ -218,8 +218,9 @@ void Game::OnInit()
 
     // Set the gravity to zero, we will apply forces towards the center of world
     // PhysicsManager::GetInstance().GetSystem().SetGravity(JPH::Vec3(0.0f, -1.62f, 0.0f));
-    PhysicsManager::GetInstance().GetSystem().SetGravity(JPH::Vec3(0.0f, 0.0f, 0.0f));
-    
+    // PhysicsManager::GetInstance().GetSystem().SetGravity(JPH::Vec3(0.0f, 0.0f, 0.0f));
+	PhysicsManager::GetInstance().SetGravity(glm::vec3(0,0,0));
+	
     // Create the horizontal and vertical input axis'
     Input::CreateAxis("horizontal", GLFW_KEY_D, GLFW_KEY_A);
     Input::CreateAxis("vertical", GLFW_KEY_W, GLFW_KEY_S);

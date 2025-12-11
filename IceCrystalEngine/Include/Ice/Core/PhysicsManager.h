@@ -147,6 +147,8 @@ public:
 
     bool IsInitialized() const { return initialized; }
 
+    void SetGravity(glm::vec3 gravity);
+
 private:
     bool initialized = false;
     

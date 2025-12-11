@@ -7,8 +7,8 @@ local rb = actor:GetComponent("RigidBody");
 local light = sceneManager:GetActorByTag("engineLight"):GetComponent("PointLight")
 
 -- Attitude control settings
-local torqueStrength = 1000
-local engineStrength = 1500
+local torqueStrength = 15000
+local engineStrength = 20000
 
 -- Fuel
 local fuel = 100;
@@ -38,57 +38,71 @@ function lerp(a, b, t)
     return a + (b - a) * t
 end
 
-RunService.Update(function(dt)
-    print("test")
+-- Cache input state for FixedUpdate
+local isThrusting = false
+local horizontalInput = 0
+local verticalInput = 0
+local yawInput = 0
 
+-- Handle input and visuals
+RunService.Update(function(dt)
     -- SAS Toggle
     if input.GetKeyDown(Key.T) then
         sasEnabled = not sasEnabled
         sasToggleImage.enabled = sasEnabled
     end
 
-    -- Lander Controls
-    if input.GetKey(Key.Space) and fuel > 0 then
-        rb:AddForce(transform.up * engineStrength)
+    -- Cache input for physics
+    isThrusting = input.GetKey(Key.Space) and fuel > 0
+    horizontalInput = input.GetAxis("horizontal")
+    verticalInput = input.GetAxis("vertical")
+    
+    yawInput = 0
+    if input.GetKey(Key.Q) then
+        yawInput = 1
+    elseif input.GetKey(Key.E) then
+        yawInput = -1
+    end
+
+    -- Visual feedback (safe to do in Update)
+    if isThrusting then
         light.strength = lerp(light.strength, 1, dt * 10)
         enginePlume.transform.scale = vec3.lerp(enginePlume.transform.scale, vec3(1, 1, 1), dt * 10)
-        fuel = fuel - .005;
     else
         light.strength = lerp(light.strength, 0, dt * 10)
         enginePlume.transform.scale = vec3.lerp(enginePlume.transform.scale, vec3(1, 0, 1), dt * 10)
     end
     
-    if inRefuelZone and fuel < 100 then
-        fuel = fuel + 0.1;
-    end
-    
     -- Update fuel bar UI
     fuelBar.transform:SetScale(fuelBarStartingScale * (fuel / 100), fuelBar.transform.scale.y, fuelBar.transform.scale.z)
     
-    local horizontal = input.GetAxis("horizontal") -- value between -1 and 1 using a and d
-    local vertical = input.GetAxis("vertical")     -- value between -1 and 1 using w and s
-
-    -- Calculate torque based on input
-    -- Pitch (W/S) - rotates around right axis
-    local pitchTorque = transform.right * (-vertical * torqueStrength)
-    
-    -- Roll (A/D) - rotates around forward axis
-    local rollTorque = transform.forward * (-horizontal * torqueStrength)
-    
-    -- Yaw (Q/E) - rotates around up axis
-    local yaw = 0
-    if input.GetKey(Key.Q) then
-        yaw = 1
-    elseif input.GetKey(Key.E) then
-        yaw = -1
+    -- Fuel
+    if isThrusting then
+        fuel = fuel - 0.005
     end
-    local yawTorque = transform.up * (yaw * torqueStrength)
+    if inRefuelZone and fuel < 100 then
+        fuel = fuel + 0.1
+    end
+end)
+
+-- Handle physics
+RunService.FixedUpdate(function(fixedDt)
+    -- Thrust
+    if isThrusting then
+        rb:AddForce(transform.up * engineStrength)
+    end
+
+    -- Calculate torque based on cached input
+    local pitchTorque = transform.right * (-verticalInput * torqueStrength)
+    local rollTorque = transform.forward * (-horizontalInput * torqueStrength)
+    local yawTorque = transform.up * (yawInput * torqueStrength)
     
     -- Apply combined torque
     local totalTorque = pitchTorque + rollTorque + yawTorque
     rb:AddTorque(totalTorque)
     
-     if sasEnabled and vec3.length(totalTorque) < 1 then
-        rb:SetAngularVelocity(rb:GetAngularVelocity() * .995)
-     end
+    -- SAS dampening
+    if sasEnabled and vec3.length(totalTorque) < 1 then
+        rb:SetAngularVelocity(rb:GetAngularVelocity() * 0.95)
+    end
 end)

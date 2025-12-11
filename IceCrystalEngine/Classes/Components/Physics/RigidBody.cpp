@@ -2,6 +2,9 @@
 #include <Ice/Editor/WebEditorManager.h>
 #include <Ice/Editor/EditorUI.h>
 
+#include <iostream>
+
+
 RigidBody::RigidBody(float mass, bool trigger) : mass(mass), isTrigger(trigger) {}
 
 void RigidBody::Ready()
