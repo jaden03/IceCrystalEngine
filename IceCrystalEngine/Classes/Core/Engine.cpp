@@ -19,17 +19,17 @@
 #endif
 
 
-Engine::Engine()
-{
-    Init();
-}
+//Engine::Engine()
+//{
+    //Init();
+//}
 
 Engine::~Engine()
 {
     
     LuaManager::GetInstance().Cleanup();
 #ifdef _DEBUG
-    DebugUtil::GetInstance().Cleanup();
+    EditorUI::GetInstance().Cleanup();
     WebEditorManager::GetInstance().Stop();
 #endif
     glfwTerminate();
@@ -53,7 +53,6 @@ void Engine::Init()
     RendererManager::GetInstance();
     
 #ifdef _DEBUG
-    DebugUtil::GetInstance();
     WebEditorManager::GetInstance().Start(8080);
     GizmoRenderer::GetInstance().Initialize();
     
@@ -65,6 +64,9 @@ void Engine::Init()
 // Standalone mode (no game)
 void Engine::Run()
 {
+    // Initialize the engine and all core singletons
+    Init();
+    
     // Initialize the SceneInitializer so it initializes the scene
     SceneInitializer::GetInstance();
     
@@ -77,9 +79,7 @@ void Engine::Run()
 
         // Update
 #ifdef _DEBUG
-        //DebugUtil& debugUtil = DebugUtil::GetInstance();
-        //if (input.GetKeyDown(GLFW_KEY_GRAVE_ACCENT))
-           // debugUtil.showConsole = !debugUtil.showConsole;
+        // Console toggle is now handled by EditorUI
 #endif
 
         Update();
@@ -97,6 +97,9 @@ void Engine::Run(IGame* gameInstance)
         Run();
         return;
     }
+
+    // Initialize the engine and all core singletons
+    Init();
 
     isEditor = true;
     game = gameInstance;

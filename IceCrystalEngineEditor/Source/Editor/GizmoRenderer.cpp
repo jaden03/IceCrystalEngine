@@ -1,4 +1,6 @@
-﻿#include <Ice/Editor/GizmoRenderer.h>
+#ifdef ICE_EDITOR
+
+#include <Ice/Editor/GizmoRenderer.h>
 #include <Ice/Core/Actor.h>
 #include <iostream>
 #include <Ice/Components/Camera.h>
@@ -722,3 +724,5 @@ glm::vec3 GizmoRenderer::ProjectPointOntoLine(const glm::vec3& point, const glm:
     float t = glm::dot(v, lineDir);
     return lineStart + t * lineDir;
 }
+
+#endif // ICE_EDITOR

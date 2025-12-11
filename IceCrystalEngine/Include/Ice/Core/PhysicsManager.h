@@ -133,11 +133,7 @@ private:
 class PhysicsManager
 {
 public:
-    static PhysicsManager& GetInstance()
-    {
-        static PhysicsManager instance; // Static local variable ensures a single instance
-        return instance;
-    }
+    static PhysicsManager& GetInstance();
 
     JPH::uint maxBodies = 1024;
     JPH::uint numBodyMutexes = 0;

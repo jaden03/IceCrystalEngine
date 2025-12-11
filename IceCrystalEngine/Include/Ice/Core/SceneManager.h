@@ -20,11 +20,7 @@ class SceneManager
 
 public:
 	
-	static SceneManager& GetInstance()
-	{
-		static SceneManager instance; // Static local variable ensures a single instance
-		return instance;
-	}
+	static SceneManager& GetInstance();
 	
 	Camera* mainCamera;
 	double gameTime = 0.0f;

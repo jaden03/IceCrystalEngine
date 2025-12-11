@@ -11,17 +11,17 @@ class CameraController : public Component
 {
 public:
     // Camera settings
-    float cameraDistance = 10.0f;
+    float cameraDistance = 30.0f;
     float mouseSensitivity = 0.15f;
-    float rotationSmoothSpeed = 0.01f;
+    float rotationSmoothSpeed = 0.1f;
 
     // Pitch limits
     float minPitch = -89.0f;
     float maxPitch = 89.0f;
 
     // Distance limits
-    float minDistance = 10.0f;
-    float maxDistance = 50.0f;
+    float minDistance = 5.0f;
+    float maxDistance = 100.0f;
 
     // Moon center (assuming centered at origin)
     glm::vec3 moonCenter = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -37,10 +37,10 @@ public:
 
 private:
     // Camera rotation state (independent of target)
-    float targetYaw = 180.0f;
-    float targetPitch = -20.0f;
-    float currentYaw = 180.0f;
-    float currentPitch = -20.0f;
+    float targetYaw = 45.0f;
+    float targetPitch = -30.0f;
+    float currentYaw = 45.0f;
+    float currentPitch = -30.0f;
 
     glm::vec2 lastMousePos;
 

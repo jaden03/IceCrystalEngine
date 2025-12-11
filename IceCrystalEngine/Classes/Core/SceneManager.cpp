@@ -2,6 +2,12 @@
 
 #include <iostream>
 
+SceneManager& SceneManager::GetInstance()
+{
+    static SceneManager instance; // Static local variable ensures a single instance
+    return instance;
+}
+
 #include <Ice/Rendering/PostProcessor.h>
 #include <Ice/Core/LightingManager.h>
 #include <Ice/Core/WindowManager.h>
@@ -19,6 +25,7 @@
 
 #include <Ice/Core/Skybox.h>
 #include <Ice/Editor/GizmoRenderer.h>
+#include <Ice/Editor/EditorCamera.h>
 #include <Ice/Editor/WebEditorManager.h>
 #include <Ice/Editor/EditorUI.h>
 
@@ -170,11 +177,34 @@ void SceneManager::Update()
 		}
 	}
 
-	// bind to the hdr framebuffer
-	postProcessor.Bind();
-	// reset the viewport
-	glViewport(0, 0, windowManager.windowWidth, windowManager.windowHeight);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Bind to the appropriate framebuffer (viewport in editor, or HDR for post-processing)
+	#ifdef _DEBUG
+	if (editorUI.IsViewportActive())
+	{
+		// Render to editor viewport framebuffer
+		unsigned int fbo = editorUI.GetViewportFramebuffer();
+		int vpWidth = editorUI.GetViewportWidth();
+		int vpHeight = editorUI.GetViewportHeight();
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		
+		// IMPORTANT: Explicitly set draw buffers after binding FBO
+		// OpenGL may not remember this from framebuffer creation
+		GLenum drawBuffers[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+		glDrawBuffers(3, drawBuffers);
+		
+		glViewport(0, 0, vpWidth, vpHeight);
+		glClearColor(0.1f, 0.1f, 0.15f, 1.0f); // Slightly visible clear color
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+	else
+	#endif
+	{
+		// Render to HDR framebuffer for post-processing
+		postProcessor.Bind();
+		glViewport(0, 0, windowManager.windowWidth, windowManager.windowHeight);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
 
 
 	// backface culling
@@ -182,17 +212,34 @@ void SceneManager::Update()
 	
 	Input& input = Input::GetInstance();
 
-	// Sync EditorUI pause state with WebEditor (if web editor is running, it takes precedence)
-	bool isEnginePaused = editorUI.IsEnginePaused() || (webEditor.IsRunning() && webEditor.IsEnginePaused());
+	// Get current play mode
+	PlayMode currentPlayMode = editorUI.GetPlayMode();
+	bool isEditMode = (currentPlayMode == PlayMode::EDIT);
+	bool isPlayingGame = (currentPlayMode == PlayMode::PLAY);
 
-	// Only update Lua/scripts when engine is not paused (allows editing in pause mode)
-	if (!isEnginePaused)
+	// Global shortcut: Ctrl+P to toggle play mode
+	if (input.GetKeyDown(GLFW_KEY_P) && (input.GetKey(GLFW_KEY_LEFT_CONTROL) || input.GetKey(GLFW_KEY_RIGHT_CONTROL)))
+	{
+		if (currentPlayMode == PlayMode::EDIT)
+		{
+			editorUI.SetPlayMode(PlayMode::PLAY);
+			std::cout << "[Editor] Starting Play Mode (Ctrl+P)" << std::endl;
+		}
+		else
+		{
+			editorUI.SetPlayMode(PlayMode::EDIT);
+			std::cout << "[Editor] Stopping - Returning to Edit Mode (Ctrl+P)" << std::endl;
+		}
+	}
+
+	// Only update Lua/scripts when game is actually running (PLAY mode)
+	if (isPlayingGame)
 	{
 		LuaManager::GetInstance().Update(gameTime);
 	}
 
-	// Handle gizmo keyboard shortcuts when engine is paused
-	if (isEnginePaused && !input.GetKeyDown(GLFW_MOUSE_BUTTON_2))
+	// Handle gizmo keyboard shortcuts only in EDIT mode
+	if (isEditMode && !input.GetKeyDown(GLFW_MOUSE_BUTTON_2))
 	{
 		GizmoRenderer& gizmoRenderer = GizmoRenderer::GetInstance();
 		
@@ -237,15 +284,68 @@ void SceneManager::Update()
 		}
 	}
 
-	// Handle gizmo input and actor selection when engine is paused
-	if (isEnginePaused && mainCamera != nullptr)
+	// Update editor camera when in EDIT mode and viewport is active
+	#ifdef _DEBUG
+	if (isEditMode && editorUI.IsViewportActive())
+	{
+		EditorCamera& editorCam = EditorCamera::GetInstance();
+		editorCam.UpdateProjectionMatrix((float)editorUI.GetViewportWidth(), (float)editorUI.GetViewportHeight());
+		
+		// Always update camera in edit mode (it handles its own focus/input logic)
+		bool isMouseInViewport = editorUI.IsMouseInViewport();
+		glm::vec2 viewportMousePos = editorUI.GetViewportMousePos();
+		editorCam.Update(deltaTime, isMouseInViewport, viewportMousePos);
+	}
+	#endif
+
+	// Handle gizmo input and actor selection only in EDIT mode
+	if (isEditMode && mainCamera != nullptr)
 	{
 		// Check if ImGui wants to capture mouse input (user is interacting with UI)
-		ImGuiIO& io = ImGui::GetIO();
-		bool imguiWantsMouse = io.WantCaptureMouse;
+		// Only check if ImGui context exists (it won't exist in non-editor builds)
+		bool imguiWantsMouse = false;
+		if (ImGui::GetCurrentContext() != nullptr)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			imguiWantsMouse = io.WantCaptureMouse;
+		}
 		
-		glm::vec2 mousePos = input.GetMousePosition();
-		glm::vec2 screenSize(windowManager.windowWidth, windowManager.windowHeight);
+		// Use viewport-relative coordinates when viewport is active
+		glm::vec2 mousePos;
+		glm::vec2 screenSize;
+		bool useViewportCoords = false;
+		Camera* cameraToUse = mainCamera;
+		
+		#ifdef _DEBUG
+		if (editorUI.IsViewportActive())
+		{
+			// Always use editor camera when viewport is active (regardless of mouse position)
+			EditorCamera& editorCam = EditorCamera::GetInstance();
+			mainCamera->view = editorCam.view;
+			mainCamera->projection = editorCam.projection;
+			cameraToUse = mainCamera;
+			
+			// Use viewport-relative mouse coordinates if mouse is in viewport
+			if (editorUI.IsMouseInViewport())
+			{
+				mousePos = editorUI.GetViewportMousePos();
+				screenSize = editorUI.GetViewportSize();
+				useViewportCoords = true;
+			}
+			else
+			{
+				// Mouse outside viewport - use window coords but still use editor camera
+				mousePos = input.GetMousePosition();
+				screenSize = glm::vec2(windowManager.windowWidth, windowManager.windowHeight);
+			}
+		}
+		else
+		#endif
+		{
+			// Use full window coordinates
+			mousePos = input.GetMousePosition();
+			screenSize = glm::vec2(windowManager.windowWidth, windowManager.windowHeight);
+		}
 		
 		// Use EditorUI's selected actor (priority), fallback to WebEditor's
 		Actor* selectedActor = editorUI.GetSelectedActor();
@@ -254,8 +354,11 @@ void SceneManager::Update()
 			selectedActor = webEditor.GetSelectedActor();
 		}
 		
-		// If we have a selected actor, handle gizmo interaction (only if ImGui doesn't want the mouse)
-		if (selectedActor != nullptr && !imguiWantsMouse)
+		// If we have a selected actor, handle gizmo interaction
+		// Only allow interaction if mouse is in viewport (in editor mode)
+		bool allowGizmoInteraction = useViewportCoords;
+		
+		if (selectedActor != nullptr && allowGizmoInteraction)
 		{
 			GizmoRenderer& gizmoRenderer = GizmoRenderer::GetInstance();
 			if (gizmoRenderer.IsEnabled())
@@ -286,8 +389,8 @@ void SceneManager::Update()
 			}
 		}
 		
-		// If left click and not dragging gizmo, try to select an actor by clicking on it (only if ImGui doesn't want the mouse)
-		if (input.GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT) && !imguiWantsMouse)
+		// If left click and not dragging gizmo, try to select an actor by clicking on it
+		if (input.GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT) && allowGizmoInteraction)
 		{
 			GizmoRenderer& gizmoRenderer = GizmoRenderer::GetInstance();
 			
@@ -303,26 +406,43 @@ void SceneManager::Update()
 					clickedOnGizmo = (hitAxis != GizmoAxis::None);
 				}
 				
-				// If we didn't click on a gizmo, check for actor selection
-				if (!clickedOnGizmo && hoveredActor != nullptr)
+				// If we didn't click on a gizmo, handle actor selection
+				if (!clickedOnGizmo)
 				{
-					// Select the hovered actor in both editors
-					editorUI.SetSelectedActor(hoveredActor);
-					if (webEditor.IsRunning())
+					if (hoveredActor != nullptr)
 					{
-						int actorId = static_cast<int>(reinterpret_cast<intptr_t>(hoveredActor));
-						webEditor.SetSelectedActor(actorId);
+						// Select the hovered actor
+						editorUI.SetSelectedActor(hoveredActor);
+						if (webEditor.IsRunning())
+						{
+							int actorId = static_cast<int>(reinterpret_cast<intptr_t>(hoveredActor));
+							webEditor.SetSelectedActor(actorId);
+						}
+						std::cout << "[Editor] Selected actor: " << hoveredActor->name << std::endl;
 					}
-					std::cout << "[Editor] Selected actor: " << hoveredActor->name << std::endl;
+					else
+					{
+						// Clicked on empty space - deselect
+						if (selectedActor != nullptr)
+						{
+							std::cout << "[Editor] Deselected actor: " << selectedActor->name << std::endl;
+							editorUI.SetSelectedActor(nullptr);
+							if (webEditor.IsRunning())
+							{
+								webEditor.SetSelectedActor(0);
+							}
+						}
+					}
 				}
 			}
 		}
 	}
 
-	// update UBOs for renderning
+	// update UBOs for rendering
 	rendererManager.UpdateUBOs();
 
-	// Update transforms hierarchically - only call Update on root transforms
+	// Update transforms hierarchically - only in PLAY mode (not in EDIT mode)
+	// In EDIT mode, transforms are updated by gizmo manipulation only
 	for (int i = 0; i < actors->size(); i++)
 	{
 		if (actors->at(i)->transform->parent == nullptr)
@@ -332,7 +452,10 @@ void SceneManager::Update()
 	}
 
 	Actor* currentHoveredActor = nullptr;
-	glm::vec3 hoveredColor = postProcessor.hoveredActorColor;
+	glm::vec3 hoveredColor;
+	
+	// Will read picking color AFTER rendering is complete
+	
 	// loop through actors to update components (also get the hovered actor here to save having to loop elsewhere)
 	for (int i = 0; i < actors->size(); i++)
 	{
@@ -359,20 +482,19 @@ void SceneManager::Update()
 			                              dynamic_cast<Freecam*>(component) != nullptr ||
 			                              dynamic_cast<RigidBody*>(component) != nullptr);
 			
-			if (isRenderingComponent || !isEnginePaused)
+			if (isRenderingComponent || isPlayingGame)
 			{
 				component->Update();
 			}
 		}
 	}
-	hoveredActor = currentHoveredActor;
 
 	// lateupdate
 	RunService::GetInstance().FireLateUpdate(deltaTime);
 	for (int i = 0; i < actors->size(); i++)
 	{
 		// update the transform
-		actors->at(i)->transform->LateUpdate();
+		//actors->at(i)->transform->LateUpdate();
 		// loop through components
 		for (int j = 0; j < actors->at(i)->components->size(); j++)
 		{
@@ -389,7 +511,7 @@ void SceneManager::Update()
 			                              dynamic_cast<Freecam*>(component) != nullptr ||
 			                              dynamic_cast<RigidBody*>(component) != nullptr);
 			
-			if (isRenderingComponent || !isEnginePaused)
+			if (isRenderingComponent || isPlayingGame)
 			{
 				component->LateUpdate();
 			}
@@ -406,8 +528,94 @@ void SceneManager::Update()
 	// render the skybox
 	skybox.Render();
 
+	// Render gizmos for selected actor BEFORE unbinding FBO (so they appear in viewport)
+	// Only in EDIT mode
+	#ifdef _DEBUG
+	if (isEditMode && mainCamera != nullptr)
+	{
+		GizmoRenderer& gizmoRenderer = GizmoRenderer::GetInstance();
+		if (gizmoRenderer.IsEnabled())
+		{
+			// Use EditorUI's selected actor (priority), fallback to WebEditor's
+			Actor* selectedActor = editorUI.GetSelectedActor();
+			if (!selectedActor && webEditor.IsRunning())
+			{
+				selectedActor = webEditor.GetSelectedActor();
+			}
+			
+			if (selectedActor != nullptr)
+			{
+				// Use editor camera when rendering to viewport
+				Camera* renderCamera = mainCamera;
+				if (editorUI.IsViewportActive())
+				{
+					EditorCamera& editorCam = EditorCamera::GetInstance();
+					mainCamera->view = editorCam.view;
+					mainCamera->projection = editorCam.projection;
+				}
+				
+				gizmoRenderer.RenderGizmos(selectedActor, mainCamera);
+			}
+		}
+	}
+	#endif
+
 	// render the scene onto the quad
-	postProcessor.Render();
+	// Only render post-processing if not rendering to viewport
+	#ifdef _DEBUG
+	if (!editorUI.IsViewportActive())
+	#endif
+	{
+		postProcessor.Render();
+	}
+	
+	// Unbind framebuffer when rendering to viewport
+	#ifdef _DEBUG
+	if (editorUI.IsViewportActive())
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+	#endif
+
+	// NOW read picking color AFTER scene has been rendered to viewport
+	#ifdef _DEBUG
+	if (isEditMode && editorUI.IsViewportActive())
+	{
+		// Use viewport picking texture in edit mode - read AFTER rendering
+		hoveredColor = editorUI.GetViewportPickedColor();
+	}
+	else
+	#endif
+	{
+		// Use post-processor picking in game mode
+		hoveredColor = postProcessor.hoveredActorColor;
+	}
+	
+	// Find which actor matches the hovered color
+	for (int i = 0; i < actors->size(); i++)
+	{
+		if (actors->at(i)->uniqueColor == hoveredColor)
+		{
+			currentHoveredActor = actors->at(i);
+			break;
+		}
+	}
+	
+	// Update hovered actor and log changes
+	#ifdef _DEBUG
+	if (isEditMode && hoveredActor != currentHoveredActor)
+	{
+		if (currentHoveredActor != nullptr)
+		{
+			std::cout << "[Editor] Hovering over: " << currentHoveredActor->name << std::endl;
+		}
+		else if (hoveredActor != nullptr)
+		{
+			std::cout << "[Editor] No longer hovering" << std::endl;
+		}
+	}
+	#endif
+	hoveredActor = currentHoveredActor;
 
 	// render UI
 	glDisable(GL_DEPTH_TEST);
@@ -425,27 +633,6 @@ void SceneManager::Update()
 	
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-
-	// Render gizmos for selected actor only when engine is paused (edit mode)
-	//WebEditorManager& webEditor = WebEditorManager::GetInstance();
-	if (isEnginePaused && mainCamera != nullptr)
-	{
-		GizmoRenderer& gizmoRenderer = GizmoRenderer::GetInstance();
-		if (gizmoRenderer.IsEnabled())
-		{
-			// Use EditorUI's selected actor (priority), fallback to WebEditor's
-			Actor* selectedActor = editorUI.GetSelectedActor();
-			if (!selectedActor && webEditor.IsRunning())
-			{
-				selectedActor = webEditor.GetSelectedActor();
-			}
-			
-			if (selectedActor != nullptr)
-			{
-				gizmoRenderer.RenderGizmos(selectedActor, mainCamera);
-			}
-		}
-	}
 
 	// set the polygon mode back to what it was before
 	glPolygonMode(GL_FRONT_AND_BACK, currentPolygonMode);

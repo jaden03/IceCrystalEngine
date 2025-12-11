@@ -11,11 +11,7 @@ class WindowManager
     
 public:
 
-	static WindowManager& GetInstance()
-	{
-		static WindowManager instance; // Static local variable ensures a single instance
-		return instance;
-	}
+	static WindowManager& GetInstance();
 
 	GLFWwindow* window;
 
