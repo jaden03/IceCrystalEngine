@@ -101,7 +101,7 @@ void Engine::Run(IGame* gameInstance)
     // Initialize the engine and all core singletons
     Init();
 
-    isEditor = true;
+    isEditor = false;
     game = gameInstance;
 
     game->OnInit();
@@ -159,6 +159,9 @@ void Engine::Update()
     // Update web editor (process queued messages)
     webEditor.Update();
 #endif
+
+    // Fire Update within the lua RunService
+    RunService::GetInstance().FireUpdate(sceneManager.deltaTime);
     
     // Other engine updates (rendering still happens even when paused)
     sceneManager.Update();

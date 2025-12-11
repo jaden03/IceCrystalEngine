@@ -32,7 +32,6 @@
 
 void CreateSun()
 {
-    std::cout << "[Game] Creating Sun..." << std::endl;
     // Sun
     Actor* sun = new Actor("Sun", "sun");
     Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
@@ -48,12 +47,10 @@ void CreateSun()
     sunTilt->transform->Translate(0, 125, 0);
     sun->transform->RotateLocal(50, 0, 0);
     sun->transform->scale = glm::vec3(0.2f, 0.2f, 0.2f);
-    std::cout << "[Game] Sun created successfully" << std::endl;
 }
 
 void CreateMoon()
 {
-    std::cout << "[Game] Creating Moon..." << std::endl;
     // Moon Surface
     Material* moonMaterial = new Material(FileUtil::AssetDir + "Materials/moon.mat");
     Actor* moon = new Actor("Moon", "moon");
@@ -62,12 +59,10 @@ void CreateMoon()
     moon->transform->scale = glm::vec3(4, 4, 4);
     moon->AddComponent<MeshCollider>(moonRenderer->meshHolders[0].vertices, moonRenderer->meshHolders[0].indices, moon->transform->scale);
     RigidBody* rb = moon->AddComponent<RigidBody>(0.0f);
-    std::cout << "[Game] Moon created successfully" << std::endl;
 }
 
 void Game::CreateLander()
 {
-    std::cout << "[Game] Creating Lander..." << std::endl;
     // Lander
     lander = new Actor("Lander", "Lander");
     lander->AddComponent<Renderer>(FileUtil::AssetDir + "Models/lander.obj", mainMaterial);
@@ -118,30 +113,16 @@ void Game::CreateLander()
     enginePlume->transform->SetParent(lander->transform);
     enginePlume->transform->SetScale(1, 0, 1);
     enginePlume->transform->localPosition = glm::vec3(0, -1.0, 0);
-    std::cout << "[Game] Lander created successfully" << std::endl;
-}
-
-void CreateTestCube(Material* material)
-{
-    std::cout << "[Game] Creating Test Cube near lander for visibility testing..." << std::endl;
-    // Create a test cube near the lander to verify rendering works
-    Actor* testCube = new Actor("Test Cube", "testCube");
-    testCube->AddComponent<Renderer>(FileUtil::AssetDir + "Models/cube.obj", material);
-    testCube->transform->SetPosition(10, 100, 0); // Next to the lander
-    testCube->transform->SetScale(5, 5, 5); // Make it big and visible
-    std::cout << "[Game] Test Cube created at (10, 100, 0) with scale (5, 5, 5)" << std::endl;
 }
 
 void CreateCamera()
 {
-    std::cout << "[Game] Creating Camera..." << std::endl;
     // Camera
     Actor* cameraActor = new Actor("Main Camera");
     Camera* cam = cameraActor->AddComponent<Camera>();
     cam->farClippingPlane = 200.0f;
     // cameraActor->AddComponent<LuaExecutor>(FileUtil::AssetDir + "LuaScripts/CameraRotation.lua");
     cameraActor->AddComponent<CameraController>();
-    std::cout << "[Game] Camera created with CameraController component" << std::endl;
 }
 
 
@@ -180,10 +161,10 @@ void Game::CreateObject(std::string type, glm::vec3 position, glm::quat rotation
 	{
 		// Base	
     	Actor* base = new Actor("Pad", "pad");
-    	Renderer* baseRenderer = pad->AddComponent<Renderer>(FileUtil::AssetDir + "Models/base.obj", mainMaterial);
+    	Renderer* baseRenderer = base->AddComponent<Renderer>(FileUtil::AssetDir + "Models/base.obj", mainMaterial);
     	base->transform->SetPosition(position);
     	base->transform->SetRotation(rotation);
-    	base->AddComponent<MeshCollider>(padRenderer->meshHolders[0].vertices, padRenderer->meshHolders[0].indices, pad->transform->scale);
+    	base->AddComponent<MeshCollider>(baseRenderer->meshHolders[0].vertices, baseRenderer->meshHolders[0].indices, base->transform->scale);
     	base->AddComponent<RigidBody>(0.0f);
 	}
 }
@@ -252,82 +233,13 @@ void Game::OnInit()
     CreateMoon();
     CreateLander();
     CreateCamera();
-    CreateTestCube(mainMaterial); // Add test cube for visibility testing
     CreateWorld(); // pads, buildings, etc
     CreateUI();
     
     std::cout << "========================================" << std::endl;
     std::cout << "[Game] Scene initialization complete!" << std::endl;
     std::cout << "[Game] Total actors in scene: " << SceneManager::GetInstance().GetActorCount() << std::endl;
-    
-    // Verify lander exists
-    Actor* landerCheck = SceneManager::GetInstance().GetActorByTag("Lander");
-    if (landerCheck)
-    {
-        std::cout << "[Game] Lander verification: FOUND (position: " 
-                  << landerCheck->transform->position.x << ", "
-                  << landerCheck->transform->position.y << ", "
-                  << landerCheck->transform->position.z << ")" << std::endl;
-        
-        // Check lander components
-        Renderer* landerRenderer = landerCheck->GetComponent<Renderer>();
-        if (landerRenderer)
-        {
-            std::cout << "[Game] Lander has Renderer component with " 
-                      << landerRenderer->meshHolders.size() << " meshes" << std::endl;
-            if (landerRenderer->material)
-            {
-                std::cout << "[Game] Lander material is valid" << std::endl;
-            }
-            else
-            {
-                std::cout << "[Game] WARNING: Lander material is NULL!" << std::endl;
-            }
-        }
-        else
-        {
-            std::cout << "[Game] WARNING: Lander has no Renderer component!" << std::endl;
-        }
-    }
-    else
-    {
-        std::cout << "[Game] Lander verification: NOT FOUND - THIS IS A PROBLEM!" << std::endl;
-    }
-    
-    // Verify camera exists
-    Camera* cameraCheck = SceneManager::GetInstance().GetComponentOfType<Camera>();
-    if (cameraCheck)
-    {
-        std::cout << "[Game] Camera verification: FOUND" << std::endl;
-        std::cout << "[Game] Camera position: (" 
-                  << cameraCheck->transform->position.x << ", "
-                  << cameraCheck->transform->position.y << ", "
-                  << cameraCheck->transform->position.z << ")" << std::endl;
-        std::cout << "[Game] Camera FOV: " << cameraCheck->fieldOfView 
-                  << ", Near: " << cameraCheck->nearClippingPlane 
-                  << ", Far: " << cameraCheck->farClippingPlane << std::endl;
-    }
-    else
-    {
-        std::cout << "[Game] Camera verification: NOT FOUND - THIS IS A PROBLEM!" << std::endl;
-    }
-    
-    // Verify moon exists
-    Actor* moonCheck = SceneManager::GetInstance().GetActorByTag("moon");
-    if (moonCheck)
-    {
-        std::cout << "[Game] Moon verification: FOUND" << std::endl;
-        Renderer* moonRenderer = moonCheck->GetComponent<Renderer>();
-        if (moonRenderer && !moonRenderer->meshHolders.empty())
-        {
-            std::cout << "[Game] Moon has Renderer with " << moonRenderer->meshHolders.size() << " meshes" << std::endl;
-        }
-    }
-    else
-    {
-        std::cout << "[Game] WARNING: Moon not found!" << std::endl;
-    }
-    
+
     std::cout << "========================================" << std::endl;
     std::cout << "[Game] CONTROLS:" << std::endl;
     std::cout << "[Game] - Hold RIGHT MOUSE BUTTON and move mouse to rotate camera" << std::endl;

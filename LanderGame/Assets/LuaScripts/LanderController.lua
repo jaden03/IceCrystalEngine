@@ -39,6 +39,8 @@ function lerp(a, b, t)
 end
 
 RunService.Update(function(dt)
+    print("test")
+
     -- SAS Toggle
     if input.GetKeyDown(Key.T) then
         sasEnabled = not sasEnabled

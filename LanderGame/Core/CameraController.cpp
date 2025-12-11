@@ -154,19 +154,4 @@ void CameraController::Update()
 
     // Make camera look at target with custom up vector
     transform->LookAt(targetPos, localUp);
-    
-    // Debug output every 60 frames (roughly once per second at 60fps)
-    static int frameCount = 0;
-    if (frameCount % 60 == 0)
-    {
-        std::cout << "[CameraController] Camera pos: (" << transform->position.x 
-                  << ", " << transform->position.y 
-                  << ", " << transform->position.z << ")" << std::endl;
-        std::cout << "[CameraController] Target pos: (" << targetPos.x 
-                  << ", " << targetPos.y 
-                  << ", " << targetPos.z << ")" << std::endl;
-        std::cout << "[CameraController] Distance: " << cameraDistance 
-                  << ", Yaw: " << currentYaw << ", Pitch: " << currentPitch << std::endl;
-    }
-    frameCount++;
 }
