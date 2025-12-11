@@ -120,44 +120,59 @@ void CreateCamera()
 
 
 
-void Game::CreatePad(glm::vec3 position, glm::quat rotation)
+void Game::CreateObject(std::string type, glm::vec3 position, glm::quat rotation)
 {
-    // Pad
-    Actor* pad = new Actor("Pad", "pad");
-    Renderer* padRenderer = pad->AddComponent<Renderer>(FileUtil::AssetDir + "Models/pad.obj", mainMaterial);
-    pad->transform->SetPosition(position);
-    pad->transform->SetRotation(rotation);
-    pad->AddComponent<MeshCollider>(padRenderer->meshHolders[0].vertices, padRenderer->meshHolders[0].indices, pad->transform->scale);
-    pad->AddComponent<RigidBody>(0.0f);
-    // Lights
-    Actor* padLights = new Actor("Pad Lights");
-    padLights->transform->SetPosition(position);
-    padLights->transform->SetRotation(rotation);
-    padLights->transform->SetParent(pad->transform);
-    padLights->AddComponent<Renderer>(FileUtil::AssetDir + "Models/padLights.obj", unlitMaterial);
-    // Refuel Trigger
-    Actor* padRefuelTrigger = new Actor("Pad Refuel Trigger", "refuelTrigger");
-    padRefuelTrigger->transform->SetRotation(rotation);
-    padRefuelTrigger->transform->SetScale(4.0f, 0.2f, 4.0f);
-    padRefuelTrigger->transform->SetParent(pad->transform);
-    // cant only set local position because the actual position would be calculated and set on the next frame
-    // but the physics need the position to already be set when initializing the rigidbody, so we have to calculate out the actual world pos and set it
-    padRefuelTrigger->transform->position = pad->transform->position + (pad->transform->Up() * 0.4f); // use the Up() function because up would just be world up (hasnt had the first update yet)
-    padRefuelTrigger->transform->localPosition = glm::vec3(0.0f, 0.4f, 0.0f);
-    padRefuelTrigger->AddComponent<BoxCollider>(padRefuelTrigger->transform->scale);
-    padRefuelTrigger->AddComponent<RigidBody>(0.0f, true);
-    // padRefuelTrigger->AddComponent<Renderer>(FileUtil::AssetDir + "Models/cube.obj", unlitMaterial);
+	if (type == "pad")
+	{
+    	// Pad	
+    	Actor* pad = new Actor("Pad", "pad");
+    	Renderer* padRenderer = pad->AddComponent<Renderer>(FileUtil::AssetDir + "Models/pad.obj", mainMaterial);
+    	pad->transform->SetPosition(position);
+    	pad->transform->SetRotation(rotation);
+    	pad->AddComponent<MeshCollider>(padRenderer->meshHolders[0].vertices, padRenderer->meshHolders[0].indices, pad->transform->scale);
+    	pad->AddComponent<RigidBody>(0.0f);
+    	// Lights
+    	Actor* padLights = new Actor("Pad Lights");
+    	padLights->transform->SetPosition(position);
+    	padLights->transform->SetRotation(rotation);
+    	padLights->transform->SetParent(pad->transform);
+    	padLights->AddComponent<Renderer>(FileUtil::AssetDir + "Models/padLights.obj", unlitMaterial);
+    	// Refuel Trigger
+    	Actor* padRefuelTrigger = new Actor("Pad Refuel Trigger", "refuelTrigger");
+    	padRefuelTrigger->transform->SetRotation(rotation);
+    	padRefuelTrigger->transform->SetScale(4.0f, 0.2f, 4.0f);
+    	padRefuelTrigger->transform->SetParent(pad->transform);
+    	// cant only set local position because the actual position would be calculated and set on the next frame
+    	// but the physics need the position to already be set when initializing the rigidbody, so we have to calculate out the actual world pos and set it
+    	padRefuelTrigger->transform->position = pad->transform->position + (pad->transform->Up() * 0.4f); // use the Up() function because up would just be world up (hasnt had the first update yet)
+    	padRefuelTrigger->transform->localPosition = glm::vec3(0.0f, 0.4f, 0.0f);
+    	padRefuelTrigger->AddComponent<BoxCollider>(padRefuelTrigger->transform->scale);
+    	padRefuelTrigger->AddComponent<RigidBody>(0.0f, true);
+    	// padRefuelTrigger->AddComponent<Renderer>(FileUtil::AssetDir + "Models/cube.obj", unlitMaterial);
+	}	
+	else if (type == "base")
+	{
+		// Base	
+    	Actor* base = new Actor("Pad", "pad");
+    	Renderer* baseRenderer = pad->AddComponent<Renderer>(FileUtil::AssetDir + "Models/base.obj", mainMaterial);
+    	base->transform->SetPosition(position);
+    	base->transform->SetRotation(rotation);
+    	base->AddComponent<MeshCollider>(padRenderer->meshHolders[0].vertices, padRenderer->meshHolders[0].indices, pad->transform->scale);
+    	base->AddComponent<RigidBody>(0.0f);
+	}
 }
 void Game::CreateWorld()
 {
-    CreatePad(MathUtils::BlenderToEngine(glm::vec3(44.58f, -34.67f, 68.55f)), MathUtils::BlenderToEngineQuat(glm::quat(0.959001f, 0.149376f, 0.240800f, 0.004277f)));
-    CreatePad(MathUtils::BlenderToEngine(glm::vec3(-85.22f, -13.97f, 52.32f)), MathUtils::BlenderToEngineQuat(glm::quat(0.860231f, -0.107791f, -0.419877f, 0.268492f)));
-    CreatePad(MathUtils::BlenderToEngine(glm::vec3(3.16f, 88.14f, 20.63f)), MathUtils::BlenderToEngineQuat(glm::quat(0.744106f, -0.631242f, -0.130073f, -0.175845f)));
-    CreatePad(MathUtils::BlenderToEngine(glm::vec3(-9.45f, 35.79f, 88.66f)), MathUtils::BlenderToEngineQuat(glm::quat(0.888069f, -0.226797f, 0.129038f, 0.378479f)));
-    CreatePad(MathUtils::BlenderToEngine(glm::vec3(94.57f, 7.68f, 0.78f)), MathUtils::BlenderToEngineQuat(glm::quat(0.643592f, 0.329059f, 0.634373f, 0.274008f)));
-    CreatePad(MathUtils::BlenderToEngine(glm::vec3(53.58f, -51.03f, -59.88f)), MathUtils::BlenderToEngineQuat(glm::quat(0.442553f, 0.665599f, 0.600259f, 0.028527f)));
-    CreatePad(MathUtils::BlenderToEngine(glm::vec3(-45.17f, -22.14f, -82.00f)), MathUtils::BlenderToEngineQuat(glm::quat(-0.047015f, 0.697573f, 0.667251f, -0.256822f)));
-    CreatePad(MathUtils::BlenderToEngine(glm::vec3(44.71f, 35.77f, -76.99f)), MathUtils::BlenderToEngineQuat(glm::quat(-0.052434f, 0.653777f, 0.696809f, 0.290316f)));
+    CreateObject("pad", MathUtils::BlenderToEngine(glm::vec3(44.58f, -34.67f, 68.55f)), MathUtils::BlenderToEngineQuat(glm::quat(0.959001f, 0.149376f, 0.240800f, 0.004277f)));
+    CreateObject("pad", MathUtils::BlenderToEngine(glm::vec3(-85.22f, -13.97f, 52.32f)), MathUtils::BlenderToEngineQuat(glm::quat(0.860231f, -0.107791f, -0.419877f, 0.268492f)));
+    CreateObject("pad", MathUtils::BlenderToEngine(glm::vec3(3.16f, 88.14f, 20.63f)), MathUtils::BlenderToEngineQuat(glm::quat(0.744106f, -0.631242f, -0.130073f, -0.175845f)));
+    CreateObject("pad", MathUtils::BlenderToEngine(glm::vec3(-9.45f, 35.79f, 88.66f)), MathUtils::BlenderToEngineQuat(glm::quat(0.888069f, -0.226797f, 0.129038f, 0.378479f)));
+    CreateObject("pad", MathUtils::BlenderToEngine(glm::vec3(94.57f, 7.68f, 0.78f)), MathUtils::BlenderToEngineQuat(glm::quat(0.643592f, 0.329059f, 0.634373f, 0.274008f)));
+    CreateObject("pad", MathUtils::BlenderToEngine(glm::vec3(53.58f, -51.03f, -59.88f)), MathUtils::BlenderToEngineQuat(glm::quat(0.442553f, 0.665599f, 0.600259f, 0.028527f)));
+    CreateObject("pad", MathUtils::BlenderToEngine(glm::vec3(-45.17f, -22.14f, -82.00f)), MathUtils::BlenderToEngineQuat(glm::quat(-0.047015f, 0.697573f, 0.667251f, -0.256822f)));
+    CreateObject("pad", MathUtils::BlenderToEngine(glm::vec3(44.71f, 35.77f, -76.99f)), MathUtils::BlenderToEngineQuat(glm::quat(-0.052434f, 0.653777f, 0.696809f, 0.290316f)));
+
+	CreateObject("base", MathUtils::BlenderToEngine(glm::vec3(47.79f, -15.77f, 70.82f)), MathUtils::BlenderToEngineQuat(glm::quat(0.517686f, 0.301762f, 0.016011f, 0.800428f)));
 }
 
 

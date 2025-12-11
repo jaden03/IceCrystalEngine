@@ -18,7 +18,7 @@ private:
 
     void CreateLander();
     void CreateWorld();
-    void CreatePad(glm::vec3 position, glm::quat rotation);
+    void CreateObject(std::string type, glm::vec3 position, glm::quat rotation);
     
     Actor* lander;
     RigidBody* landerRB;
