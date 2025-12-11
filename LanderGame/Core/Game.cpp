@@ -188,22 +188,22 @@ void CreateUI()
     Actor* fuelBarBG = new Actor("Fuel Bar Background");
     fuelBarBG->AddComponent<RawImage>(FileUtil::AssetDir + "Textures/fuelBarBG.png");
     fuelBarBG->transform->SetScale(glm::vec3(400, 50, 100));
-    fuelBarBG->transform->Translate(400, 80, 0);
+    fuelBarBG->transform->Translate(80, 80, 0);
     
     Actor* fuelBarFG = new Actor("Fuel Bar Foreground", "fuelBarFG");
     fuelBarFG->AddComponent<RawImage>(FileUtil::AssetDir + "Textures/fuelBarFG.png");
     fuelBarFG->transform->SetScale(glm::vec3(400, 50, 100));
-    fuelBarFG->transform->Translate(400, 80, 0);
+    fuelBarFG->transform->Translate(80, 80, 0);
 
     Actor* sasToggleBG = new Actor("SAS Toggle Background");
     sasToggleBG->AddComponent<RawImage>(FileUtil::AssetDir + "Textures/sasToggleBG.png");
     sasToggleBG->transform->SetScale(glm::vec3(150, 50, 100));
-    sasToggleBG->transform->Translate(400, 150, 0);
+    sasToggleBG->transform->Translate(80, 150, 0);
 
     Actor* sasToggleFG = new Actor("SAS Toggle Foreground", "sasToggleFG");
     RawImage* sasToggleFGImage = sasToggleFG->AddComponent<RawImage>(FileUtil::AssetDir + "Textures/sasToggleFG.png");
     sasToggleFG->transform->SetScale(glm::vec3(150, 50, 100));
-    sasToggleFG->transform->Translate(400, 150, 0);
+    sasToggleFG->transform->Translate(80, 150, 0);
     sasToggleFGImage->enabled = false;
 }
 
