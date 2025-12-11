@@ -179,6 +179,14 @@
   <ItemGroup>
     <Content Include="Assets\Models\cone.obj" />
     <Content Include="Assets\Models\cube.obj" />
+    <Content Include="Assets\Models\lander.mtl" />
+    <Content Include="Assets\Models\lander.obj" />
+    <Content Include="Assets\Models\lander.obj.cache" />
+    <Content Include="Assets\Models\landerPlume.obj" />
+    <Content Include="Assets\Models\moon.obj" />
+    <Content Include="Assets\Models\moon.obj.cache" />
+    <Content Include="Assets\Models\pad.obj" />
+    <Content Include="Assets\Models\padLights.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

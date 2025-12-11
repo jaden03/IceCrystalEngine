@@ -1,5 +1,11 @@
-﻿#include <Ice/Core/PhysicsManager.h>
+#include <Ice/Core/PhysicsManager.h>
 #include <Ice/Components/Physics/RigidBody.h>
+
+PhysicsManager& PhysicsManager::GetInstance()
+{
+    static PhysicsManager instance; // Static local variable ensures a single instance
+    return instance;
+}
 
 void PhysicsContactListener::OnContactAdded(
     const JPH::Body& inBody1,

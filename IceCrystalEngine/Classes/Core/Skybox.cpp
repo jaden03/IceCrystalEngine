@@ -133,11 +133,25 @@ void Skybox::Render()
 		view = glm::lookAt(mainCamera->transform->position, mainCamera->transform->position + mainCamera->transform->forward, mainCamera->transform->up);
 		view = glm::mat4(glm::mat3(view));
 
-		projection = glm::perspective(glm::radians(sceneManager.mainCamera->fieldOfView), (float)windowManager.windowWidth / (float)windowManager.windowHeight, sceneManager.mainCamera->nearClippingPlane, sceneManager.mainCamera->farClippingPlane);
+		// Prevent division by zero - use 16:9 as fallback if window not initialized
+		float aspectRatio = 16.0f / 9.0f;
+		if (windowManager.windowWidth > 0 && windowManager.windowHeight > 0)
+		{
+			aspectRatio = (float)windowManager.windowWidth / (float)windowManager.windowHeight;
+		}
+
+		projection = glm::perspective(glm::radians(sceneManager.mainCamera->fieldOfView), aspectRatio, sceneManager.mainCamera->nearClippingPlane, sceneManager.mainCamera->farClippingPlane);
 	}
 	else
 	{
-		projection = glm::perspective(glm::radians(90.0f), (float)windowManager.windowWidth / (float)windowManager.windowHeight, 0.1f, 10000.0f);
+		// Prevent division by zero - use 16:9 as fallback if window not initialized
+		float aspectRatio = 16.0f / 9.0f;
+		if (windowManager.windowWidth > 0 && windowManager.windowHeight > 0)
+		{
+			aspectRatio = (float)windowManager.windowWidth / (float)windowManager.windowHeight;
+		}
+
+		projection = glm::perspective(glm::radians(90.0f), aspectRatio, 0.1f, 10000.0f);
 	}
 
 	shader->setMat4("projection", projection);

@@ -65,7 +65,15 @@ glm::mat4 DirectionalLight::GetLightSpaceMatrix(float nearPlane, float farPlane)
     if (cam == nullptr)
         return glm::mat4(1.0f);
     
-    auto proj = glm::perspective(glm::radians(cam->fieldOfView), (float)WindowManager::GetInstance().windowWidth / (float)WindowManager::GetInstance().windowHeight, nearPlane, farPlane);
+    // Prevent division by zero - use 16:9 as fallback if window not initialized
+    WindowManager& windowManager = WindowManager::GetInstance();
+    float aspectRatio = 16.0f / 9.0f;
+    if (windowManager.windowWidth > 0 && windowManager.windowHeight > 0)
+    {
+        aspectRatio = (float)windowManager.windowWidth / (float)windowManager.windowHeight;
+    }
+    
+    auto proj = glm::perspective(glm::radians(cam->fieldOfView), aspectRatio, nearPlane, farPlane);
     auto corners = getFrustumCornersWorldSpace(proj, cam->view);
 
     glm::vec3 center = glm::vec3(0, 0, 0);

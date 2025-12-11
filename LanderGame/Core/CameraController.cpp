@@ -1,9 +1,10 @@
-﻿#include "CameraController.h"
+#include "CameraController.h"
 #include <Ice/Core/SceneManager.h>
 #include <Ice/Core/Input.h>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <cmath>
+#include <iostream>
 
 CameraController::CameraController() : Component()
 {
@@ -13,14 +14,79 @@ void CameraController::Ready()
 {
     // Get the target actor
     targetActor = SceneManager::GetInstance().GetActorByTag(targetTag);
+    
+    if (targetActor == nullptr)
+    {
+        std::cout << "[CameraController] ERROR: Could not find actor with tag '" << targetTag << "'" << std::endl;
+    }
+    else
+    {
+        std::cout << "[CameraController] Successfully found target actor: " << targetActor->name << std::endl;
+        std::cout << "[CameraController] Target position: (" << targetActor->transform->position.x 
+                  << ", " << targetActor->transform->position.y 
+                  << ", " << targetActor->transform->position.z << ")" << std::endl;
+        
+        // Calculate and set initial camera position immediately
+        glm::vec3 targetPos = targetActor->transform->position;
+        glm::vec3 localUp = glm::normalize(targetPos - moonCenter);
+        
+        // Build stable horizontal plane
+        glm::vec3 worldNorth = glm::vec3(0.0f, 0.0f, 1.0f);
+        if (std::abs(glm::dot(localUp, worldNorth)) > 0.9f)
+        {
+            worldNorth = glm::vec3(1.0f, 0.0f, 0.0f);
+        }
+        
+        glm::vec3 localEast = glm::normalize(glm::cross(worldNorth, localUp));
+        glm::vec3 localNorth = glm::normalize(glm::cross(localUp, localEast));
+        
+        // Apply initial rotation
+        float yawRad = glm::radians(currentYaw);
+        float pitchRad = glm::radians(currentPitch);
+        
+        glm::vec3 horizontalDir = std::cos(yawRad) * localNorth + std::sin(yawRad) * localEast;
+        glm::vec3 finalDirection = std::cos(pitchRad) * horizontalDir + std::sin(pitchRad) * localUp;
+        finalDirection = glm::normalize(finalDirection);
+        
+        // Set initial camera position
+        glm::vec3 initialPosition = targetPos - finalDirection * cameraDistance;
+        transform->position = initialPosition;
+        transform->LookAt(targetPos, localUp);
+        
+        std::cout << "[CameraController] Initial camera position set to: (" 
+                  << transform->position.x << ", " 
+                  << transform->position.y << ", " 
+                  << transform->position.z << ")" << std::endl;
+    }
+    
     // Initialize last mouse position
     lastMousePos = Input::GetMousePosition();
+    
+    std::cout << "[CameraController] Initial camera distance: " << cameraDistance << std::endl;
+    std::cout << "[CameraController] Initial yaw: " << currentYaw << ", pitch: " << currentPitch << std::endl;
 }
 
 void CameraController::Update()
 {
+    // Try to find target actor if we haven't found it yet
     if (targetActor == nullptr)
-        return;
+    {
+        targetActor = SceneManager::GetInstance().GetActorByTag(targetTag);
+        if (targetActor == nullptr)
+        {
+            static int warnCounter = 0;
+            if (warnCounter % 60 == 0)  // Only warn once per second
+            {
+                std::cout << "[CameraController] WARNING: targetActor is still null, retrying..." << std::endl;
+            }
+            warnCounter++;
+            return;
+        }
+        else
+        {
+            std::cout << "[CameraController] Successfully found target actor on retry: " << targetActor->name << std::endl;
+        }
+    }
 
     Input& input = Input::GetInstance();
 
@@ -88,4 +154,19 @@ void CameraController::Update()
 
     // Make camera look at target with custom up vector
     transform->LookAt(targetPos, localUp);
+    
+    // Debug output every 60 frames (roughly once per second at 60fps)
+    static int frameCount = 0;
+    if (frameCount % 60 == 0)
+    {
+        std::cout << "[CameraController] Camera pos: (" << transform->position.x 
+                  << ", " << transform->position.y 
+                  << ", " << transform->position.z << ")" << std::endl;
+        std::cout << "[CameraController] Target pos: (" << targetPos.x 
+                  << ", " << targetPos.y 
+                  << ", " << targetPos.z << ")" << std::endl;
+        std::cout << "[CameraController] Distance: " << cameraDistance 
+                  << ", Yaw: " << currentYaw << ", Pitch: " << currentPitch << std::endl;
+    }
+    frameCount++;
 }

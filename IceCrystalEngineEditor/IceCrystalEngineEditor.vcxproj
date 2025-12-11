@@ -1,5 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8" ?>
+<Project
+    DefaultTargets="Build"
+    xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -29,26 +32,38 @@
   <PropertyGroup>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+  <PropertyGroup
+        Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"
+        Label="Configuration"
+    >
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+  <PropertyGroup
+        Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"
+        Label="Configuration"
+    >
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+  <PropertyGroup
+        Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"
+        Label="Configuration"
+    >
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+  <PropertyGroup
+        Condition="'$(Configuration)|$(Platform)'=='Release|x64'"
+        Label="Configuration"
+    >
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -60,17 +75,45 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  <ImportGroup
+        Label="PropertySheets"
+        Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"
+    >
+    <Import
+            Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props"
+            Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')"
+            Label="LocalAppDataPlatform"
+        />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  <ImportGroup
+        Label="PropertySheets"
+        Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"
+    >
+    <Import
+            Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props"
+            Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')"
+            Label="LocalAppDataPlatform"
+        />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  <ImportGroup
+        Label="PropertySheets"
+        Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"
+    >
+    <Import
+            Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props"
+            Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')"
+            Label="LocalAppDataPlatform"
+        />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  <ImportGroup
+        Label="PropertySheets"
+        Condition="'$(Configuration)|$(Platform)'=='Release|x64'"
+    >
+    <Import
+            Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props"
+            Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')"
+            Label="LocalAppDataPlatform"
+        />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -85,13 +128,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup
+        Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"
+    >
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions
+            >WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -106,19 +152,27 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions
+            >_DEBUG;_CONSOLE;ICE_EDITOR;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)IceCrystalEngine\Include;$(SolutionDir)IceCrystalEngine\External\Jolt</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories
+            >$(SolutionDir)IceCrystalEngineEditor\Include;$(SolutionDir)IceCrystalEngine\Include;$(SolutionDir)IceCrystalEngine\Include\lua;$(SolutionDir)IceCrystalEngine\External\Jolt</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)/IceCrystalEngine/Libraries/lua/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);IceCrystalEngine.lib;lua54.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories
+            >$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)/IceCrystalEngine/Libraries/lua/;$(SolutionDir)/IceCrystalEngine/Libraries/GLFW</AdditionalLibraryDirectories>
+      <AdditionalDependencies
+            >%(AdditionalDependencies);lua54.lib;glfw3.lib;opengl32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ItemDefinitionGroup
+        Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"
+    >
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -126,7 +180,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions
+            >WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -137,7 +192,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  <ItemDefinitionGroup
+        Condition="'$(Configuration)|$(Platform)'=='Release|x64'"
+    >
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -145,27 +202,491 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions
+            >NDEBUG;_CONSOLE;ICE_EDITOR;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)IceCrystalEngine\Include;$(SolutionDir)IceCrystalEngine\External\Jolt</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories
+            >$(SolutionDir)IceCrystalEngineEditor\Include;$(SolutionDir)IceCrystalEngine\Include;$(SolutionDir)IceCrystalEngine\Include\lua;$(SolutionDir)IceCrystalEngine\External\Jolt</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)/IceCrystalEngine/Libraries/lua/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);IceCrystalEngine.lib;lua54.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories
+            >$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)/IceCrystalEngine/Libraries/lua/;$(SolutionDir)/IceCrystalEngine/Libraries/GLFW</AdditionalLibraryDirectories>
+      <AdditionalDependencies
+            >%(AdditionalDependencies);lua54.lib;glfw3.lib;opengl32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="IceCrystalEngineEditor.cpp" />
+    <ClCompile Include="Source\Editor\EditorCamera.cpp" />
+    <ClCompile Include="Source\Editor\EditorUI.cpp" />
+    <ClCompile Include="Source\Editor\GizmoRenderer.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Components\Camera.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Components\Light.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Components\Freecam.cpp" />
+    <ClCompile
+            Include="..\IceCrystalEngine\Classes\Components\LineRenderer.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\Classes\Components\LuaExecutor.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\Classes\Components\Physics\RigidBody.cpp"
+        />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Components\RawImage.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Components\Renderer.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Core\Actor.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Core\Component.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Core\Engine.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Core\Input.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Core\LightingManager.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Core\LuaManager.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Core\PhysicsManager.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Core\RendererManager.cpp" />
+    <ClCompile
+            Include="..\IceCrystalEngine\Classes\Core\SceneInitializer.cpp"
+        />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Core\SceneManager.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Core\Skybox.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Core\Transform.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Core\UIManager.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Core\WindowManager.cpp" />
+    <ClCompile
+            Include="..\IceCrystalEngine\Classes\Editor\WebEditorManager.cpp"
+        />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Rendering\Material.cpp" />
+    <ClCompile
+            Include="..\IceCrystalEngine\Classes\Rendering\PostProcessor.cpp"
+        />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Rendering\Shader.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Rendering\Texture.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Utils\FileUtil.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\Utils\DebugUtil.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\glad.c" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\imgui\imgui.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\imgui\imgui_draw.cpp" />
+    <ClCompile
+            Include="..\IceCrystalEngine\Classes\imgui\imgui_impl_glfw.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\Classes\imgui\imgui_impl_opengl3.cpp"
+        />
+    <ClCompile Include="..\IceCrystalEngine\Classes\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\IceCrystalEngine\Classes\imgui\imgui_widgets.cpp" />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\AABBTree\AABBTreeBuilder.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Core\Color.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Core\Factory.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Core\IssueReporting.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Core\JobSystemSingleThreaded.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Core\JobSystemThreadPool.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Core\JobSystemWithBarrier.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Core\LinearCurve.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Core\Memory.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Core\Profiler.cpp"
+        />
+    <ClCompile Include="..\IceCrystalEngine\External\Jolt\Jolt\Core\RTTI.cpp" />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Core\Semaphore.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Core\StringTools.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Core\TickCounter.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Geometry\ConvexHullBuilder.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Geometry\ConvexHullBuilder2D.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Geometry\Indexify.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Geometry\OrientedBox.cpp"
+        />
+    <ClCompile Include="..\IceCrystalEngine\External\Jolt\Jolt\Math\Vec3.cpp" />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\ObjectStream\ObjectStream.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\ObjectStream\ObjectStreamBinaryIn.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\ObjectStream\ObjectStreamBinaryOut.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\ObjectStream\ObjectStreamIn.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\ObjectStream\ObjectStreamOut.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\ObjectStream\ObjectStreamTextIn.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\ObjectStream\ObjectStreamTextOut.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\ObjectStream\SerializableObject.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\ObjectStream\TypeDeclarations.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Body\Body.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Body\BodyCreationSettings.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Body\BodyInterface.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Body\BodyManager.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Body\MassProperties.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Body\MotionProperties.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Character\Character.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Character\CharacterBase.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Character\CharacterVirtual.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\BroadPhase\BroadPhase.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\BroadPhase\BroadPhaseBruteForce.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\BroadPhase\BroadPhaseQuadTree.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\BroadPhase\QuadTree.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\CastConvexVsTriangles.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\CastSphereVsTriangles.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\CollideConvexVsTriangles.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\CollideSphereVsTriangles.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\CollisionDispatch.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\CollisionGroup.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\EstimateCollisionResponse.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\GroupFilter.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\GroupFilterTable.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\ManifoldBetweenTwoFaces.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\NarrowPhaseQuery.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\NarrowPhaseStats.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\PhysicsMaterial.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\PhysicsMaterialSimple.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\BoxShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\CapsuleShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\CompoundShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\ConvexHullShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\ConvexShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\CylinderShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\DecoratedShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\EmptyShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\HeightFieldShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\MeshShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\MutableCompoundShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\OffsetCenterOfMassShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\PlaneShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\RotatedTranslatedShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\ScaledShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\Shape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\SphereShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\StaticCompoundShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\TaperedCapsuleShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\TaperedCylinderShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\Shape\TriangleShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Collision\TransformedShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\ConeConstraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\Constraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\ConstraintManager.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\ContactConstraintManager.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\DistanceConstraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\FixedConstraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\GearConstraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\HingeConstraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\MotorSettings.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\PathConstraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\PathConstraintPath.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\PathConstraintPathHermite.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\PointConstraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\PulleyConstraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\RackAndPinionConstraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\SixDOFConstraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\SliderConstraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\SpringSettings.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\SwingTwistConstraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Constraints\TwoBodyConstraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\DeterminismLog.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\IslandBuilder.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\LargeIslandSplitter.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\PhysicsScene.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\PhysicsSystem.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\PhysicsUpdateContext.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Ragdoll\Ragdoll.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\SoftBody\SoftBodyCreationSettings.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\SoftBody\SoftBodyMotionProperties.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\SoftBody\SoftBodyShape.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\SoftBody\SoftBodySharedSettings.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\StateRecorderImpl.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Vehicle\MotorcycleController.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Vehicle\TrackedVehicleController.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Vehicle\VehicleAntiRollBar.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Vehicle\VehicleCollisionTester.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Vehicle\VehicleConstraint.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Vehicle\VehicleController.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Vehicle\VehicleDifferential.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Vehicle\VehicleEngine.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Vehicle\VehicleTrack.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Vehicle\VehicleTransmission.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Vehicle\Wheel.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Physics\Vehicle\WheeledVehicleController.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\RegisterTypes.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Renderer\DebugRenderer.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Renderer\DebugRendererPlayback.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Renderer\DebugRendererRecorder.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Renderer\DebugRendererSimple.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Skeleton\SkeletalAnimation.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Skeleton\Skeleton.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Skeleton\SkeletonMapper.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\Skeleton\SkeletonPose.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\TriangleSplitter\TriangleSplitter.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\TriangleSplitter\TriangleSplitterBinning.cpp"
+        />
+    <ClCompile
+            Include="..\IceCrystalEngine\External\Jolt\Jolt\TriangleSplitter\TriangleSplitterMean.cpp"
+        />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\Ice\Editor\EditorUI.h" />
+    <ClInclude Include="Include\Ice\Editor\EditorCamera.h" />
+    <ClInclude Include="Include\Ice\Editor\GizmoRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IceCrystalEngine\IceCrystalEngine.vcxproj">
       <Project>{23c6f331-c50c-4cb5-9665-8093d96b2a22}</Project>
       <Name>IceCrystalEngine</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

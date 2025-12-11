@@ -20,7 +20,15 @@ Camera::Camera(float fieldOfView, float nearClippingPlane, float farClippingPlan
 void Camera::Update()
 {
 	view = glm::lookAt(transform->position, transform->position + transform->forward, transform->up);
-	projection = glm::perspective(glm::radians(fieldOfView), (float)windowManager.windowWidth / (float)windowManager.windowHeight, nearClippingPlane, farClippingPlane);
+	
+	// Prevent division by zero - use 16:9 as fallback if window not initialized
+	float aspectRatio = 16.0f / 9.0f;
+	if (windowManager.windowWidth > 0 && windowManager.windowHeight > 0)
+	{
+		aspectRatio = (float)windowManager.windowWidth / (float)windowManager.windowHeight;
+	}
+	
+	projection = glm::perspective(glm::radians(fieldOfView), aspectRatio, nearClippingPlane, farClippingPlane);
 
 	frustumCorners = GetFrustomCorners();
 	glm::vec3 center = glm::vec3(0, 0, 0);
