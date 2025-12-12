@@ -115,22 +115,14 @@ void WindowManager::ToggleFullscreen()
     
     if (isFullscreen)
     {
-        // Save current windowed state
-        glfwGetWindowPos(window, &windowedX, &windowedY);
-        glfwGetWindowSize(window, &windowedWidth, &windowedHeight);
-        
-        // Get monitor dimensions
         const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        
-        // Make borderless and resize to cover screen
+    
         glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
         glfwSetWindowPos(window, 0, 0);
-        glfwSetWindowSize(window, mode->width, mode->height);
-        
+        glfwSetWindowSize(window, mode->width, mode->height - 1);
+    
         windowWidth = mode->width;
-        windowHeight = mode->height;
-        
-        std::cout << "[WindowManager] Switched to borderless fullscreen: " << windowWidth << "x" << windowHeight << std::endl;
+        windowHeight = mode->height - 1;
     }
     else
     {
