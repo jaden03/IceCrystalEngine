@@ -29,8 +29,8 @@ UIManager::UIManager()
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    
-    material = new Material(FileUtil::SubstituteVariables("{ASSET_DIR}Materials/ui.mat"));
+
+    material = new Material(FileUtil::SubstituteVariables("{ENGINE_ASSET_DIR}Materials/ui.mat"));
 }
 
 

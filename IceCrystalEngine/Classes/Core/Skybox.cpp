@@ -106,7 +106,7 @@ void Skybox::InitializeSkybox()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-	shader = new Shader(FileUtil::SubstituteVariables("{ASSET_DIR}Shaders/skybox.vert"), FileUtil::SubstituteVariables("{ASSET_DIR}Shaders/skybox.frag"));
+	shader = new Shader(FileUtil::SubstituteVariables("{ENGINE_ASSET_DIR}Shaders/skybox.vert"), FileUtil::SubstituteVariables("{ENGINE_ASSET_DIR}Shaders/skybox.frag"));
 }
 
 

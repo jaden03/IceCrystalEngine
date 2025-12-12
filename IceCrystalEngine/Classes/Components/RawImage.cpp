@@ -14,7 +14,7 @@ GLuint RawImage::sharedVBO = 0;
 RawImage::RawImage(std::string texturePath)
 {
     InitializeSharedResources();
-    shader = new Shader(FileUtil::AssetDir + "Shaders/ui.vert", FileUtil::AssetDir + "Shaders/ui.frag");
+    shader = new Shader(FileUtil::EngineAssetDir + "Shaders/ui.vert", FileUtil::EngineAssetDir + "Shaders/ui.frag");
     texture = new Texture(texturePath);
 }
 RawImage::RawImage(std::string texturePath, std::string shaderPath)
@@ -27,7 +27,7 @@ RawImage::RawImage(std::string texturePath, std::string shaderPath)
 RawImage::RawImage(unsigned int textureHandle)
 {
     InitializeSharedResources();
-    shader = new Shader(FileUtil::AssetDir + "Shaders/ui.vert", FileUtil::AssetDir + "Shaders/ui.frag");
+    shader = new Shader(FileUtil::EngineAssetDir + "Shaders/ui.vert", FileUtil::EngineAssetDir + "Shaders/ui.frag");
     sourceType = RawImageSourceType::RawHandle;
     rawHandle = textureHandle;
 }

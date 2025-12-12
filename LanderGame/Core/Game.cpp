@@ -34,7 +34,7 @@ void CreateSun()
 {
     // Sun
     Actor* sun = new Actor("Sun", "sun");
-    Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
+    Renderer* sunRenderer = new Renderer(FileUtil::EngineAssetDir + "Models/cone.obj");
     DirectionalLight* sunLight = sun->AddComponent<DirectionalLight>();
     sunLight->cascadeSplits = std::vector<float> { 15.0f, 30.0f, 50.0f, 75.0f };
     sunLight->strength = .2f;
@@ -227,7 +227,7 @@ void Game::OnInit()
     
     // Create the main material used for everything
     mainMaterial = new Material(FileUtil::AssetDir + "Materials/main.mat");
-    unlitMaterial = new Material(FileUtil::AssetDir + "Materials/unlit.mat");
+    unlitMaterial = new Material(FileUtil::EngineAssetDir + "Materials/unlit.mat");
     unlitMaterial->color = glm::vec3(0.0f, 1.0f, 3.0f);
 
     CreateSun();

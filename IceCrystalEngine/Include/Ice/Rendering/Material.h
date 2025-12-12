@@ -19,7 +19,7 @@ class Material // this is the class definition
 
 public:
 	
-	std::string materialPath = "{PROJECT_ROOT}Assets/Materials/default.mat";
+	std::string materialPath = "{ENGINE_ASSET_DIR}Materials/default.mat";
 	std::string name = "Default Material"; // the name of the material
 
 	std::shared_ptr<Texture> texture; // the texture of the material

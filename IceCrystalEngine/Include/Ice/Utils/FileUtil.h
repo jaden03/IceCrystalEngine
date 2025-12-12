@@ -8,7 +8,8 @@ class FileUtil {
 	
 public:
     static std::string ProjectRoot;
-    static std::string AssetDir;
+	static std::string AssetDir;
+	static std::string EngineAssetDir;
 
     static void InitializeStaticMembers();
 
@@ -18,7 +19,9 @@ public:
 	static std::string SubstituteVariables(const std::string& str);
 
 	static std::string GetProjectRoot();
+	static std::string GetExecutableDir();
 	static std::string GetAssetDir();
+	static std::string GetEngineAssetDir();
 };
 
 

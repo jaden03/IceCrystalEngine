@@ -1,6 +1,0 @@
-﻿{
-  "Name": "Default UI Material",
-  "Texture": "",
-  "Shader": "{ASSET_DIR}Shaders/ui",
-  "Color": [ 1.0, 1.0, 1.0 ]
-}

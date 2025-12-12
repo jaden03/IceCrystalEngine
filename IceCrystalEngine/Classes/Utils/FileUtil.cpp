@@ -3,24 +3,17 @@
 #include <iostream>
 #include <filesystem>
 
-
+#include <Windows.h>
 
 // Initialize static members here.
 std::string FileUtil::ProjectRoot = "";
 std::string FileUtil::AssetDir = "";
+std::string FileUtil::EngineAssetDir = "";
 
 void FileUtil::InitializeStaticMembers() {
-    // Get the project root
-    std::string projectRoot = std::filesystem::current_path().string() + "/";
-    // Change the "\\" to "/"
-    for (std::string::iterator it = projectRoot.begin(); it != projectRoot.end(); ++it) {
-        if (*it == '\\') {
-            *it = '/';
-        }
-    }
-
-    ProjectRoot = projectRoot;
+    ProjectRoot = GetProjectRoot();
     AssetDir = ProjectRoot + "Assets/";
+	EngineAssetDir = GetExecutableDir() + "EngineAssets/";
 }
 
 
@@ -37,14 +30,32 @@ std::string FileUtil::GetProjectRoot()
     }
     return projectRoot;
 }
+std::string FileUtil::GetExecutableDir() {
+	char path[MAX_PATH];
+	GetModuleFileNameA(NULL, path, MAX_PATH);
+	std::string exePath(path);
+    
+	// Find last slash
+	size_t pos = exePath.find_last_of("\\/");
+	if (pos != std::string::npos) {
+		exePath = exePath.substr(0, pos + 1);
+	}
+    
+	// Normalize slashes
+	for (char& c : exePath) {
+		if (c == '\\') c = '/';
+	}
+    
+	return exePath;
+}
 
 std::string FileUtil::GetAssetDir()
 {
 	return GetProjectRoot() + "Assets/";
 }
-
-
-
+std::string FileUtil::GetEngineAssetDir() {
+	return GetExecutableDir() + "EngineAssets/";
+}
 
 std::string FileUtil::ReadFile(const std::string& filename) 
 {
@@ -97,6 +108,14 @@ std::string FileUtil::SubstituteVariables(const std::string& str)
 	{
 		updatedStr.replace(found, 11, AssetDir);
 		found = updatedStr.find("{ASSET_DIR}");
+	}
+
+	// ENGINE_ASSET_DIR
+	found = updatedStr.find("{ENGINE_ASSET_DIR}");
+	while (found != std::string::npos)
+	{
+		updatedStr.replace(found, 18, EngineAssetDir);
+		found = updatedStr.find("{ENGINE_ASSET_DIR}");
 	}
 
 	return updatedStr;

@@ -16,8 +16,8 @@ LightingManager::~LightingManager()
 
 void LightingManager::InitializeLighting()
 {
-	shadowShader = new Shader("{ASSET_DIR}Shaders/shadows");
-	shadowsCascadedShader = new Shader("{ASSET_DIR}Shaders/shadowsCascaded");
+	shadowShader = new Shader("{ENGINE_ASSET_DIR}Shaders/shadows");
+	shadowsCascadedShader = new Shader("{ENGINE_ASSET_DIR}Shaders/shadowsCascaded");
 	glGenFramebuffers(1, &shadowMapFBO);
 	
 	pointLights = std::vector<PointLight*>();

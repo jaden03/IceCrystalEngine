@@ -78,7 +78,7 @@ PostProcessor::PostProcessor()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// Create the shader
-	hdrShader = new Shader(FileUtil::SubstituteVariables("{ASSET_DIR}Shaders/hdr.vert"), FileUtil::SubstituteVariables("{ASSET_DIR}Shaders/hdr.frag"));
+	hdrShader = new Shader(FileUtil::SubstituteVariables("{ENGINE_ASSET_DIR}Shaders/hdr.vert"), FileUtil::SubstituteVariables("{ENGINE_ASSET_DIR}Shaders/hdr.frag"));
 
 
 	// Bloom
@@ -111,7 +111,7 @@ PostProcessor::PostProcessor()
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurPingpongBuffer[i], 0);
 	}
 	
-	blurShader = new Shader(FileUtil::SubstituteVariables("{ASSET_DIR}Shaders/blur.vert"), FileUtil::SubstituteVariables("{ASSET_DIR}Shaders/blur.frag"));
+	blurShader = new Shader(FileUtil::SubstituteVariables("{ENGINE_ASSET_DIR}Shaders/blur.vert"), FileUtil::SubstituteVariables("{ENGINE_ASSET_DIR}Shaders/blur.frag"));
 }
 
 

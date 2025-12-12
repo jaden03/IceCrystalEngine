@@ -177,8 +177,6 @@
     <ClInclude Include="Core\Game.h" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Models\cone.obj" />
-    <Content Include="Assets\Models\cube.obj" />
     <Content Include="Assets\Models\lander.mtl" />
     <Content Include="Assets\Models\lander.obj" />
     <Content Include="Assets\Models\lander.obj.cache" />

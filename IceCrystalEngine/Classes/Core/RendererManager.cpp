@@ -45,7 +45,7 @@ void RendererManager::Initialize()
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
     // Setup the line renderer shader
-    lineRendererShader = new Shader(FileUtil::AssetDir + "Shaders/line");
+    lineRendererShader = new Shader(FileUtil::EngineAssetDir + "Shaders/line");
 }
 
 void RendererManager::UpdateUBOs()
