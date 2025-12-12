@@ -99,6 +99,7 @@ EditorUI::EditorUI()
     WindowManager& windowManager = WindowManager::GetInstance();
     ImGui_ImplGlfw_InitForOpenGL(windowManager.window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
+   // WindowManager::GetInstance().SetFullscreen(true);
 }
 
 // Destructor
