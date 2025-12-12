@@ -128,7 +128,7 @@ void CameraController::Update()
     // Get target position and calculate local "up" based on position
     glm::vec3 targetPos = targetActor->transform->position;
     glm::vec3 localUp = glm::normalize(targetPos - moonCenter);
-
+    
     // Build a stable horizontal plane perpendicular to localUp
     glm::vec3 worldNorth = glm::vec3(0.0f, 0.0f, 1.0f);
     if (std::abs(glm::dot(localUp, worldNorth)) > 0.9f)

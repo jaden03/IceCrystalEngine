@@ -177,6 +177,9 @@
     <ClInclude Include="Core\Game.h" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\LuaScripts\CameraRotation.lua" />
+    <Content Include="Assets\LuaScripts\LanderController.lua" />
+    <Content Include="Assets\LuaScripts\Test.lua" />
     <Content Include="Assets\Models\cone.obj" />
     <Content Include="Assets\Models\cube.obj" />
     <Content Include="Assets\Models\lander.mtl" />
