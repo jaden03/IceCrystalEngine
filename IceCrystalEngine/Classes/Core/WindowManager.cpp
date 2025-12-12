@@ -9,7 +9,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 WindowManager& WindowManager::GetInstance()
 {
-    static WindowManager instance; // Static local variable ensures a single instance
+    static WindowManager instance;
     return instance;
 }
 
@@ -49,7 +49,7 @@ void WindowManager::InitializeWindow()
         windowedHeight = windowHeight;
     }
     
-    // This essentially puts it into borderless-windowed
+    // Borderless windowed for "fullscreen"
     if (isFullscreen)
     {
         glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
@@ -57,7 +57,6 @@ void WindowManager::InitializeWindow()
         windowWidth = mode->width;
         windowHeight = mode->height;
     }
-
 
     std::cout << "[WindowManager] Creating window with dimensions: " << windowWidth << "x" << windowHeight << std::endl;
     GLFWwindow* win = glfwCreateWindow(windowWidth, windowHeight, "IceCrystal Engine", NULL, NULL);
@@ -69,15 +68,20 @@ void WindowManager::InitializeWindow()
     }
     std::cout << "[WindowManager] Window created successfully: " << (void*)win << std::endl;
 
+    // Position at top-left if borderless fullscreen
+    if (isFullscreen)
+    {
+        glfwSetWindowPos(win, 0, 0);
+    }
+
     glfwMakeContextCurrent(win);
     
-    // Turns vSync off (set back to 1 to turn it on)
     glfwSwapInterval(0);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
-       exit(-1);
+        exit(-1);
     }
 
     window = win;
@@ -90,9 +94,9 @@ void WindowManager::InitializeWindow()
     glDepthMask(GL_TRUE);
     glEnable(GL_CULL_FACE);
 
-    // Set the window icon to Assets/Logo.png
+    // Set the window icon
     GLFWimage images[1];
-    images[0].pixels = stbi_load("Assets/Logo.png", &images[0].width, &images[0].height, 0, 4); // load rgba channels
+    images[0].pixels = stbi_load("Assets/Logo.png", &images[0].width, &images[0].height, 0, 4);
     glfwSetWindowIcon(window, 1, images);
     stbi_image_free(images[0].pixels);
 }
@@ -101,7 +105,6 @@ void WindowManager::ToggleFullscreen()
 {
     std::cout << "[WindowManager] ToggleFullscreen called, window = " << (void*)window << std::endl;
     
-    // Safety check: ensure window exists before toggling
     if (window == nullptr)
     {
         std::cout << "[WindowManager] ERROR: Cannot toggle fullscreen - window is null!" << std::endl;
@@ -112,28 +115,29 @@ void WindowManager::ToggleFullscreen()
     
     if (isFullscreen)
     {
-        // Save current windowed dimensions and position
+        // Save current windowed state
         glfwGetWindowPos(window, &windowedX, &windowedY);
         glfwGetWindowSize(window, &windowedWidth, &windowedHeight);
         
-        // Get primary monitor and its video mode
-        GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+        // Get monitor dimensions
+        const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         
-        // Switch to fullscreen using glfwSetWindowMonitor (proper GLFW method)
-        // This creates a borderless fullscreen window
-        glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+        // Make borderless and resize to cover screen
+        glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
+        glfwSetWindowPos(window, 0, 0);
+        glfwSetWindowSize(window, mode->width, mode->height);
         
         windowWidth = mode->width;
         windowHeight = mode->height;
         
-        std::cout << "[WindowManager] Switched to fullscreen: " << windowWidth << "x" << windowHeight << std::endl;
+        std::cout << "[WindowManager] Switched to borderless fullscreen: " << windowWidth << "x" << windowHeight << std::endl;
     }
     else
     {
-        // Switch back to windowed mode using glfwSetWindowMonitor
-        // Passing NULL as monitor parameter creates a windowed mode window
-        glfwSetWindowMonitor(window, NULL, windowedX, windowedY, windowedWidth, windowedHeight, GLFW_DONT_CARE);
+        // Restore decorations and windowed size/position
+        glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_TRUE);
+        glfwSetWindowSize(window, windowedWidth, windowedHeight);
+        glfwSetWindowPos(window, windowedX, windowedY);
         
         windowWidth = windowedWidth;
         windowHeight = windowedHeight;
@@ -146,7 +150,6 @@ void WindowManager::SetFullscreen(bool fullscreen)
 {
     std::cout << "[WindowManager] SetFullscreen(" << fullscreen << ") called, current isFullscreen = " << isFullscreen << ", window = " << (void*)window << std::endl;
     
-    // Safety check: ensure window exists
     if (window == nullptr)
     {
         std::cout << "[WindowManager] ERROR: Cannot set fullscreen - window is null!" << std::endl;
@@ -166,7 +169,6 @@ void WindowManager::SetFullscreen(bool fullscreen)
 }
 
 
-// glfw: whenever the window size changed
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     WindowManager& windowManager = WindowManager::GetInstance();
