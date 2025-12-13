@@ -4,7 +4,7 @@
 #define UI_MANAGER_H
 
 #include <glm/glm.hpp>
-#include <Ice/Core/WindowManager.h>
+#include <Ice/Managers/WindowManager.h>
 #include <Ice/Rendering/Material.h>
 
 class UIManager

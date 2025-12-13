@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef ACTOR_H
 
@@ -7,9 +7,9 @@
 #include <vector>
 #include <string>
 
-#include <Ice/Core/WindowManager.h>
-#include <Ice/Core/LightingManager.h>
-#include <Ice/Core/SceneManager.h>
+#include <Ice/Managers/WindowManager.h>
+#include <Ice/Managers/LightingManager.h>
+#include <Ice/Managers/SceneManager.h>
 
 class Transform; // forward declaration because actor and transform depend on eachother
 class Component;

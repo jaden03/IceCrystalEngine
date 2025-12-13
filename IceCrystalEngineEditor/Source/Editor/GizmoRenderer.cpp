@@ -4,7 +4,7 @@
 #include <Ice/Core/Actor.h>
 #include <iostream>
 #include <Ice/Components/Camera.h>
-#include <Ice/Core/WindowManager.h>
+#include <Ice/Managers/WindowManager.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 

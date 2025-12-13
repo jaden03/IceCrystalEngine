@@ -3,7 +3,7 @@
 #include <Ice/Core/IGame.h>
 
 #include "Ice/Components/Physics/RigidBody.h"
-#include "Ice/Components/LineRenderer.h"
+#include <Ice/Components/Rendering/LineRenderer.h>
 #include "Ice/Core/Actor.h"
 #include "Ice/Rendering/Material.h"
 

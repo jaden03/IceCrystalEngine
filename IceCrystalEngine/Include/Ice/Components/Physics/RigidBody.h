@@ -10,7 +10,7 @@
 
 #include <glm/glm.hpp>
 
-#include <Ice/Core/PhysicsManager.h>
+#include <Ice/Managers/PhysicsManager.h>
 
 #include <functional>
 #include <set>

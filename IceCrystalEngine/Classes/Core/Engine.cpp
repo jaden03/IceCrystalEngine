@@ -1,14 +1,15 @@
 #include <Ice/Core/Engine.h>
 
 #include <Ice/Core/Input.h>
-#include <Ice/Core/LuaManager.h>
-#include <Ice/Core/RendererManager.h>
+#include <Ice/Managers/LuaManager.h>
+#include <Ice/Managers/RendererManager.h>
 #include <Ice/Core/SceneInitializer.h>
 #include <Ice/Utils/FileUtil.h>
-#include <Ice/Core/PhysicsManager.h>
-#include <Ice/Core/SceneManager.h>
+#include <Ice/Managers/PhysicsManager.h>
+#include <Ice/Managers/SceneManager.h>
 
 #include "Ice/Core/IGame.h"
+#include "Ice/Managers/AudioManager.h"
 
 
 #ifdef _DEBUG
@@ -51,6 +52,8 @@ void Engine::Init()
     LuaManager::GetInstance();
     LightingManager::GetInstance().InitializeLighting();
     RendererManager::GetInstance();
+
+    AudioManager::GetInstance().Initialize();
     
 #ifdef _DEBUG
     WebEditorManager::GetInstance().Start(8080);
@@ -142,6 +145,8 @@ void Engine::Update()
 #else
     bool isPaused = false;
 #endif
+
+    AudioManager::GetInstance().Update();
     
     if (!isPaused)
     {

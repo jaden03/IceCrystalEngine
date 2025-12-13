@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef INPUT_H
 
@@ -10,7 +10,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include <Ice/Core/WindowManager.h>
+#include <Ice/Managers/WindowManager.h>
 
 
 class InputAxis

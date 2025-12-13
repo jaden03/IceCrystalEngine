@@ -1,16 +1,16 @@
-#pragma once
+﻿#pragma once
 
 #ifndef FREECAM_H
 
 #define FREECAM_H
 
-#include <Ice/Core/SceneManager.h>
+#include <Ice/Managers/SceneManager.h>
 #include <Ice/Core/Input.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
-#include <Ice/Components/Renderer.h>
+#include <Ice/Components/Rendering/Renderer.h>
 #include <Ice/Components/Camera.h>
 
 #include <Ice/Core/Component.h>

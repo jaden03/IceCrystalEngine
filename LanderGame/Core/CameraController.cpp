@@ -1,5 +1,5 @@
 #include "CameraController.h"
-#include <Ice/Core/SceneManager.h>
+#include <Ice/Managers/SceneManager.h>
 #include <Ice/Core/Input.h>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>

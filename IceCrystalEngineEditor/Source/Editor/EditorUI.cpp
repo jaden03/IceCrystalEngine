@@ -9,17 +9,17 @@
 #include <Ice//Editor/EditorUI.h>
 
 // Ice Core headers
-#include <Ice/Core/SceneManager.h>
-#include <Ice/Core/WindowManager.h>
-#include <Ice/Core/LightingManager.h>
+#include <Ice/Managers/SceneManager.h>
+#include <Ice/Managers/WindowManager.h>
+#include <Ice/Managers/LightingManager.h>
 #include <Ice/Core/Input.h>
 #include <Ice/Core/Actor.h>
 #include <Ice/Core/Transform.h>
 
 // Ice Components
 #include <Ice/Components/Camera.h>
-#include <Ice/Components/Light.h>
-#include <Ice/Components/Renderer.h>
+#include <Ice/Components/Rendering/Light.h>
+#include <Ice/Components/Rendering/Renderer.h>
 #include <Ice/Components/Physics/RigidBody.h>
 
 // Ice Utils

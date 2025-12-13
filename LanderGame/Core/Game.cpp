@@ -6,8 +6,8 @@
 #include <Ice/Core/Actor.h>
 #include <Ice/Utils/FileUtil.h>
 
-#include "Ice/Components/Renderer.h"
-#include "Ice/Components/Light.h"
+#include <Ice/Components/Rendering/Renderer.h>
+#include <Ice/Components/Rendering/Light.h>
 
 #include <Ice/Components/Freecam.h>
 
@@ -21,10 +21,13 @@
 
 #include <Ice/Utils/MathUtils.h>
 
-#include "Ice/Components/LineRenderer.h"
-#include "Ice/Components/RawImage.h"
+#include <Ice/Components/Rendering/LineRenderer.h>
+#include <Ice/Components/UI/RawImage.h>
 
-#include <Ice/Core/SceneManager.h>
+#include <Ice/Managers/SceneManager.h>
+
+#include "Ice/Components/Audio/AudioSource.h"
+#include "Ice/Resources/AudioClip.h"
 
 #ifdef _DEBUG
 #include <Ice/IEditor/EditorUI.h>
@@ -166,6 +169,17 @@ void Game::CreateObject(std::string type, glm::vec3 position, glm::quat rotation
     	base->transform->SetRotation(rotation);
     	base->AddComponent<MeshCollider>(baseRenderer->meshHolders[0].vertices, baseRenderer->meshHolders[0].indices, base->transform->scale);
     	base->AddComponent<RigidBody>(0.0f);
+
+		AudioSource* as = base->AddComponent<AudioSource>();
+		AudioClip* clip = new AudioClip;
+		clip->LoadFromFile(FileUtil::AssetDir + "Sounds/kspSpaceThemeKevinMaclead.wav");
+		std::cout << "Channels: " << clip->GetChannelCount() << std::endl;
+		as->SetClip(clip);
+		as->SetVolume(.2f);
+		as->SetMinDistance(5.0f);
+		as->SetMaxDistance(100.0f);
+		as->SetLooping(true);
+		as->Play();
 	}
 }
 void Game::CreateWorld()

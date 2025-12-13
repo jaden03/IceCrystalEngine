@@ -1,13 +1,13 @@
-#pragma once
+﻿#pragma once
 
 #ifndef DEBUG_UTIL_H
 
 #define DEBUG_UTIL_H
 
 #include <functional>
-#include <Ice/Core/WindowManager.h>
-#include <Ice/Core/SceneManager.h>
-#include <Ice/Core/LightingManager.h>
+#include <Ice/Managers/WindowManager.h>
+#include <Ice/Managers/SceneManager.h>
+#include <Ice/Managers/LightingManager.h>
 
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>

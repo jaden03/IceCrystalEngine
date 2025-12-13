@@ -1,6 +1,6 @@
 ﻿#include <Ice/Components/LuaExecutor.h>
 
-#include "Ice/Core/LuaManager.h"
+#include <Ice/Managers/LuaManager.h>
 
 LuaExecutor::LuaExecutor(std::string path)
 {

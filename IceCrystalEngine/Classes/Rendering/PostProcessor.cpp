@@ -1,7 +1,7 @@
 #include <Ice/Rendering/PostProcessor.h>
 
-#include <Ice/Core/WindowManager.h>
-#include <Ice/Core/LightingManager.h>
+#include <Ice/Managers/WindowManager.h>
+#include <Ice/Managers/LightingManager.h>
 #include <Ice/Utils/FileUtil.h>
 
 #include <Ice/Rendering/Shader.h>

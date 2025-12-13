@@ -1,18 +1,18 @@
 #include <Ice/IEditor/WebEditorManager.h>
 #include <Ice/IEditor/GizmoRenderer.h>
-#include <Ice/Core/SceneManager.h>
+#include <Ice/Managers/SceneManager.h>
 #include <Ice/Core/Actor.h>
 #include <Ice/Core/Transform.h>
 #include <Ice/Core/Component.h>
 #include <Ice/Components/Physics/RigidBody.h>
 #include <Ice/Components/Physics/BoxCollider.h>
 #include <Ice/Components/Physics/SphereCollider.h>
-#include <Ice/Components/Renderer.h>
+#include <Ice/Components/Rendering/Renderer.h>
 #include <Ice/Components/Camera.h>
-#include <Ice/Components/Light.h>
+#include <Ice/Components/Rendering/Light.h>
 #include <Ice/Components/Freecam.h>
 #include <Ice/Components/LuaExecutor.h>
-#include <Ice/Core/PhysicsManager.h>
+#include <Ice/Managers/PhysicsManager.h>
 #include <Ice/Utils/FileUtil.h>
 #include <JSON/json.h>
 

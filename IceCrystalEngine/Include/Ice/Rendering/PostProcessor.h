@@ -1,11 +1,11 @@
-#pragma once
+﻿#pragma once
 
 #ifndef POST_PROCESSOR_H
 
 #define POST_PROCESSOR_H
 
-#include <Ice/Core/WindowManager.h>
-#include <Ice/Core/LightingManager.h>
+#include <Ice/Managers/WindowManager.h>
+#include <Ice/Managers/LightingManager.h>
 
 class Shader;
 

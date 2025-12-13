@@ -1,18 +1,18 @@
 #include <Ice/Core/SceneInitializer.h>
 
 #include <Ice/Components/Camera.h>
-#include <Ice/Components/Renderer.h>
+#include <Ice/Components/Rendering/Renderer.h>
 #include <Ice/Components/Freecam.h>
-#include <Ice/Components/Light.h>
+#include <Ice/Components/Rendering/Light.h>
 
 #include <iostream>
 
-#include "Ice/Components/RawImage.h"
+#include <Ice/Components/UI/RawImage.h>
 #include "Ice/Components/Physics/BoxCollider.h"
 #include "Ice/Components/Physics/MeshCollider.h"
 #include "Ice/Components/Physics/RigidBody.h"
 #include "Ice/Core/Engine.h"
-#include "Ice/Core/LuaManager.h"
+#include <Ice/Managers/LuaManager.h>
 
 SceneInitializer::SceneInitializer()
 {

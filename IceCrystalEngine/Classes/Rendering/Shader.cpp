@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "Ice/Core/LightingManager.h"
+#include <Ice/Managers/LightingManager.h>
 
 std::int32_t Handle;
 
