@@ -24,10 +24,10 @@ SceneManager& SceneManager::GetInstance()
 #include <Ice/Components/Physics/RigidBody.h>
 
 #include <Ice/Core/Skybox.h>
-#include <Ice/Editor/GizmoRenderer.h>
-#include <Ice/Editor/EditorCamera.h>
-#include <Ice/Editor/WebEditorManager.h>
-#include <Ice/Editor/EditorUI.h>
+#include <Ice/IEditor/GizmoRenderer.h>
+#include <Ice/IEditor/EditorCamera.h>
+#include <Ice/IEditor/WebEditorManager.h>
+#include <Ice/IEditor/EditorUI.h>
 
 #include <imgui/imgui.h>
 #include <typeinfo>

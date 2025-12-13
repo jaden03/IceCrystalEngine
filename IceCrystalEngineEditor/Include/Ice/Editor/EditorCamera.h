@@ -10,11 +10,7 @@
 class EditorCamera
 {
 public:
-    static EditorCamera& GetInstance()
-    {
-        static EditorCamera instance;
-        return instance;
-    }
+    static EditorCamera& GetInstance();
 
     // Camera properties
     glm::vec3 position;
@@ -57,8 +53,8 @@ public:
     void UpdateVectors();
     
     // Focus management
-    void SetViewportFocused(bool focused) { isViewportFocused = focused; }
-    bool IsViewportFocused() const { return isViewportFocused; }
+    void SetViewportFocused(bool focused);
+    bool IsViewportFocused() const;
     
     // Camera controls
     void ProcessMouseMovement(float deltaX, float deltaY);
@@ -69,9 +65,9 @@ public:
     void Reset();
     
     // Get camera direction vectors
-    glm::vec3 GetForward() const { return forward; }
-    glm::vec3 GetRight() const { return right; }
-    glm::vec3 GetUp() const { return up; }
+    glm::vec3 GetForward() const;
+    glm::vec3 GetRight() const;
+    glm::vec3 GetUp() const;
 
 private:
     EditorCamera();

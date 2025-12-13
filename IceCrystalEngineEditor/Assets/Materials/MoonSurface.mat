@@ -1,7 +1,7 @@
 {
   "Name": "Moon Surface Material",
   "Texture": "{ASSET_DIR}Textures/moonSurface/Diffuse.png",
-  "Shader": "{ASSET_DIR}Shaders/default",
+  "Shader": "{ENGINE_ASSET_DIR}Shaders/default",
   "Color": [ 1.0, 1.0, 1.0 ],
   "Smoothness": 0.0
 }

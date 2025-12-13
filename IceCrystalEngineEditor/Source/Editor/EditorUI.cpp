@@ -4,9 +4,9 @@
 #include <glad/glad.h>
 
 // Ice Editor headers (may include glad/OpenGL)
-#include <Ice/Editor/EditorUI.h>
-#include <Ice/Editor/GizmoRenderer.h>
-#include <Ice/Editor/EditorCamera.h>
+#include <Ice//Editor/EditorCamera.h>
+#include <Ice//Editor/GizmoRenderer.h>
+#include <Ice//Editor/EditorUI.h>
 
 // Ice Core headers
 #include <Ice/Core/SceneManager.h>
@@ -33,6 +33,37 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+
+EditorUI& EditorUI::GetInstance()
+{
+    static EditorUI instance;
+    return instance;
+}
+
+void EditorUI::SetEnabled(bool enabled) { editorEnabled = enabled; }
+bool EditorUI::IsEnabled() const { return editorEnabled; }
+
+void EditorUI::SetPlayMode(PlayMode mode) { playMode = mode; }
+PlayMode EditorUI::GetPlayMode() const { return playMode; }
+bool EditorUI::IsEditMode() const { return playMode == PlayMode::EDIT; }
+bool EditorUI::IsPlayMode() const { return playMode == PlayMode::PLAY || playMode == PlayMode::PAUSED; }
+bool EditorUI::IsGamePaused() const { return playMode == PlayMode::PAUSED; }
+
+void EditorUI::SetEnginePaused(bool paused) { playMode = paused ? PlayMode::PAUSED : PlayMode::PLAY; }
+bool EditorUI::IsEnginePaused() const { return playMode != PlayMode::PLAY; }
+
+void EditorUI::SetSelectedActor(Actor* actor) { selectedActor = actor; }
+Actor* EditorUI::GetSelectedActor() const { return selectedActor; }
+bool EditorUI::HasSelectedActor() const { return selectedActor != nullptr; }
+
+unsigned int EditorUI::GetViewportFramebuffer() const { return viewportFBO; }
+int EditorUI::GetViewportWidth() const { return viewportWidth; }
+int EditorUI::GetViewportHeight() const { return viewportHeight; }
+bool EditorUI::IsViewportActive() const { return panelVisibility.viewport && viewportFBO != 0; }
+
+bool EditorUI::IsMouseInViewport() const { return isMouseInViewport; }
+glm::vec2 EditorUI::GetViewportMousePos() const { return viewportMousePos; }
+glm::vec2 EditorUI::GetViewportSize() const { return glm::vec2(viewportWidth, viewportHeight); }
 
 // Constructor
 EditorUI::EditorUI()
@@ -117,7 +148,7 @@ void EditorUI::Initialize()
     ImGuiIO& io = ImGui::GetIO();
     
     // Load fonts
-    std::string fontPath = FileUtil::SubstituteVariables("{ASSET_DIR}Fonts/Varela.ttf");
+    std::string fontPath = FileUtil::SubstituteVariables("{ENGINE_ASSET_DIR}Fonts/Varela.ttf");
     if (!fontPath.empty())
     {
         defaultFont = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 16.0f);

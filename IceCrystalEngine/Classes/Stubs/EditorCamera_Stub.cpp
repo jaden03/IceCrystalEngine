@@ -1,4 +1,4 @@
-#include <Ice/Editor/EditorCamera.h>
+#include <Ice/IEditor/EditorCamera.h>
 
 // Stub implementation for EditorCamera
 // This provides minimal functionality when editor is not linked

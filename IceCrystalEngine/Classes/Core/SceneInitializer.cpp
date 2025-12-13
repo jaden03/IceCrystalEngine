@@ -22,15 +22,15 @@ SceneInitializer::SceneInitializer()
 
 void SceneInitializer::InitializeScene()
 {
-	Material* unlitMaterial = new Material(FileUtil::AssetDir + "Materials/unlit.mat");
+	Material* unlitMaterial = new Material(FileUtil::EngineAssetDir + "Materials/unlit.mat");
 	
-	Material* unlitMaterialBlue = new Material(FileUtil::AssetDir + "Materials/unlit.mat");
+	Material* unlitMaterialBlue = new Material(FileUtil::EngineAssetDir + "Materials/unlit.mat");
 	unlitMaterialBlue->color = glm::vec3(0.0f, 0.0f, 15.0f); // making the color higher than 1.0 will make it glow with bloom
 
-	Material* unlitMaterialRed = new Material(FileUtil::AssetDir + "Materials/unlit.mat");
+	Material* unlitMaterialRed = new Material(FileUtil::EngineAssetDir + "Materials/unlit.mat");
 	unlitMaterialRed->color = glm::vec3(10.0f, 0.0f, 0.0f);
 
-	Material* unlitMaterialGreen = new Material(FileUtil::AssetDir + "Materials/unlit.mat");
+	Material* unlitMaterialGreen = new Material(FileUtil::EngineAssetDir + "Materials/unlit.mat");
 	unlitMaterialGreen->color = glm::vec3(0.0f, 10.0f, 0.0f);
 	
     Actor* cameraActor = new Actor("Main Camera");
@@ -41,7 +41,7 @@ void SceneInitializer::InitializeScene()
 	
 
 	Actor* sun = new Actor("Sun", "sun");
-	Renderer* sunRenderer = new Renderer(FileUtil::AssetDir + "Models/cone.obj");
+	Renderer* sunRenderer = new Renderer(FileUtil::EngineAssetDir + "Models/cone.obj");
 	sun->AddComponent(sunRenderer);
 	DirectionalLight* sunLight = sun->AddComponent<DirectionalLight>();
 	sunRenderer->castShadows = false;
@@ -71,7 +71,7 @@ void SceneInitializer::InitializeScene()
 	Material* crateMaterial = new Material(FileUtil::AssetDir + "Materials/crate.mat");
 
 	Actor* testCrate = new Actor("Test Crate", "testCrate");
-	Renderer* testCrateRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj", crateMaterial);
+	Renderer* testCrateRenderer = new Renderer(FileUtil::EngineAssetDir + "Models/cube.obj", crateMaterial);
 	testCrate->AddComponent(testCrateRenderer);
 	testCrate->transform->Translate(0, 5, 0);
 	testCrate->AddComponent<BoxCollider>(testCrate->transform->scale);
@@ -97,7 +97,7 @@ void SceneInitializer::InitializeScene()
 			crate->transform->Translate(j * spacing - offsetX, -5, i * spacing - offsetZ);  // Centering the grid
 	
 			// Create the crate renderer and assign the material
-			Renderer* crateRenderer = new Renderer(FileUtil::AssetDir + "Models/cube.obj", crateMaterial);
+			Renderer* crateRenderer = new Renderer(FileUtil::EngineAssetDir + "Models/cube.obj", crateMaterial);
         
 			// Add the renderer to the crate actor
 			crate->AddComponent(crateRenderer);
@@ -118,7 +118,7 @@ void SceneInitializer::InitializeScene()
 	Actor* pointLight = new Actor("Blue Light", "PointLight1");
 	PointLight* pointLightComponent = pointLight->AddComponent<PointLight>();
 	pointLight->transform->Translate(5, -3, 0);
-	Renderer* pointLightRenderer = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterialBlue);
+	Renderer* pointLightRenderer = new Renderer(FileUtil::EngineAssetDir + "Models/icosphere.obj", unlitMaterialBlue);
 	pointLight->AddComponent(pointLightRenderer);
 	pointLight->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
 	pointLightRenderer->castShadows = false;
@@ -128,7 +128,7 @@ void SceneInitializer::InitializeScene()
 	Actor* pointLight2 = new Actor("Green Light", "PointLight2");
 	PointLight* pointLightComponent2 = pointLight2->AddComponent<PointLight>();
 	pointLight2->transform->Translate(0, -3, 5);
-	Renderer* pointLightRenderer2 = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterialGreen);
+	Renderer* pointLightRenderer2 = new Renderer(FileUtil::EngineAssetDir + "Models/icosphere.obj", unlitMaterialGreen);
 	pointLight2->AddComponent(pointLightRenderer2);
 	pointLight2->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
 	pointLightRenderer2->castShadows = false;
@@ -138,7 +138,7 @@ void SceneInitializer::InitializeScene()
 	Actor* pointLight3 = new Actor("Red Light", "PointLight3");
 	PointLight* pointLightComponent3 = pointLight3->AddComponent<PointLight>();
 	pointLight3->transform->Translate(0, -3, -5);
-	Renderer* pointLightRenderer3 = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterialRed);
+	Renderer* pointLightRenderer3 = new Renderer(FileUtil::EngineAssetDir + "Models/icosphere.obj", unlitMaterialRed);
 	pointLight3->AddComponent(pointLightRenderer3);
 	pointLight3->transform->scale = glm::vec3(0.05f, 0.05f, 0.05f);
 	pointLightRenderer3->castShadows = false;
@@ -148,7 +148,7 @@ void SceneInitializer::InitializeScene()
 	Actor* pointLight4 = new Actor("White Light", "PointLight4");
 	PointLight* pointLightComponent4 = pointLight4->AddComponent<PointLight>();
 	pointLight4->transform->Translate(0, 6, 0);
-	Renderer* pointLightRenderer4 = new Renderer(FileUtil::AssetDir + "Models/icosphere.obj", unlitMaterial);
+	Renderer* pointLightRenderer4 = new Renderer(FileUtil::EngineAssetDir + "Models/icosphere.obj", unlitMaterial);
 	pointLight4->AddComponent(pointLightRenderer4);
 	pointLight4->transform->scale = glm::vec3(0.025f, 0.025f, 0.025f);
 	pointLightRenderer4->castShadows = false;

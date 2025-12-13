@@ -9,6 +9,8 @@
 
 #include "Ice/Components/LuaExecutor.h"
 
+#pragma comment(lib, "lua54.lib")
+
 struct ComponentRegistryEntry {
 	std::function<sol::object(Actor&)> addFn;
 	std::function<sol::object(Actor&)> getFn;

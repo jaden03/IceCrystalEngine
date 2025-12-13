@@ -33,11 +33,7 @@ enum class PlayMode
 class EditorUI
 {
 public:
-    static EditorUI& GetInstance()
-    {
-        static EditorUI instance;
-        return instance;
-    }
+    static EditorUI& GetInstance();
 
     // Initialize and cleanup
     void Initialize();
@@ -49,24 +45,24 @@ public:
     void EndFrame();
 
     // Editor state
-    void SetEnabled(bool enabled) { editorEnabled = enabled; }
-    bool IsEnabled() const { return editorEnabled; }
+    void SetEnabled(bool enabled);
+    bool IsEnabled() const;
     
     // Play mode control (replaces pause/unpause)
-    void SetPlayMode(PlayMode mode) { playMode = mode; }
-    PlayMode GetPlayMode() const { return playMode; }
-    bool IsEditMode() const { return playMode == PlayMode::EDIT; }
-    bool IsPlayMode() const { return playMode == PlayMode::PLAY || playMode == PlayMode::PAUSED; }
-    bool IsGamePaused() const { return playMode == PlayMode::PAUSED; }
+    void SetPlayMode(PlayMode mode);
+    PlayMode GetPlayMode() const;
+    bool IsEditMode() const;
+    bool IsPlayMode() const;
+    bool IsGamePaused() const;
     
     // Legacy compatibility
-    void SetEnginePaused(bool paused) { playMode = paused ? PlayMode::PAUSED : PlayMode::PLAY; }
-    bool IsEnginePaused() const { return playMode != PlayMode::PLAY; }
+    void SetEnginePaused(bool paused);
+    bool IsEnginePaused() const;
 
     // Actor selection
-    void SetSelectedActor(Actor* actor) { selectedActor = actor; }
-    Actor* GetSelectedActor() const { return selectedActor; }
-    bool HasSelectedActor() const { return selectedActor != nullptr; }
+    void SetSelectedActor(Actor* actor);
+    Actor* GetSelectedActor() const;
+    bool HasSelectedActor() const;
 
     // Panel visibility
     struct PanelVisibility
@@ -86,15 +82,15 @@ public:
     void ClearConsole();
     
     // Viewport framebuffer access
-    unsigned int GetViewportFramebuffer() const { return viewportFBO; }
-    int GetViewportWidth() const { return viewportWidth; }
-    int GetViewportHeight() const { return viewportHeight; }
-    bool IsViewportActive() const { return panelVisibility.viewport && viewportFBO != 0; }
+    unsigned int GetViewportFramebuffer() const;
+    int GetViewportWidth() const;
+    int GetViewportHeight() const;
+    bool IsViewportActive() const;
     
     // Viewport mouse interaction
-    bool IsMouseInViewport() const { return isMouseInViewport; }
-    glm::vec2 GetViewportMousePos() const { return viewportMousePos; }
-    glm::vec2 GetViewportSize() const { return glm::vec2(viewportWidth, viewportHeight); }
+    bool IsMouseInViewport() const;
+    glm::vec2 GetViewportMousePos() const;
+    glm::vec2 GetViewportSize() const;
     
     // Viewport actor picking
     glm::vec3 GetViewportPickedColor() const;

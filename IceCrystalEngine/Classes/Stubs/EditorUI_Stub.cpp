@@ -1,4 +1,4 @@
-#include <Ice/Editor/EditorUI.h>
+#include <Ice/IEditor/EditorUI.h>
 #include <Ice/Core/Actor.h>
 
 // Stub implementation for EditorUI

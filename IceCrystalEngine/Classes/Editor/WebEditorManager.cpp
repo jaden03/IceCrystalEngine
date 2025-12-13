@@ -1,5 +1,5 @@
-#include <Ice/Editor/WebEditorManager.h>
-#include <Ice/Editor/GizmoRenderer.h>
+#include <Ice/IEditor/WebEditorManager.h>
+#include <Ice/IEditor/GizmoRenderer.h>
 #include <Ice/Core/SceneManager.h>
 #include <Ice/Core/Actor.h>
 #include <Ice/Core/Transform.h>

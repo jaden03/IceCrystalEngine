@@ -12,9 +12,9 @@
 
 
 #ifdef _DEBUG
-#include <Ice/Editor/WebEditorManager.h>
-#include <Ice/Editor/GizmoRenderer.h>
-#include <Ice/Editor/EditorUI.h>
+#include <Ice/IEditor/WebEditorManager.h>
+#include <Ice/IEditor/GizmoRenderer.h>
+#include <Ice/IEditor/EditorUI.h>
 #include <Ice/Utils/DebugUtil.h>
 #endif
 

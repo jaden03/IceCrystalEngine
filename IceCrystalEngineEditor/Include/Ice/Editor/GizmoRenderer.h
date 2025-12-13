@@ -29,12 +29,8 @@ enum class GizmoAxis
 class GizmoRenderer
 {
 public:
-    static GizmoRenderer& GetInstance()
-    {
-        static GizmoRenderer instance;
-        return instance;
-    }
-
+    static GizmoRenderer& GetInstance();
+    
     void Initialize();
     void Cleanup();
 
@@ -42,12 +38,12 @@ public:
     void RenderGizmos(Actor* selectedActor, Camera* camera);
 
     // Set the current gizmo mode
-    void SetMode(GizmoMode mode) { currentMode = mode; }
-    GizmoMode GetMode() const { return currentMode; }
+    void SetMode(GizmoMode mode);
+    GizmoMode GetMode() const;
 
     // Enable/disable gizmo rendering
-    void SetEnabled(bool enabled) { this->enabled = enabled; }
-    bool IsEnabled() const { return enabled; }
+    void SetEnabled(bool enabled);
+    bool IsEnabled() const;
 
     // Check if mouse is hovering over a gizmo axis
     GizmoAxis HitTest(const glm::vec2& mousePos, const glm::vec2& screenSize, 
@@ -64,7 +60,7 @@ public:
     
     void EndDrag();
 
-    bool IsDragging() const { return isDragging; }
+    bool IsDragging() const;
 
     // High-level mouse interaction methods
     void HandleMouseDown(const glm::vec2& mousePos, const glm::vec2& screenSize,

@@ -1,6 +1,6 @@
 {
   "Name": "Cube Test Material",
   "Texture": "{ASSET_DIR}Textures/cubeTest.png",
-  "Shader": "{ASSET_DIR}Shaders/default",
+  "Shader": "{ENGINE_ASSET_DIR}Shaders/default",
   "Color": [ 1.0, 1.0, 1.0 ]
 }

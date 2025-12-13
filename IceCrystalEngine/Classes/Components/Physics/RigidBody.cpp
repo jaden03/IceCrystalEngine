@@ -1,6 +1,6 @@
 #include <Ice/Components/Physics/RigidBody.h>
-#include <Ice/Editor/WebEditorManager.h>
-#include <Ice/Editor/EditorUI.h>
+#include <Ice/IEditor/WebEditorManager.h>
+#include <Ice/IEditor/EditorUI.h>
 
 #include <iostream>
 

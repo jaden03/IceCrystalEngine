@@ -4,6 +4,19 @@
 #include <Ice/Core/Input.h>
 #include <iostream>
 
+EditorCamera& EditorCamera::GetInstance()
+{
+    static EditorCamera instance;
+    return instance;
+}
+
+void EditorCamera::SetViewportFocused(bool focused) { isViewportFocused = focused; }
+bool EditorCamera::IsViewportFocused() const { return isViewportFocused; }
+
+glm::vec3 EditorCamera::GetForward() const { return forward; }
+glm::vec3 EditorCamera::GetRight() const { return right; }
+glm::vec3 EditorCamera::GetUp() const { return up; }
+
 EditorCamera::EditorCamera()
     : position(0.0f, 5.0f, 10.0f)
     , forward(0.0f, 0.0f, -1.0f)

@@ -184,7 +184,7 @@
       <PreprocessorDefinitions>GLFW_INCLUDE_NONE;%(PreprocessorDefinitions);CPPHTTPLIB_OPENSSL_SUPPORT;CPPHTTPLIB_ZLIB_SUPPORT</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)IceCrystalEngine/Include/lua/;$(SolutionDir)IceCrystalEngine\External\Jolt</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)IceCrystalEngine/Include;$(SolutionDir)IceCrystalEngine\External\Jolt</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/bigobj /FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -196,7 +196,7 @@
       <AdditionalLibraryDirectories>$(ProjectDir)/Libraries/lua/</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)EngineAssets" "$(OutDir)EngineAssets" /E /I /Y /Q</Command>
+      <Command>xcopy "$(ProjectDir)EngineAssets" "$(OutDir)EngineAssets" /E /I /Y /Q &amp;&amp; xcopy "$(SolutionDir)IceCrystalEngine\Libraries\bin\OpenAL32.dll" "$(OutDir)" /Y /D &amp;&amp; xcopy "$(SolutionDir)IceCrystalEngine\Libraries\bin\lua54.dll" "$(OutDir)" /Y /D</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -223,7 +223,7 @@
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)/IceCrystalEngine/Libraries/lua/</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)EngineAssets" "$(OutDir)EngineAssets" /E /I /Y /Q</Command>
+      <Command>xcopy "$(ProjectDir)EngineAssets" "$(OutDir)EngineAssets" /E /I /Y /Q &amp;&amp; xcopy "$(SolutionDir)IceCrystalEngine\Libraries\bin\*.dll" "$(OutDir)" /Y /D</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <!--Assets Folder Copy-->
@@ -258,10 +258,10 @@
     <Content Include="EngineAssets\Shaders\unlit.vert" />
     <Content Include="External\Jolt\Jolt\Jolt.cmake" />
     <Content Include="External\Jolt\Jolt\Physics\Collision\Shape\TaperedCapsuleShape.gliffy" />
-    <Content Include="Libraries\lua\lua54.lib" />
-    <Content Include="lua54.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Libraries\bin\lua54.dll" />
+    <Content Include="Libraries\bin\OpenAL32.dll" />
+    <Content Include="Libraries\lua54.lib" />
+    <Content Include="Libraries\OpenAL32.lib" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Classes\Components\Camera.cpp" />
@@ -285,9 +285,6 @@
     <ClCompile Include="Classes\Core\Transform.cpp" />
     <ClCompile Include="Classes\Core\UIManager.cpp" />
     <ClCompile Include="Classes\Core\WindowManager.cpp" />
-    <ClCompile Include="Classes\Editor\EditorCamera_Stub.cpp" />
-    <ClCompile Include="Classes\Editor\EditorUI_Stub.cpp" />
-    <ClCompile Include="Classes\Editor\GizmoRenderer_Stub.cpp" />
     <ClCompile Include="Classes\Editor\WebEditorManager.cpp" />
     <ClCompile Include="Classes\glad.c" />
     <ClCompile Include="Classes\imgui\imgui.cpp" />
@@ -1014,10 +1011,10 @@
     <ClInclude Include="Include\Ice\Core\Transform.h" />
     <ClInclude Include="Include\Ice\Core\UIManager.h" />
     <ClInclude Include="Include\Ice\Core\WindowManager.h" />
-    <ClInclude Include="Include\Ice\Editor\EditorUI.h" />
-    <ClInclude Include="Include\Ice\Editor\EditorCamera.h" />
-    <ClInclude Include="Include\Ice\Editor\GizmoRenderer.h" />
-    <ClInclude Include="Include\Ice\Editor\WebEditorManager.h" />
+    <ClInclude Include="Include\Ice\IEditor\EditorUI.h" />
+    <ClInclude Include="Include\Ice\IEditor\EditorCamera.h" />
+    <ClInclude Include="Include\Ice\IEditor\GizmoRenderer.h" />
+    <ClInclude Include="Include\Ice\IEditor\WebEditorManager.h" />
     <ClInclude Include="Include\Ice\Rendering\Material.h" />
     <ClInclude Include="Include\Ice\Rendering\MeshHolder.h" />
     <ClInclude Include="Include\Ice\Components\Renderer.h" />
@@ -1162,9 +1159,6 @@
     <ClInclude Include="Include\sol\wrapper.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="Libraries\GLFW\glfw3.lib" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Include\glm\detail\func_common.inl" />
     <None Include="Include\glm\detail\func_common_simd.inl" />
     <None Include="Include\glm\detail\func_exponential.inl" />
@@ -1303,6 +1297,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="EngineAssets\Textures\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="Libraries\glfw3.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

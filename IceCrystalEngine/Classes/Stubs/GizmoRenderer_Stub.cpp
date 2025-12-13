@@ -1,4 +1,4 @@
-#include <Ice/Editor/GizmoRenderer.h>
+#include <Ice/IEditor/GizmoRenderer.h>
 
 // Stub implementation for GizmoRenderer
 // This provides minimal functionality when editor is not linked

@@ -7,7 +7,7 @@
 #include "Ice/Core/Component.h"
 
 #include "Ice/Components/Light.h"
-#include "Ice/Editor/EditorUI.h"
+#include "Ice/IEditor/EditorUI.h"
 
 #include "Ice/Core/Actor.h"
 #include "Ice/Core/Transform.h"

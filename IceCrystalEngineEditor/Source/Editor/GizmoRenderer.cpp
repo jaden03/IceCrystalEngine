@@ -8,6 +8,20 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
+GizmoRenderer& GizmoRenderer::GetInstance()
+{
+    static GizmoRenderer instance;
+    return instance;
+}
+
+void GizmoRenderer::SetMode(GizmoMode mode) { currentMode = mode; }
+GizmoMode GizmoRenderer::GetMode() const { return currentMode; }
+
+void GizmoRenderer::SetEnabled(bool enabled) { this->enabled = enabled; }
+bool GizmoRenderer::IsEnabled() const { return enabled; }
+
+bool GizmoRenderer::IsDragging() const { return isDragging; }
+
 GizmoRenderer::GizmoRenderer()
     : lineShaderProgram(0)
     , arrowVAO(0), arrowVBO(0)

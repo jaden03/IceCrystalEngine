@@ -27,7 +27,7 @@
 #include <Ice/Core/SceneManager.h>
 
 #ifdef _DEBUG
-#include <Ice/Editor/EditorUI.h>
+#include <Ice/IEditor/EditorUI.h>
 #endif
 
 void CreateSun()
