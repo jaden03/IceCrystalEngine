@@ -196,6 +196,7 @@
     <Content Include="Assets\Models\moon.obj.cache" />
     <Content Include="Assets\Models\pad.obj" />
     <Content Include="Assets\Models\padLights.obj" />
+    <Content Include="Assets\Sounds\engineLoop.wav" />
     <Content Include="Assets\Sounds\kspSpaceThemeKevinMaclead.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

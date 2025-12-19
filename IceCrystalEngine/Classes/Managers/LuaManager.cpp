@@ -15,6 +15,8 @@
 #include <Ice/Core/Input.h>
 
 #include <Ice/Components/UI/RawImage.h>
+
+#include "Ice/Components/Audio/AudioSource.h"
 #include "Ice/Components/Physics/RigidBody.h"
 
 LuaManager::LuaManager()
@@ -790,6 +792,30 @@ void LuaManager::RegisterBindings() {
         "IsKinematic", &RigidBody::IsKinematic
     );
     RegisterComponent<RigidBody>("RigidBody", lua);
+
+    // Audio Source
+    lua.new_usertype<AudioSource>("AudioSource",
+        sol::no_constructor,
+        sol::base_classes, sol::bases<Component>(),
+        // Methods (voiding anything to do with the actual AudioClip because I dont feel like making a usertype for them rn)
+        "SetVolume", &AudioSource::SetVolume,
+        "GetVolume", &AudioSource::GetVolume,
+        "SetPitch", &AudioSource::SetPitch,
+        "GetPitch", &AudioSource::GetPitch,
+        "SetLooping", &AudioSource::SetLooping,
+        "IsLooping", &AudioSource::IsLooping,
+        "SetPlayOnReady", &AudioSource::SetPlayOnReady,
+        "GetPlayOnReady", &AudioSource::GetPlayOnReady,
+        "SetSpatial", &AudioSource::SetSpatial,
+        "IsSpatial", &AudioSource::IsSpatial,
+        "SetMinDistance", &AudioSource::SetMinDistance,
+        "GetMinDistance", &AudioSource::GetMinDistance,
+        "SetMaxDistance", &AudioSource::SetMaxDistance,
+        "GetMaxDistance", &AudioSource::GetMaxDistance,
+        "SetPlaybackTime", &AudioSource::SetPlaybackTime,
+        "GetPlaybackTime", &AudioSource::GetPlaybackTime
+    );
+    RegisterComponent<AudioSource>("AudioSource", lua);
 
 #pragma endregion
 

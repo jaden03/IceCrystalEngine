@@ -38,6 +38,9 @@ function lerp(a, b, t)
     return a + (b - a) * t
 end
 
+-- Sound
+local engineSound = enginePlume:GetComponent("AudioSource")
+
 -- Cache input state for FixedUpdate
 local isThrusting = false
 local horizontalInput = 0
@@ -68,9 +71,11 @@ RunService.Update(function(dt)
     if isThrusting then
         light.strength = lerp(light.strength, 1, dt * 10)
         enginePlume.transform.scale = vec3.lerp(enginePlume.transform.scale, vec3(1, 1, 1), dt * 10)
+        engineSound:SetVolume(lerp(engineSound:GetVolume(), .2, dt * 10))
     else
         light.strength = lerp(light.strength, 0, dt * 10)
         enginePlume.transform.scale = vec3.lerp(enginePlume.transform.scale, vec3(1, 0, 1), dt * 10)
+        engineSound:SetVolume(lerp(engineSound:GetVolume(), 0, dt * 10))
     end
     
     -- Update fuel bar UI

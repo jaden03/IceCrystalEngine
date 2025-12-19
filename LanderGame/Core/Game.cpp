@@ -116,6 +116,17 @@ void Game::CreateLander()
     enginePlume->transform->SetParent(lander->transform);
     enginePlume->transform->SetScale(1, 0, 1);
     enginePlume->transform->localPosition = glm::vec3(0, -1.0, 0);
+
+	// Engine Sound
+	AudioSource* as = enginePlume->AddComponent<AudioSource>();
+	AudioClip* clip = new AudioClip;
+	clip->LoadFromFile(FileUtil::AssetDir + "Sounds/engineLoop.wav");
+	as->SetClip(clip);
+	as->SetVolume(0.0f);
+	as->SetMinDistance(5.0f);
+	as->SetMaxDistance(100.0f);
+	as->SetLooping(true);
+	as->Play();
 }
 
 void CreateCamera()
@@ -173,7 +184,6 @@ void Game::CreateObject(std::string type, glm::vec3 position, glm::quat rotation
 		AudioSource* as = base->AddComponent<AudioSource>();
 		AudioClip* clip = new AudioClip;
 		clip->LoadFromFile(FileUtil::AssetDir + "Sounds/kspSpaceThemeKevinMaclead.wav");
-		std::cout << "Channels: " << clip->GetChannelCount() << std::endl;
 		as->SetClip(clip);
 		as->SetVolume(.2f);
 		as->SetMinDistance(5.0f);
